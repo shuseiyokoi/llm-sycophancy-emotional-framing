@@ -130,7 +130,10 @@ python analyze_results.py
 ### 6. Optional Run them All 
 
 > [!WARNING]
-> Modify `../src/config.py` for # of iternation of API call for LLM
+> Modify [`src/config.py`](https://github.com/shuseiyokoi/Bias-by-Prompt-LLM-Fairness/blob/4d4085db74ca950b5ec5c7919082ab71d887ec09/src/config.py#L3) for # of iterations of API call for LLM
+> ```python
+> NUM_ITERATIONS = 2
+> ```
 
 ```sh
 python main.py
