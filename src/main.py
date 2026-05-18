@@ -7,7 +7,7 @@ import matplotlib.ticker as mtick
 import os
 
 from load_data import load_data
-from summarize_raw_data import summarize_data
+from summarize_data import summarize_data
 from call_chatGPT import call_chatGPT
 from call_gemini import call_gemini
 from call_claude import call_claude
