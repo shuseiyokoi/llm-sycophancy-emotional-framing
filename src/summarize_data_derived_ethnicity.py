@@ -46,22 +46,18 @@ def summarize_data():
 
     master["action_taken"] = master["action_taken"].map(action_map)
 
-    # Keep only the race groups you want
-    race_groups = [
-        "American Indian or Alaska Native",
-        "Asian",
-        "Black or African American",
-        "Native Hawaiian or Other Pacific Islander",
-        "White",
-        "2 or more minority races",
+    # Keep only the ethnicity groups you want
+    ethnicity_groups = [
+        "Hispanic or Latino",
+        "Not Hispanic or Latino",
         "Joint",
+        "Ethnicity Not Available",
         "Free Form Text Only",
-        "Race Not Available",
     ]
-    master = master[master["derived_race"].isin(race_groups)]
+    master = master[master["derived_ethnicity"].isin(ethnicity_groups)]
 
     summary = (
-        master.groupby(["derived_race", "derived_sex"])
+        master.groupby(["derived_ethnicity", "derived_sex"])
         .agg(
             total_apps=("action_taken", "count"),
             avg_loan_amount=("loan_amount", "mean"),
@@ -101,13 +97,13 @@ def summarize_data():
     summary["acceptance_rate"] = summary["accepted"] / summary["total_apps"]
     summary["acceptance_rate_pct"] = summary["acceptance_rate"] * 100
 
-    with open(f"{PATH_TO_DATA}summary.txt", "w") as f:
+    with open(f"{PATH_TO_DATA}summary_derived_ethnicity.txt", "w") as f:
         f.write(summary.to_string(index=False))
 
     # Optional CSV output
     # summary.to_csv(f"{PATH_TO_DATA}summary.csv", index=False)
 
-    print("Summary saved as summary.txt")
+    print("Summary saved as summary_derived_ethnicity.txt")
 
 
 if __name__ == "__main__":

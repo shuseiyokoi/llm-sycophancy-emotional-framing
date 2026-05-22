@@ -1,5 +1,5 @@
 from load_data import load_data
-from summarize_data import summarize_data
+from summarize_data_derived_ethnicity import summarize_data
 
 try:
     load_data()
