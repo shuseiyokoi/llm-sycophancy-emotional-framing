@@ -6,11 +6,8 @@ from scipy.stats import chi2_contingency, fisher_exact
 import matplotlib.ticker as mtick
 import os
 
-from load_data import load_data
-from summarize_data_derived_ethnicity import summarize_data
-from call_chatGPT import call_chatGPT
-from call_gemini import call_gemini
-from call_claude import call_claude
+from gather_data import gather_data
+from call_models import call_models
 from config import PATH_TO_DATA, GPT_MODEL, CLAUDE_MODEL, GEMINI_MODEL, PATH_TO_RESULTS
 
 
@@ -67,27 +64,11 @@ def load_json_file(filepath, model_name, prompt_name):
     return pd.DataFrame(rows)
 
 
-def gather_data():
-    load_data()
-    summarize_data()
-    print("Data gathering pipeline started")
-
-
-def call_models():
-    try:
-        call_chatGPT()
-    except Exception as e:
-        print(f"ChatGPT API call failed: {e}")
-
-    try:
-        call_gemini()
-    except Exception as e:
-        print(f"Gemini API call failed: {e}")
-
-    try:
-        call_claude()
-    except Exception as e:
-        print(f"Claude API call failed: {e}")
+# def gather_data():
+#     load_data()
+#     preprocess_data()
+#     summarize_data()
+#     print("Data gathering pipeline started")
 
 
 def analyze_results():
@@ -204,7 +185,6 @@ def main():
         "--analyze", action="store_true", help="Analyze saved model results"
     )
     args = parser.parse_args()
-
 
     if args.gather_data:
         try:
