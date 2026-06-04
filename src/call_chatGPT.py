@@ -3,18 +3,9 @@ import os
 from openai import OpenAI
 import json
 
-from config import (
-    PATH_TO_DATA,
-    GPT_MODEL,
-    NUM_ITERATIONS,
-)
+from config import PATH_TO_DATA, GPT_MODEL, NUM_ITERATIONS, PROMPT_TYPES
 
-from prompts import (
-    CONTROL_PROMPT,
-    EMOTIONAL_IDENTITY_PROMPT,
-    EMOTIONAL_PROMPT,
-    IDENTITY_PROMPT,
-)
+from prompts import get_prompt
 
 
 def clean_json_response(raw_text):
@@ -90,27 +81,16 @@ def call_chatGPT():
     client = OpenAI(api_key=api_key)
 
     file = client.files.create(
-        file=open(f"{PATH_TO_DATA}/summary.txt", "rb"),
+        file=open(f"{PATH_TO_DATA}summary.txt", "rb"),
         purpose="user_data",
     )
 
     prompt_jobs = {
-        "control_prompt": {
-            "prompt": CONTROL_PROMPT,
-            "output": "results_control_prompt_ChatGPT.jsonl",
-        },
-        "emotional_prompt": {
-            "prompt": EMOTIONAL_PROMPT,
-            "output": "results_emotional_prompt_ChatGPT.jsonl",
-        },
-        "identity_prompt": {
-            "prompt": IDENTITY_PROMPT,
-            "output": "results_identity_prompt_ChatGPT.jsonl",
-        },
-        "emotional_identity_prompt": {
-            "prompt": EMOTIONAL_IDENTITY_PROMPT,
-            "output": "results_emotional_identity_prompt_ChatGPT.jsonl",
-        },
+        prompt_type: {
+            "prompt": get_prompt(prompt_type),
+            "output": f"results_{prompt_type}_ChatGPT.jsonl",
+        }
+        for prompt_type in PROMPT_TYPES
     }
 
     for prompt_name, job in prompt_jobs.items():

@@ -2,13 +2,8 @@ import json
 import anthropic
 from dotenv import load_dotenv
 
-from config import PATH_TO_DATA, CLAUDE_MODEL, NUM_ITERATIONS
-from prompts import (
-    get_control_prompt_embedded,
-    get_emotional_prompt_embedded,
-    get_identity_prompt_embedded,
-    get_emotional_identity_prompt_embedded,
-)
+from config import PATH_TO_DATA, CLAUDE_MODEL, NUM_ITERATIONS, PROMPT_TYPES
+from prompts import get_embedded_prompt
 
 
 def parse_json_response(raw_text):
@@ -72,22 +67,11 @@ def call_claude():
     client = anthropic.Anthropic()
 
     prompt_jobs = {
-        "control_prompt": {
-            "prompt": get_control_prompt_embedded(),
-            "output": f"{PATH_TO_DATA}results_control_prompt_claude.jsonl",
-        },
-        "emotional_prompt": {
-            "prompt": get_emotional_prompt_embedded(),
-            "output": f"{PATH_TO_DATA}results_emotional_prompt_claude.jsonl",
-        },
-        "identity_prompt": {
-            "prompt": get_identity_prompt_embedded(),
-            "output": f"{PATH_TO_DATA}results_identity_prompt_claude.jsonl",
-        },
-        "emotional_identity_prompt": {
-            "prompt": get_emotional_identity_prompt_embedded(),
-            "output": f"{PATH_TO_DATA}results_emotional_identity_prompt_claude.jsonl",
-        },
+        prompt_type: {
+            "prompt": get_embedded_prompt(prompt_type),
+            "output": f"{PATH_TO_DATA}results_{prompt_type}_claude.jsonl",
+        }
+        for prompt_type in PROMPT_TYPES
     }
 
     for prompt_name, job in prompt_jobs.items():
