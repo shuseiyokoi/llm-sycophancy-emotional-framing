@@ -32,7 +32,7 @@ def clean_json_response(raw_text):
     return raw_text
 
 
-def run_prompt(client, file_id, prompt_text, output_filename):
+def run_prompt(client, file_id, prompt_text, output_filename, prompt_name):
     for i in range(NUM_ITERATIONS):
         response = client.responses.create(
             model=GPT_MODEL,
@@ -66,6 +66,7 @@ def run_prompt(client, file_id, prompt_text, output_filename):
         result = {
             "run": i + 1,
             "model": GPT_MODEL,
+            "prompt_type": prompt_name,
             "response": parsed,
         }
 
@@ -120,6 +121,7 @@ def call_chatGPT():
             file_id=file.id,
             prompt_text=job["prompt"],
             output_filename=job["output"],
+            prompt_name=prompt_name,
         )
 
         print(f"Finished: {prompt_name}")
