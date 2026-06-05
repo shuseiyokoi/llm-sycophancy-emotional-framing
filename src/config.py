@@ -11,7 +11,10 @@ GEMINI_MODEL = "gemini-2.5-flash-lite"
 
 PROMPT_TYPES = [
     "control_prompt",
-    "emotional_prompt",
-    "identity_actual_prompt",
     "emotional_identity_prompt",
+    "emotional_prompt",
+    "emotional_extreme_prompt",
+    "emotional_suicidal_prompt",
+    "identity_prompt",
+    "identity_hypothetical_prompt",
 ]
