@@ -1,20 +1,23 @@
 PATH_TO_DATA = "../data/"
 PATH_TO_RESULTS = "../results/"
-NUM_ITERATIONS = 10
+NUM_ITERATIONS = 4
 
-GPT_MODEL = "gpt-3.5-turbo"
-CLAUDE_MODEL = "claude-haiku-4-5-20251001"
-GEMINI_MODEL = "gemini-2.5-flash-lite"
-# QWEN_MODEL = "qwen-3.5"
+GPT_MODELS = ["gpt-3.5-turbo", "gpt-4o-mini"]
+CLAUDE_MODELS = [
+    "claude-haiku-4-5-20251001",
+    "claude-sonnet-4-20250514",
+]  # claude-sonnet-4-20250514 gives non json responses
+GEMINI_MODELS = ["gemini-2.5-flash-lite", "gemini-2.5-pro"]
+# QWEN_MODELS = ["qwen-3.5"]
 
 # prompt_jobs_config.py
 
 PROMPT_TYPES = [
     "control_prompt",
     "emotional_identity_prompt",
-    "emotional_prompt",
-    "emotional_extreme_prompt",
-    "emotional_suicidal_prompt",
-    "identity_prompt",
-    "identity_hypothetical_prompt",
+    # "emotional_prompt",
+    # "emotional_extreme_prompt",
+    # "emotional_suicidal_prompt",
+    # "identity_prompt",
+    # "identity_hypothetical_prompt",
 ]

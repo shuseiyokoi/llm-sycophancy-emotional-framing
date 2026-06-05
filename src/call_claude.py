@@ -1,9 +1,10 @@
 import json
 import anthropic
 from dotenv import load_dotenv
+import time
 
-from config import PATH_TO_DATA, CLAUDE_MODEL, NUM_ITERATIONS, PROMPT_TYPES
-from prompts import get_embedded_prompt
+from config import PATH_TO_DATA, CLAUDE_MODELS, NUM_ITERATIONS, PROMPT_TYPES
+from prompts import get_prompt
 
 
 def parse_json_response(raw_text):
@@ -20,37 +21,45 @@ def parse_json_response(raw_text):
     try:
         return json.loads(raw_text)
     except json.JSONDecodeError:
-        start = raw_text.find("{")
-        end = raw_text.rfind("}")
-
-        if start != -1 and end != -1 and end > start:
-            try:
-                return json.loads(raw_text[start : end + 1])
-            except json.JSONDecodeError:
-                return {"raw_text": raw_text}
-
         return {"raw_text": raw_text}
 
 
-def run_prompt_set(client, prompt_text, output_file, prompt_name):
+def run_prompt_set(client, model_name, file_id, prompt_text, output_file, prompt_name):
     for i in range(NUM_ITERATIONS):
-        message = client.messages.create(
-            model=CLAUDE_MODEL,
-            max_tokens=1024,
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt_text,
-                }
-            ],
-        )
+        try:
+            message = client.beta.messages.create(
+                model=model_name,
+                max_tokens=1024,
+                betas=["files-api-2025-04-14"],
+                messages=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "document",
+                                "source": {
+                                    "type": "file",
+                                    "file_id": file_id,
+                                },
+                            },
+                            {
+                                "type": "text",
+                                "text": prompt_text,
+                            },
+                        ],
+                    }
+                ],
+            )
 
-        raw_text = message.content[0].text.strip()
-        parsed_response = parse_json_response(raw_text)
+            raw_text = message.content[0].text.strip()
+            parsed_response = parse_json_response(raw_text)
+
+        except Exception as e:
+            parsed_response = {"error": str(e)}
 
         result = {
             "run": i + 1,
-            "model": CLAUDE_MODEL,
+            "model": model_name,
             "prompt_type": prompt_name,
             "response": parsed_response,
         }
@@ -58,7 +67,9 @@ def run_prompt_set(client, prompt_text, output_file, prompt_name):
         with open(output_file, "a", encoding="utf-8") as f:
             f.write(json.dumps(result, ensure_ascii=False) + "\n")
 
-        print(f"{prompt_name} | Run {i + 1}: {parsed_response}")
+        print(f"{model_name} | {prompt_name} | Run {i + 1}: {parsed_response}")
+
+        time.sleep(1)
 
 
 def call_claude():
@@ -66,25 +77,27 @@ def call_claude():
 
     client = anthropic.Anthropic()
 
-    prompt_jobs = {
-        prompt_type: {
-            "prompt": get_embedded_prompt(prompt_type),
-            "output": f"{PATH_TO_DATA}results_{prompt_type}_claude.jsonl",
-        }
-        for prompt_type in PROMPT_TYPES
-    }
+    uploaded_file = client.beta.files.upload(
+        file=open(f"{PATH_TO_DATA}summary.txt", "rb"),
+        betas=["files-api-2025-04-14"],
+    )
 
-    for prompt_name, job in prompt_jobs.items():
-        print(f"\nStarting: {prompt_name}")
+    for model_name in CLAUDE_MODELS:
+        for prompt_type in PROMPT_TYPES:
+            output_file = f"{PATH_TO_DATA}results_{prompt_type}_{model_name}.jsonl"
 
-        run_prompt_set(
-            client=client,
-            prompt_text=job["prompt"],
-            output_file=job["output"],
-            prompt_name=prompt_name,
-        )
+            print(f"\nStarting: {model_name} | {prompt_type}")
 
-        print(f"Finished: {prompt_name}")
+            run_prompt_set(
+                client=client,
+                model_name=model_name,
+                file_id=uploaded_file.id,
+                prompt_text=get_prompt(prompt_type),
+                output_file=output_file,
+                prompt_name=prompt_type,
+            )
+
+            print(f"Finished: {model_name} | {prompt_type}")
 
 
 if __name__ == "__main__":

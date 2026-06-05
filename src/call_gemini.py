@@ -3,8 +3,8 @@ from google import genai
 import json
 import time
 
-from config import PATH_TO_DATA, GEMINI_MODEL, NUM_ITERATIONS, PROMPT_TYPES
-from prompts import get_embedded_prompt
+from config import PATH_TO_DATA, GEMINI_MODELS, NUM_ITERATIONS, PROMPT_TYPES
+from prompts import get_prompt
 
 
 def parse_json_response(raw_text):
@@ -21,48 +21,39 @@ def parse_json_response(raw_text):
     try:
         return json.loads(raw_text)
     except json.JSONDecodeError:
-        start = raw_text.find("{")
-        end = raw_text.rfind("}")
-
-        if start != -1 and end != -1 and end > start:
-            try:
-                return json.loads(raw_text[start : end + 1])
-            except json.JSONDecodeError:
-                return {"raw_text": raw_text}
-
         return {"raw_text": raw_text}
 
 
-def run_prompt_set(client, prompt_text, output_file, prompt_name):
+def run_prompt_set(
+    client, model_name, uploaded_file, prompt_text, output_file, prompt_name
+):
     for i in range(NUM_ITERATIONS):
         try:
             response = client.models.generate_content(
-                model=GEMINI_MODEL,
-                contents=prompt_text,
+                model=model_name,
+                contents=[
+                    uploaded_file,
+                    prompt_text,
+                ],
             )
 
             raw_text = response.text.strip()
             parsed_response = parse_json_response(raw_text)
 
-            result = {
-                "run": i + 1,
-                "model": GEMINI_MODEL,
-                "prompt_type": prompt_name,
-                "response": parsed_response,
-            }
-
         except Exception as e:
-            result = {
-                "run": i + 1,
-                "model": GEMINI_MODEL,
-                "prompt_type": prompt_name,
-                "response": {"error": str(e)},
-            }
+            parsed_response = {"error": str(e)}
+
+        result = {
+            "run": i + 1,
+            "model": model_name,
+            "prompt_type": prompt_name,
+            "response": parsed_response,
+        }
 
         with open(output_file, "a", encoding="utf-8") as f:
             f.write(json.dumps(result, ensure_ascii=False) + "\n")
 
-        print(f"{prompt_name} | Run {i + 1}: {result['response']}")
+        print(f"{model_name} | {prompt_name} | Run {i + 1}: {parsed_response}")
 
         time.sleep(1)
 
@@ -72,25 +63,24 @@ def call_gemini():
 
     client = genai.Client()
 
-    prompt_jobs = {
-        prompt_type: {
-            "prompt": get_embedded_prompt(prompt_type),
-            "output": f"{PATH_TO_DATA}results_{prompt_type}_gemini.jsonl",
-        }
-        for prompt_type in PROMPT_TYPES
-    }
+    uploaded_file = client.files.upload(file=f"{PATH_TO_DATA}summary.txt")
 
-    for prompt_name, job in prompt_jobs.items():
-        print(f"\nStarting: {prompt_name}")
+    for model_name in GEMINI_MODELS:
+        for prompt_type in PROMPT_TYPES:
+            output_file = f"{PATH_TO_DATA}results_{prompt_type}_{model_name}.jsonl"
 
-        run_prompt_set(
-            client=client,
-            prompt_text=job["prompt"],
-            output_file=job["output"],
-            prompt_name=prompt_name,
-        )
+            print(f"\nStarting: {model_name} | {prompt_type}")
 
-        print(f"Finished: {prompt_name}")
+            run_prompt_set(
+                client=client,
+                model_name=model_name,
+                uploaded_file=uploaded_file,
+                prompt_text=get_prompt(prompt_type),
+                output_file=output_file,
+                prompt_name=prompt_type,
+            )
+
+            print(f"Finished: {model_name} | {prompt_type}")
 
 
 if __name__ == "__main__":
