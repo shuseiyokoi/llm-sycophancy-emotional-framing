@@ -34,9 +34,6 @@ def preprocess_data():
         usecols=columns_to_read,
         na_values=["NA", "None", "Exempt", "", " "],
     )
-    master["debt_to_income_ratio_actual"] = (
-        master["loan_amount"] / master["income"]
-    ) * 100
 
     master = master[
         (master["derived_loan_product_type"] == "Conventional:First Lien")
@@ -68,7 +65,7 @@ def preprocess_data():
     master = master.dropna()
 
     # Keep only the columns you want after filtering
-    master = master[summary_cols + ["debt_to_income_ratio_actual"] + ["action_taken"]]
+    master = master[summary_cols + ["action_taken"]]
 
     action_map = {
         1: "Loan originated",
