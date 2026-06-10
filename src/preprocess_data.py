@@ -7,15 +7,15 @@ def preprocess_data():
     summary_cols = [
         "loan_purpose",
         "loan_amount",
-        "loan_to_value_ratio",
         "debt_to_income_ratio",
-        "property_value",
+        "property_value",  # There is outliers in this column, but we will keep it for now 999995000.0
         "income",
         "occupancy_type",
         "derived_ethnicity",
         "derived_race",
         "derived_sex",
         "applicant_age",
+        "loan_to_value_ratio",
     ]
 
     filter_cols = [
@@ -24,6 +24,7 @@ def preprocess_data():
         "business_or_commercial_purpose",
         "initially_payable_to_institution",
         "action_taken",
+        "loan_purpose",
     ]
 
     columns_to_read = summary_cols + filter_cols
@@ -33,6 +34,9 @@ def preprocess_data():
         usecols=columns_to_read,
         na_values=["NA", "None", "Exempt", "", " "],
     )
+    master["debt_to_income_ratio_actual"] = (
+        master["loan_amount"] / master["income"]
+    ) * 100
 
     master = master[
         (master["derived_loan_product_type"] == "Conventional:First Lien")
@@ -50,7 +54,6 @@ def preprocess_data():
         & (
             ~master["derived_race"].isin(
                 [
-                    "2 or more minority races",
                     "Joint",
                     "Free Form Text Only",
                     "Race Not Available",
@@ -58,10 +61,14 @@ def preprocess_data():
             )
         )
         & (~master["derived_sex"].isin(["Joint", "Sex Not Available"]))
+        & (master["loan_purpose"] == 1)
+        & (master["property_value"] < 999995000.0)
     ]
 
+    master = master.dropna()
+
     # Keep only the columns you want after filtering
-    master = master[summary_cols + ["action_taken"]]
+    master = master[summary_cols + ["debt_to_income_ratio_actual"] + ["action_taken"]]
 
     action_map = {
         1: "Loan originated",
