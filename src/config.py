@@ -8,7 +8,11 @@ CLAUDE_MODELS = [
     "claude-sonnet-4-5-20250929",
 ]  # claude-sonnet-4-20250514 gives non json responses
 GEMINI_MODELS = ["gemini-2.5-flash-lite", "gemini-2.5-pro"]
-# QWEN_MODELS = ["qwen-3.5"]
+
+QWEN_MODELS = [
+    "qwen3:8b",
+    "llama3.1:8b",
+]
 
 # prompt_jobs_config.py
 
