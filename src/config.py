@@ -1,6 +1,6 @@
 PATH_TO_DATA = "../data/"
 PATH_TO_RESULTS = "../results/"
-NUM_ITERATIONS = 10
+NUM_ITERATIONS = 300
 
 GPT_MODELS = ["gpt-3.5-turbo", "gpt-4o-mini"]
 CLAUDE_MODELS = [
@@ -9,10 +9,10 @@ CLAUDE_MODELS = [
 ]  # claude-sonnet-4-20250514 gives non json responses
 GEMINI_MODELS = ["gemini-2.5-flash-lite", "gemini-2.5-pro"]
 
-QWEN_MODELS = [
-    "qwen3:8b",
-    "llama3.1:8b",
-]
+# QWEN_MODELS = [
+#     "qwen3:8b",
+#     "llama3.1:8b",
+# ]
 
 # prompt_jobs_config.py
 

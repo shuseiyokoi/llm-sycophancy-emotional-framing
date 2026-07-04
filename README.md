@@ -99,9 +99,11 @@ python gather_data.py
 ```
 
 1. Retrieve HMDA loan application data from the API `load_data.py`
-2. Filter the dataset to selected decision outcomes and summarize the data to `summarize_raw_data.py`
-3. Create 2 files in data directory
+2. Filter the dataset to selected decision outcomes `preprocess_data.py`
+3. Summarize the preprocessed data by race, sex, and ethnicity `summarize_data.py`
+4. Create 3 files in data directory
   - `hmda_CA_2024.csv`
+  - `preprocessed_data.csv`
   - `summary.txt`
 
 ### 4. Call Large Language Models 
