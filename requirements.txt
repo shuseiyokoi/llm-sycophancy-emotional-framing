@@ -1,14 +1,9 @@
 numpy
 pandas
-python-dotenv
 matplotlib
 scipy
-datetime
 statsmodels
+python-dotenv
 openai
 anthropic
-google
-genai
-json
-append_results
-argparse
+google-genai

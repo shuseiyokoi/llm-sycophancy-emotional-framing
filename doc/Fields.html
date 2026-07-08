@@ -1,0 +1,787 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Fields</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+
+	table.collection-content {
+		width: 100%;
+		table-layout: fixed;
+	}
+
+	table.collection-content th,
+	table.collection-content td {
+		overflow-wrap: anywhere;
+	}
+
+	table.collection-content td > .user,
+	table.collection-content td > time {
+		white-space: pre-wrap;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content-wrapper {
+	overflow-x: auto;
+}
+
+@media only print {
+	.collection-content-wrapper {
+		overflow-x: visible;
+	}
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	gap: 46px;
+}
+
+.column {
+	min-width: 0;
+	overflow: hidden;
+}
+
+.column > *:first-child {
+	margin-top: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+table {
+	border-collapse: collapse;
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol.numbered-list.numbered-list-digits-2 {
+	padding-inline-start: 2em;
+}
+
+ol.numbered-list.numbered-list-digits-3plus {
+	padding-inline-start: 2.4em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="373f61fb-e85c-80de-8284-de93d19a923b" class="page sans"><header><h1 class="page-title" dir="auto">Fields</h1><p class="page-description" dir="auto"></p><table class="properties"><tbody><tr class="property-row property-row-select"><th><span class="icon property-icon"><img src="https://app.notion.com/icons/arrow-circle-down_gray.svg" style="width:14px;height:14px;display:block"/></span>Class</th><td><span class="selected-value select-value-color-red">DSCI590</span></td></tr></tbody></table></header><div class="page-body"><div style="display:contents" dir="auto"><h1 id="373f61fb-e85c-80fc-8bc5-e94fcb203d95" class=""><strong>HMDA Public LAR Data Processing Metadata</strong></h1></div><div style="display:contents" dir="auto"><h2 id="373f61fb-e85c-80ce-94dc-f16b82d71688" class=""><strong>1. Study Goal</strong></h2></div><div style="display:contents" dir="ltr"><table id="373f61fb-e85c-80d8-9396-ef8d665785a2" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80c6-b20e-f15feac7d7ab"><th id="d[ZV" class="simple-table-header-color simple-table-header"><strong>Item</strong></th><th id="Sdcz" class="simple-table-header-color simple-table-header" style="width:503px"><strong>Description</strong></th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-803a-b6e2-d943890b54e9"><td id="d[ZV" class="">Dataset</td><td id="Sdcz" class="" style="width:503px">Public HMDA Loan/Application Register data</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8096-b044-dd1c185f9b19"><td id="d[ZV" class="">Main purpose</td><td id="Sdcz" class="" style="width:503px">Analyze mortgage application decisions and test whether LLM-generated decisions differ under emotional or discrimination-related appeal prompts</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-803a-99f7-fda510856730"><td id="d[ZV" class="">Target variable</td><td id="Sdcz" class="" style="width:503px"><code>action_taken</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80dd-986a-e0436f70cae7"><td id="d[ZV" class="">Main outcome</td><td id="Sdcz" class="" style="width:503px">Approval vs Denial</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80eb-bb02-fd2a79ed9b5c"><td id="d[ZV" class="">Main modeling population</td><td id="Sdcz" class="" style="width:503px">Applications with <code>action_taken in [1, 2, 3]</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8002-8d9e-cc370b92b0c4"><td id="d[ZV" class="">Excluded outcomes</td><td id="Sdcz" class="" style="width:503px">Withdrawn, incomplete, purchased loans, and preapproval-only outcomes</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><hr id="373f61fb-e85c-807b-84fe-ed12a65c6de4"/></div><div style="display:contents" dir="auto"><h2 id="373f61fb-e85c-80a4-af93-e3795159ccc5" class=""><strong>2. Target Variable Metadata</strong></h2></div><div style="display:contents" dir="ltr"><table id="373f61fb-e85c-80f1-a29a-e3fb069debf7" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80dd-b54c-c1609d77b0c0"><th id=";fwu" class="simple-table-header-color simple-table-header"><strong>Field</strong></th><th id="B|uz" class="simple-table-header-color simple-table-header"><strong>Decision</strong></th><th id="KIz~" class="simple-table-header-color simple-table-header"><strong>Processing</strong></th><th id="PPt;" class="simple-table-header-color simple-table-header"><strong>Reason</strong></th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80d3-aa03-df4fc7dba2bc"><td id=";fwu" class=""><code>action_taken</code></td><td id="B|uz" class="">Keep</td><td id="KIz~" class="">Keep only values <code>1</code>, <code>2</code>, and <code>3</code></td><td id="PPt;" class="">These represent clean final application outcomes: originated, approved but not accepted, and denied</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8005-913a-f2746a9ea084"><td id=";fwu" class=""><code>action_taken</code></td><td id="B|uz" class="">Transform</td><td id="KIz~" class="">Convert to binary target</td><td id="PPt;" class="">Values <code>1</code> and <code>2</code> are treated as approved; value <code>3</code> is treated as denied</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><p id="373f61fb-e85c-8010-a59b-c9692d2c578f" class="">Recommended target encoding:</p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js" integrity="sha512-AKaNmg8COK0zEbjTdMHJAPJ0z6VeNqvRvH4/d5M4sHJbQQUToMBtodq4HaV4fa+WV2UTfoperElm66c9/8cKmQ==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><pre id="373f61fb-e85c-806c-9af2-ffdd8888c0b7" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">df[&quot;target&quot;] = df[&quot;action_taken&quot;].apply(lambda x: 1 if x in [1, 2] else 0)</code></pre></div><div style="display:contents" dir="auto"><p id="373f61fb-e85c-8073-8a42-fa42de79014b" class="">Meaning:</p></div><div style="display:contents" dir="auto"><pre id="373f61fb-e85c-80c9-9a93-e46d2eb28240" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">1 = Approved / originated
+0 = Denied</code></pre></div><div style="display:contents" dir="auto"><hr id="373f61fb-e85c-802b-9fd3-e452e8ad6e3d"/></div><div style="display:contents" dir="auto"><h1 id="373f61fb-e85c-8068-bf70-d6c1a83a7cd4" class=""><strong>3. Sample Filtering Metadata</strong></h1></div><div style="display:contents" dir="auto"><p id="373f61fb-e85c-80e4-b692-e0313ec6002e" class="">These fields are mainly used to define a clean study population.</p></div><div style="display:contents" dir="ltr"><table id="373f61fb-e85c-8068-9c71-d31a1895344c" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-801d-bc2b-ce510f87ca6c"><th id="fDO?" class="simple-table-header-color simple-table-header"><strong>Field</strong></th><th id="Cgwv" class="simple-table-header-color simple-table-header"><strong>Decision</strong></th><th id="nb{&gt;" class="simple-table-header-color simple-table-header"><strong>Processing</strong></th><th id="C_sN" class="simple-table-header-color simple-table-header"><strong>Reason</strong></th><th id="kGy]" class="simple-table-header-color simple-table-header" style="width:388.5234375px">Values</th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8084-91cc-fbe58b4083af"><td id="fDO?" class=""><code>derived_loan_product_type</code></td><td id="Cgwv" class="">Keep for filtering</td><td id="nb{&gt;" class="">Filter to conventional first-lien loans</td><td id="C_sN" class="">This combines loan type and lien status. Using this field creates a cleaner sample of standard conventional first mortgages</td><td id="kGy]" class="" style="width:388.5234375px">  • Conventional:First Lien<br/>  • FHA:First LienVA:First Lien<br/>  • FSA/RHS:First Lien<br/>  • Conventional:Subordinate Lien<br/>  • FHA:Subordinate Lien<br/>  • VA:Subordinate Lien<br/>  • FSA/RHS:Subordinate Lien</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8099-8771-e7ac9db198c4"><td id="fDO?" class=""><code>conforming_loan_limit</code></td><td id="Cgwv" class="">Keep for filtering<br/><a href="https://github.com/cfpb/hmda-platform/wiki/Derived-Fields-Categorization-2018-Onward#conforming-loan-limit">Methodology</a>(GitHub)</td><td id="nb{&gt;" class="">Filter to <code>C</code></td><td id="C_sN" class="">Keeps conforming loans only and removes nonconforming/jumbo loans, which may follow different underwriting standards</td><td id="kGy]" class="" style="width:388.5234375px">  • C (Conforming)<br/>  • NC (Nonconforming)<br/>  • U (Undetermined)<br/>  • NA (Not Applicable)</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80bf-987f-de5e2551511a"><td id="fDO?" class=""><code>business_or_commercial_purpose</code></td><td id="Cgwv" class="">Keep for filtering</td><td id="nb{&gt;" class="">Filter to <code>2</code></td><td id="C_sN" class="">Removes business or commercial-purpose loans because they are different from regular consumer mortgage applications</td><td id="kGy]" class="" style="width:388.5234375px">  • 1 - Primarily for a business or commercial purpose<br/>  • 2 - Not primarily for a business or commercial purpose<br/>  • 1111 - Exempt</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8055-8942-ca9bc519c55e"><td id="fDO?" class=""><code>initially_payable_to_institution</code></td><td id="Cgwv" class="">Keep for filtering</td><td id="nb{&gt;" class="">Filter to <code>1</code></td><td id="C_sN" class="">Keeps loans initially payable to the reporting institution, so the record more directly reflects that institution’s own credit decision</td><td id="kGy]" class="" style="width:388.5234375px">  • 1 - Initially payable to your institution<br/>  • 2 - Not initially payable to your institution<br/>  • 3 - Not applicable<br/>  • 1111 - Exempt</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-800f-a4ad-eaa458d7c52c"><td id="fDO?" class=""><code>applicant_age/ageapplicant</code></td><td id="Cgwv" class="">Keep for filtering</td><td id="nb{&gt;" class="">Remove <code>8888</code> and <code>9999</code></td><td id="C_sN" class="">Removes unavailable or invalid age categories</td><td id="kGy]" class="" style="width:388.5234375px">  • &lt;25<br/>  • 25-34<br/>  • 35-44<br/>  • 45-54<br/>  • 55-64<br/>  • 65-74<br/>  • &gt;74<br/>  • 8888</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8058-a93e-c10fd0d9c410"><td id="fDO?" class=""><code>occupancy_type</code></td><td id="Cgwv" class="">Keep for filtering</td><td id="nb{&gt;" class="">Filter to <code>1</code></td><td id="C_sN" class="">Principal residence, second residence, and investment property can have different underwriting standards. Filtering to principal residences makes the sample more consistent.</td><td id="kGy]" class="" style="width:388.5234375px">  • 1 - Principal residence 89%<br/>  • 2 - Second residence 2%<br/>  • 3 - Investment property 9%</td></tr></div><div style="display:contents" dir="ltr"><tr id="374f61fb-e85c-80b4-b369-e8b6e2c52caf"><td id="fDO?" class=""><code>derived_ethnicity</code></td><td id="Cgwv" class="">Demographic/fairness feature <br/><a href="https://github.com/cfpb/hmda-platform/wiki/Derived-Fields-Categorization-2018-Onward#ethnicity">Methodology</a>(GitHub)</td><td id="nb{&gt;" class="">Filter out <code>Joint</code>, <code>Ethnicity Not Available </code>and <code>Free Form Text Only</code></td><td id="C_sN" class="">Needed to test whether LLM responses differ by ethnicity-related information or appeal prompts</td><td id="kGy]" class="" style="width:388.5234375px">  • Hispanic or Latino<br/>  • Not Hispanic or Latino<br/>  • Joint<br/>  • Ethnicity Not Available<br/>  • Free Form Text Only</td></tr></div><div style="display:contents" dir="ltr"><tr id="374f61fb-e85c-8023-8a53-d068e12ea2b7"><td id="fDO?" class=""><code>derived_race</code></td><td id="Cgwv" class="">Demographic/fairness feature<br/><a href="https://github.com/cfpb/hmda-platform/wiki/Derived-Fields-Categorization-2018-Onward#race">Methodology</a>(GitHub)</td><td id="nb{&gt;" class="">Filter out <code>2 or more minority races</code>, <code>Joint</code>, <code>Free Form Text Only</code>, and  <code>Race Not Available</code> </td><td id="C_sN" class="">Needed to test whether LLM responses differ by race-related information or appeal prompts</td><td id="kGy]" class="" style="width:388.5234375px">- American Indian or Alaska Native<br/>- Asian 15%<br/>- Black or African American<br/>- Native Hawaiian or Other Pacific Islander<br/>- White 44%<br/>- 2 or more minority races<br/>- Joint<br/>- Free Form Text Only<br/>- Race Not Available 33% (Filter Out)</td></tr></div><div style="display:contents" dir="ltr"><tr id="374f61fb-e85c-809b-8346-e471deee81ea"><td id="fDO?" class=""><code>derived_sex</code></td><td id="Cgwv" class="">Demographic/fairness feature<br/><a href="https://github.com/cfpb/hmda-platform/wiki/Derived-Fields-Categorization-2018-Onward#sex">Methodology</a>(GitHub)</td><td id="nb{&gt;" class="">Filter out <code>Joint</code> and <code>Sex Not Available</code> </td><td id="C_sN" class="">Needed to test whether LLM responses differ by sex-related information or appeal prompts</td><td id="kGy]" class="" style="width:388.5234375px">- Male 30%<br/>- Female 19%<br/>- Joint 32%<br/>- Sex Not Available</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><p id="373f61fb-e85c-8052-bb24-fea94b1b3c72" class="">Filter:</p></div><div style="display:contents" dir="auto"><pre id="373f61fb-e85c-80d2-808b-e07b545db710" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">df = df[
+    (df[&quot;derived_loan_product_type&quot;] == &quot;Conventional:First Lien&quot;) &amp;
+    (df[&quot;conforming_loan_limit&quot;] == &quot;C&quot;) &amp;
+    (df[&quot;business_or_commercial_purpose&quot;] == 2) &amp;
+    (df[&quot;initially_payable_to_institution&quot;] == 1) &amp;
+    (df[&quot;occupancy_type&quot;] == 1) &amp;
+    (df[&quot;action_taken&quot;].isin([1, 2, 3])) &amp;
+    (~df[&quot;applicant_age&quot;].isin([&quot;8888&quot;, &quot;9999&quot;])) &amp;
+    (~df[&quot;derived_ethnicity&quot;].isin([
+			  &quot;Joint&quot;,
+        &quot;Ethnicity Not Available &quot;,
+        &quot;Free Form Text Only&quot;
+    ]))&amp;
+    (~df[&quot;derived_race&quot;].isin([
+        &quot;2 or more minority races&quot;,
+        &quot;Joint&quot;,
+        &quot;Free Form Text Only&quot;,
+        &quot;Race Not Available&quot;
+    ])) &amp;
+    (~df[&quot;derived_sex&quot;].isin([
+        &quot;Joint&quot;,
+        &quot;Sex Not Available&quot;
+    ]))
+]</code></pre></div><div style="display:contents" dir="auto"><p id="373f61fb-e85c-80cb-b973-e4a295e9b99c" class="">Check exact string first:</p></div><div style="display:contents" dir="auto"><pre id="373f61fb-e85c-8045-9333-e55453f7a353" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">df[&quot;derived_loan_product_type&quot;].value_counts()</code></pre></div><div style="display:contents" dir="auto"><hr id="373f61fb-e85c-8037-997e-e9d6a39f04de"/></div><div style="display:contents" dir="auto"><h1 id="373f61fb-e85c-80aa-8d70-f334a6958d80" class=""><strong>4. Final Keep Feature Metadata</strong></h1></div><div style="display:contents" dir="auto"><p id="373f61fb-e85c-80ab-8c91-ee025de49d14" class="">These fields are kept for modeling, prompt construction, or fairness comparison.</p></div><div style="display:contents" dir="ltr"><table id="373f61fb-e85c-80eb-ad8f-c60d09fd3407" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80c0-827f-d3a67ed1e52d"><th id="z:sQ" class="simple-table-header-color simple-table-header"><strong>Field</strong></th><th id="u^Kv" class="simple-table-header-color simple-table-header"><strong>Category</strong></th><th id="jf&gt;b" class="simple-table-header-color simple-table-header"><strong>[Decision]</strong></th><th id="Stgs" class="simple-table-header-color simple-table-header" style="width:298.7578125px">Value</th><th id="q\Wb" class="simple-table-header-color simple-table-header" style="width:419px"><strong>Keeping Reason</strong></th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8015-9681-e4e679d1c36e"><td id="z:sQ" class=""><code>loan_purpose</code></td><td id="u^Kv" class="">Loan feature</td><td id="jf&gt;b" class="">Keep ?</td><td id="Stgs" class="" style="width:298.7578125px">  • 1 - Home purchase 45%<br/>  • 2 - Home improvement<br/>  • 31 - Refinancing<br/>  • 32 - Cash-out refinancing 17%<br/>  • 4 - Other purpose 13%<br/>  • 5 - Not <br/>applicable</td><td id="q\Wb" class="" style="width:419px">Loan purpose affects approval behavior because home purchase, refinance, cash-out refinance, and home improvement loans may have different risk patterns</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8005-a96a-c6b697e89207"><td id="z:sQ" class=""><code>loan_amount</code></td><td id="u^Kv" class="">Financial feature</td><td id="jf&gt;b" class="">Keep</td><td id="Stgs" class="" style="width:298.7578125px">numeric</td><td id="q\Wb" class="" style="width:419px">Loan amount is directly related to underwriting, affordability, and risk</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80b7-af14-e5c5d043b597"><td id="z:sQ" class=""><code>combined_loan_to_value_ratio/loan_to_value_ratio</code></td><td id="u^Kv" class="">Financial feature</td><td id="jf&gt;b" class="">Keep ?<br/>Missing 33%</td><td id="Stgs" class="" style="width:298.7578125px">numeric</td><td id="q\Wb" class="" style="width:419px">CLTV is an important underwriting variable because it measures loan size relative to property value</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80c2-a1d5-cc29c4e56e9e"><td id="z:sQ" class=""><code>debt_to_income_ratio</code></td><td id="u^Kv" class="">Financial feature</td><td id="jf&gt;b" class="">Keep ?<br/>Missing 35%</td><td id="Stgs" class="" style="width:298.7578125px">numeric</td><td id="q\Wb" class="" style="width:419px">DTI is directly related to affordability and mortgage approval decisions</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80b9-ba55-c019e2fd1956"><td id="z:sQ" class=""><code>property_value</code></td><td id="u^Kv" class="">Financial feature</td><td id="jf&gt;b" class="">Keep ?<br/>Missing 21%</td><td id="Stgs" class="" style="width:298.7578125px">numeric</td><td id="q\Wb" class="" style="width:419px">Property value affects collateral and loan risk</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-802d-9100-d8ab0cc8af2e"><td id="z:sQ" class=""><code>income</code></td><td id="u^Kv" class="">Financial feature</td><td id="jf&gt;b" class="">Keep<br/>Missing 14%</td><td id="Stgs" class="" style="width:298.7578125px">numeric</td><td id="q\Wb" class="" style="width:419px">Income is directly related to borrower affordability</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80d2-8f10-d0c67e93202d"><td id="z:sQ" class=""><code>derived_ethnicity</code></td><td id="u^Kv" class="">Demographic/fairness feature <br/><a href="https://github.com/cfpb/hmda-platform/wiki/Derived-Fields-Categorization-2018-Onward#ethnicity">Methodology</a>(GitHub)</td><td id="jf&gt;b" class="">Keep<br/></td><td id="Stgs" class="" style="width:298.7578125px">  • Hispanic or Latino<br/>  • Not Hispanic or LatinoJoint<br/><del>  • Joint<br/>  • Ethnicity Not Available<br/>  • Free Form Text Only</del></td><td id="q\Wb" class="" style="width:419px">Needed to test whether LLM responses differ by ethnicity-related information or appeal prompts</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80f1-9f81-ccb5147963e9"><td id="z:sQ" class=""><code>derived_race</code></td><td id="u^Kv" class="">Demographic/fairness feature<br/><a href="https://github.com/cfpb/hmda-platform/wiki/Derived-Fields-Categorization-2018-Onward#race">Methodology</a>(GitHub)</td><td id="jf&gt;b" class="">Keep</td><td id="Stgs" class="" style="width:298.7578125px">  • American Indian or Alaska Native<br/>  • Asian <br/>  • Black or African American<br/>  • Native Hawaiian or Other Pacific Islander<br/>  • White <br/><del>  • 2 or more minority races<br/>  • Joint<br/>  • Free Form Text Only<br/>  • Race Not Available </del></td><td id="q\Wb" class="" style="width:419px">Needed to test whether LLM responses differ by race-related information or appeal prompts</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8089-a237-ee60b6e22032"><td id="z:sQ" class=""><code>derived_sex</code></td><td id="u^Kv" class="">Demographic/fairness feature<br/><a href="https://github.com/cfpb/hmda-platform/wiki/Derived-Fields-Categorization-2018-Onward#sex">Methodology</a>(GitHub)</td><td id="jf&gt;b" class="">Keep</td><td id="Stgs" class="" style="width:298.7578125px">  • Male <br/>  • Female <br/><del>  • Joint <br/>  • Sex Not Available</del></td><td id="q\Wb" class="" style="width:419px">Needed to test whether LLM responses differ by sex-related information or appeal prompts</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80c6-a192-cbea2674ddfe"><td id="z:sQ" class=""><code>applicant_age/ageapplicant</code></td><td id="u^Kv" class="">Demographic/fairness feature</td><td id="jf&gt;b" class="">Keep</td><td id="Stgs" class="" style="width:298.7578125px">  • &lt;25<br/>  • 25-34<br/>  • 35-44<br/>  • 45-54<br/>  • 55-64<br/>  • 65-74<br/>  • &gt;74<br/><del>  • 8888</del></td><td id="q\Wb" class="" style="width:419px">Needed to test whether LLM responses differ by age group or age-related appeal prompts</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><hr id="373f61fb-e85c-80f6-83b4-e4face15b950"/></div><div style="display:contents" dir="auto"><h1 id="373f61fb-e85c-80f9-bed2-dbecf7938c84" class=""><strong>5. Final Modeling / Prompt Feature Set</strong></h1></div><div style="display:contents" dir="auto"><p id="373f61fb-e85c-8054-b3b6-e88c801382a8" class="">After filtering, use these as the main feature set:</p></div><div style="display:contents" dir="auto"><pre id="373f61fb-e85c-8070-a797-cdf009ce99cf" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">loan_purpose
+loan_amount
+combined_loan_to_value_ratio
+debt_to_income_ratio
+property_value
+income
+occupancy_type
+derived_ethnicity
+derived_race
+derived_sex
+applicant_age</code></pre></div><div style="display:contents" dir="auto"><p id="373f61fb-e85c-8076-b279-e9f8260c3b66" class="">Target:</p></div><div style="display:contents" dir="auto"><pre id="373f61fb-e85c-8061-ba64-c793cc9cca70" class="code code-wrap"><code style="white-space:pre-wrap;word-break:break-all">action_taken / target</code></pre></div><div style="display:contents" dir="auto"><p id="373f61fb-e85c-8057-bab2-f0cf44fc4ee0" class="">Important note:</p></div><div style="display:contents" dir="auto"><p id="373f61fb-e85c-80a3-b24f-f5b26574055c" class="">Demographic variables are kept because the study is about <strong>LLM bias and prompt response differences</strong>. They should be described as <strong>fairness or prompt-condition variables</strong>, not simply as ordinary creditworthiness variables.</p></div><div style="display:contents" dir="auto"><hr id="373f61fb-e85c-80f1-a6ed-f7744e7df7dd"/></div><div style="display:contents" dir="auto"><h1 id="373f61fb-e85c-8005-812f-e8f9559c8f71" class=""><strong>6. Final Eliminated Feature Metadata</strong></h1></div><div style="display:contents" dir="auto"><h2 id="373f61fb-e85c-8089-8b56-ff2f1b5b5674" class=""><strong>A. Redundant Loan/Product Fields</strong></h2></div><div style="display:contents" dir="ltr"><table id="373f61fb-e85c-8090-b298-cf39bbeb73bd" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8074-9ef8-e01c558dcb57"><th id="KJfB" class="simple-table-header-color simple-table-header"><strong>Field</strong></th><th id="JQ_~" class="simple-table-header-color simple-table-header"><strong>Decision</strong></th><th id="xYNe" class="simple-table-header-color simple-table-header"><strong>Elimination Reason</strong></th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80fc-b9dc-dddd6e11b53b"><td id="KJfB" class=""><code>loan_type</code></td><td id="JQ_~" class="">Eliminate</td><td id="xYNe" class="">Redundant because <code>derived_loan_product_type</code> already captures conventional loan status. FHA, VA, and USDA loans also follow different program rules, so the sample is filtered to conventional first-lien loans</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8066-be61-d473a5709023"><td id="KJfB" class=""><code>lien_status</code></td><td id="JQ_~" class="">Eliminate</td><td id="xYNe" class="">Redundant because <code>derived_loan_product_type</code> already captures first-lien status</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80d8-87f0-f3c583311d93"><td id="KJfB" class=""><code>derived_dwelling_category</code></td><td id="JQ_~" class="">Eliminate</td><td id="xYNe" class="">Low variation; most records are single-family site-built properties</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><hr id="373f61fb-e85c-80fe-9184-fca300ae9471"/></div><div style="display:contents" dir="auto"><h2 id="373f61fb-e85c-8066-93f0-e77874ee78f7" class=""><strong>B. Non-Comparable Loan Product Fields</strong></h2></div><div style="display:contents" dir="ltr"><table id="373f61fb-e85c-808e-b2a2-c875020cf0cd" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80cd-ba14-caa4f8c437d5"><th id="KAu}" class="simple-table-header-color simple-table-header" style="width:257.78125px"><strong>Field</strong></th><th id="ZS&lt;c" class="simple-table-header-color simple-table-header" style="width:217.5px"><strong>Decision</strong></th><th id="vN?J" class="simple-table-header-color simple-table-header" style="width:552px"><strong>Elimination Reason</strong></th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-805b-a9e9-d94c2317cc9d"><td id="KAu}" class="" style="width:257.78125px"><code>reverse_mortgage</code></td><td id="ZS&lt;c" class="" style="width:217.5px">Eliminate</td><td id="vN?J" class="" style="width:552px">Reverse mortgages are different from standard mortgage applications and most records are not reverse mortgages</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-803b-8d1b-e8d4a0b75867"><td id="KAu}" class="" style="width:257.78125px"><code>open-end_line_of_credit</code></td><td id="ZS&lt;c" class="" style="width:217.5px">Eliminate</td><td id="vN?J" class="" style="width:552px">Open-end credit lines, such as HELOCs, are different from standard closed-end mortgages</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8061-900d-e6912aec10b0"><td id="KAu}" class="" style="width:257.78125px"><code>business_or_commercial_purpose</code></td><td id="ZS&lt;c" class="" style="width:217.5px">Use for filtering, then eliminate</td><td id="vN?J" class="" style="width:552px">Used to keep only non-business-purpose loans; after filtering, it has no remaining useful variation</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8086-a1a9-d166dac549ce"><td id="KAu}" class="" style="width:257.78125px"><code>conforming_loan_limit</code></td><td id="ZS&lt;c" class="" style="width:217.5px">Use for filtering, then eliminate</td><td id="vN?J" class="" style="width:552px">Used to keep only conforming loans; after filtering, it has no remaining useful variation</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8030-9ce9-f7a4ccc26d2a"><td id="KAu}" class="" style="width:257.78125px"><code>initially_payable_to_institution</code></td><td id="ZS&lt;c" class="" style="width:217.5px">Use for filtering, then eliminate</td><td id="vN?J" class="" style="width:552px">Used to keep loans initially payable to the reporting institution; after filtering, it has no remaining useful variation</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80fd-8a50-ddb673565c7e"><td id="KAu}" class="" style="width:257.78125px"><code>derived_loan_product_type</code></td><td id="ZS&lt;c" class="" style="width:217.5px">Use for filtering, then eliminate</td><td id="vN?J" class="" style="width:552px">Used to keep conventional first-lien loans; after filtering, it has no remaining useful variation</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-809d-8e4b-d6821b6e383d"><td id="KAu}" class="" style="width:257.78125px"><code>applicant_credit_score_type</code></td><td id="ZS&lt;c" class="" style="width:217.5px">Eliminate</td><td id="vN?J" class="" style="width:552px">This does not provide the actual credit score, but it controls for which credit scoring model was used</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><hr id="373f61fb-e85c-8045-ba4a-d0e87291ced7"/></div><div style="display:contents" dir="auto"><h2 id="373f61fb-e85c-80dc-8988-cc04769d05f7" class=""><strong>C. Post-Decision or Data Leakage Fields</strong></h2></div><div style="display:contents" dir="ltr"><table id="373f61fb-e85c-803c-b45d-ece30716e96f" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80e8-9e31-e4ae5056697b"><th id="xkrX" class="simple-table-header-color simple-table-header"><strong>Field</strong></th><th id="jdBs" class="simple-table-header-color simple-table-header"><strong>Decision</strong></th><th id="jjuO" class="simple-table-header-color simple-table-header"><strong>Elimination Reason</strong></th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-806f-a054-d06d8239b4cf"><td id="xkrX" class=""><code>denial_reason-1</code></td><td id="jdBs" class="">Eliminate</td><td id="jjuO" class="">Directly leaks the outcome because it explains why a denied application was denied</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-803a-b6ce-c14bec20ab23"><td id="xkrX" class=""><code>denial_reason-2</code></td><td id="jdBs" class="">Eliminate</td><td id="jjuO" class="">High missingness and outcome leakage</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8039-8fb6-fdd2f5ef805e"><td id="xkrX" class=""><code>denial_reason-3</code></td><td id="jdBs" class="">Eliminate</td><td id="jjuO" class="">High missingness and outcome leakage</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-809d-981e-fbc7df5f2dca"><td id="xkrX" class=""><code>denial_reason-4</code></td><td id="jdBs" class="">Eliminate</td><td id="jjuO" class="">High missingness and outcome leakage</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80fc-860f-e088718da4b6"><td id="xkrX" class=""><code>purchaser_type</code></td><td id="jdBs" class="">Eliminate</td><td id="jjuO" class="">Post-origination field; it describes who purchased the loan after the loan decision</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80de-b7fc-c51e0467577f"><td id="xkrX" class=""><code>interest_rate</code></td><td id="jdBs" class="">Eliminate</td><td id="jjuO" class="">May be determined after approval/pricing and can create data leakage</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80b7-968d-f24e26eb7ffd"><td id="xkrX" class=""><code>rate_spread</code></td><td id="jdBs" class="">Eliminate</td><td id="jjuO" class="">Pricing-related and may be post-decision</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-806d-bef5-e14e8ec13d8b"><td id="xkrX" class=""><code>total_loan_costs</code></td><td id="jdBs" class="">Eliminate</td><td id="jjuO" class="">Closing/pricing-related and may be post-decision</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8045-9bab-db93b6783e02"><td id="xkrX" class=""><code>total_points_and_fees</code></td><td id="jdBs" class="">Eliminate</td><td id="jjuO" class="">Closing/pricing-related and highly missing</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80b2-936f-fcbca95c4c65"><td id="xkrX" class=""><code>origination_charges</code></td><td id="jdBs" class="">Eliminate</td><td id="jjuO" class="">Closing/pricing-related and may be post-decision</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-800e-92b0-d73d82d1288d"><td id="xkrX" class=""><code>discount_points</code></td><td id="jdBs" class="">Eliminate</td><td id="jjuO" class="">Pricing-related and may be post-decision</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8056-83c6-d3b88661b8d0"><td id="xkrX" class=""><code>lender_credits</code></td><td id="jdBs" class="">Eliminate</td><td id="jjuO" class="">Pricing-related and may be post-decision</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><hr id="373f61fb-e85c-80c9-955d-f009ba4ba369"/></div><div style="display:contents" dir="auto"><h2 id="373f61fb-e85c-8079-8334-fdb66f91dff0" class=""><strong>D. High-Missing or Low-Utility Financial Terms</strong></h2></div><div style="display:contents" dir="ltr"><table id="373f61fb-e85c-80c1-a1c3-d0fe25029d2f" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8063-99e6-ed59ec561933"><th id="vT?|" class="simple-table-header-color simple-table-header"><strong>Field</strong></th><th id="Y:T{" class="simple-table-header-color simple-table-header"><strong>Decision</strong></th><th id="avh=" class="simple-table-header-color simple-table-header"><strong>Elimination Reason</strong></th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80cf-8508-df0f820c8b03"><td id="vT?|" class=""><code>loan_term</code></td><td id="Y:T{" class="">Eliminate</td><td id="avh=" class="">Low diversity; most loans are 360-month loans</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8083-b1c0-e51f4096e96f"><td id="vT?|" class=""><code>prepayment_penalty_term</code></td><td id="Y:T{" class="">Eliminate</td><td id="avh=" class="">Very high missingness</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-802f-8b3c-fc8ea497582e"><td id="vT?|" class=""><code>intro_rate_period</code></td><td id="Y:T{" class="">Eliminate</td><td id="avh=" class="">High missingness and mainly relevant to adjustable-rate products</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80be-99c1-e9186207ce24"><td id="vT?|" class=""><code>total_points_and_fees</code></td><td id="Y:T{" class="">Eliminate</td><td id="avh=" class="">Very high missingness</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8014-9ae7-fce5c14ce692"><td id="vT?|" class=""><code>multifamily_affordable_units</code></td><td id="Y:T{" class="">Eliminate</td><td id="avh=" class="">Very high missingness and not central to this study</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><hr id="373f61fb-e85c-80d2-83bd-e371fe287dd9"/></div><div style="display:contents" dir="auto"><h2 id="373f61fb-e85c-80ae-9259-e7566fec2702" class=""><strong>E. Low-Variation Repayment Feature Fields</strong></h2></div><div style="display:contents" dir="ltr"><table id="373f61fb-e85c-8061-9daf-c73cfd663267" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80cd-af42-eb4272327737"><th id="ox}V" class="simple-table-header-color simple-table-header"><strong>Field</strong></th><th id="qwwo" class="simple-table-header-color simple-table-header"><strong>Decision</strong></th><th id="myOv" class="simple-table-header-color simple-table-header"><strong>Elimination Reason</strong></th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-804d-aaab-d023933109c3"><td id="ox}V" class=""><code>hoepa_status</code></td><td id="qwwo" class="">Eliminate</td><td id="myOv" class="">Low usefulness for this study and limited variation</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8032-ada0-c7e3c665c072"><td id="ox}V" class=""><code>negative_amortization</code></td><td id="qwwo" class="">Eliminate</td><td id="myOv" class="">Very low variation; almost all records have no negative amortization</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-802b-ade9-c73669788b0c"><td id="ox}V" class=""><code>interest_only_payment</code></td><td id="qwwo" class="">Eliminate</td><td id="myOv" class="">Low variation; most records have no interest-only payment</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8076-a293-c3d59f89edae"><td id="ox}V" class=""><code>balloon_payment</code></td><td id="qwwo" class="">Eliminate</td><td id="myOv" class="">Very low variation; most records have no balloon payment</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80c9-a2bc-c1561ce8dc58"><td id="ox}V" class=""><code>other_nonamortizing_features</code></td><td id="qwwo" class="">Eliminate</td><td id="myOv" class="">Very low variation; almost all records have no other non-amortizing features</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><hr id="373f61fb-e85c-804a-8510-e5c625dc6962"/></div><div style="display:contents" dir="auto"><h2 id="373f61fb-e85c-8040-b986-ead7fa195a72" class=""><strong>F. Property Fields Removed Due to Low Variation or Irrelevance</strong></h2></div><div style="display:contents" dir="ltr"><table id="373f61fb-e85c-8034-a3fe-ee5c3762f9b3" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8072-b3b1-d202282cea6a"><th id="^C{H" class="simple-table-header-color simple-table-header"><strong>Field</strong></th><th id="fzQ:" class="simple-table-header-color simple-table-header"><strong>Decision</strong></th><th id="q~Sc" class="simple-table-header-color simple-table-header"><strong>Elimination Reason</strong></th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-802d-8fa1-d0ddd668e5ba"><td id="^C{H" class=""><code>construction_method</code></td><td id="fzQ:" class="">Eliminate</td><td id="q~Sc" class="">Low variation; most records are site-built</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80a0-944e-e80f8709903d"><td id="^C{H" class=""><code>manufactured_home_secured_property_type</code></td><td id="fzQ:" class="">Eliminate</td><td id="q~Sc" class="">Mostly not applicable because the study focuses on standard site-built/conventional first-lien loans</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80b2-93c5-d301d58601b0"><td id="^C{H" class=""><code>manufactured_home_land_property_interest</code></td><td id="fzQ:" class="">Eliminate</td><td id="q~Sc" class="">Mostly not applicable and not central to the study</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80f6-b385-cd68d2e49fcd"><td id="^C{H" class=""><code>total_units</code></td><td id="fzQ:" class="">Eliminate</td><td id="q~Sc" class="">Low variation; most properties have one unit</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80a0-bcdc-f98bbd589e88"><td id="^C{H" class=""><code>multifamily_affordable_units</code></td><td id="fzQ:" class="">Eliminate</td><td id="q~Sc" class="">Mostly missing or not applicable</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><hr id="373f61fb-e85c-8002-804d-c463ff56891e"/></div><div style="display:contents" dir="auto"><h2 id="373f61fb-e85c-80f2-a104-df04a9283f9e" class=""><strong>G. Redundant Detailed Demographic Fields</strong></h2></div><div style="display:contents" dir="ltr"><table id="373f61fb-e85c-80cc-bd30-ff3a6fe04372" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8089-a1e3-c0a7eb715848"><th id="HCIn" class="simple-table-header-color simple-table-header"><strong>Field</strong></th><th id="`lbv" class="simple-table-header-color simple-table-header"><strong>Decision</strong></th><th id="nHZ_" class="simple-table-header-color simple-table-header"><strong>Elimination Reason</strong></th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8097-9cb6-f348233059c5"><td id="HCIn" class=""><code>applicant_ethnicity-1</code></td><td id="`lbv" class="">Eliminate</td><td id="nHZ_" class="">Redundant because <code>derived_ethnicity</code> provides cleaner aggregated ethnicity</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-805d-8773-e60972f1140c"><td id="HCIn" class=""><code>applicant_ethnicity-2</code> to <code>applicant_ethnicity-5</code></td><td id="`lbv" class="">Eliminate</td><td id="nHZ_" class="">High missingness and redundant with <code>derived_ethnicity</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80c9-89a4-fa9f9e82c922"><td id="HCIn" class=""><code>applicant_race-1</code></td><td id="`lbv" class="">Eliminate</td><td id="nHZ_" class="">Redundant because <code>derived_race</code> provides cleaner aggregated race</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-809c-8ddb-e23dc03d9477"><td id="HCIn" class=""><code>applicant_race-2</code> to <code>applicant_race-5</code></td><td id="`lbv" class="">Eliminate</td><td id="nHZ_" class="">High missingness and redundant with <code>derived_race</code></td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8091-9207-ff6c492944ac"><td id="HCIn" class=""><code>applicant_sex</code></td><td id="`lbv" class="">Eliminate</td><td id="nHZ_" class="">Redundant because <code>derived_sex</code> provides cleaner aggregated sex</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80d4-98da-fbe2a250696a"><td id="HCIn" class=""><code>applicant_age_above_62</code></td><td id="`lbv" class="">Eliminate</td><td id="nHZ_" class="">Redundant because <code>applicant_age</code> already captures age group</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><hr id="373f61fb-e85c-80b0-b008-e70e5fff2bef"/></div><div style="display:contents" dir="auto"><h2 id="373f61fb-e85c-8014-b647-e08e471b44bd" class=""><strong>H. Co-Applicant Fields</strong></h2></div><div style="display:contents" dir="ltr"><table id="373f61fb-e85c-803c-ba14-e573b48cacad" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8040-b02c-c8ae1d0561e1"><th id="sd=F" class="simple-table-header-color simple-table-header"><strong>Field</strong></th><th id="T{{I" class="simple-table-header-color simple-table-header"><strong>Decision</strong></th><th id="jBui" class="simple-table-header-color simple-table-header"><strong>Elimination Reason</strong></th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80eb-a9af-e0424aa9bf59"><td id="sd=F" class=""><code>co-applicant_ethnicity-1</code> to <code>co-applicant_ethnicity-5</code></td><td id="T{{I" class="">Eliminate</td><td id="jBui" class="">Often not applicable because many records have no co-applicant</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8062-9f4a-fa7a3e4cbddd"><td id="sd=F" class=""><code>co-applicant_race-1</code> to <code>co-applicant_race-5</code></td><td id="T{{I" class="">Eliminate</td><td id="jBui" class="">Often not applicable or highly missing</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80a3-882d-d4aa6593aaea"><td id="sd=F" class=""><code>co-applicant_sex</code></td><td id="T{{I" class="">Eliminate</td><td id="jBui" class="">Often not applicable</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8047-b031-f7d2cad1bf92"><td id="sd=F" class=""><code>co-applicant_age</code></td><td id="T{{I" class="">Eliminate</td><td id="jBui" class="">Often not applicable</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-801b-9aa8-ed35726e9083"><td id="sd=F" class=""><code>co-applicant_age_above_62</code></td><td id="T{{I" class="">Eliminate</td><td id="jBui" class="">Often not applicable and redundant if co-applicant age is excluded</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80dd-840a-f97903e051bf"><td id="sd=F" class=""><code>co-applicant_credit_score_type</code></td><td id="T{{I" class="">Eliminate</td><td id="jBui" class="">Often not applicable and does not provide actual credit score</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><hr id="373f61fb-e85c-8093-b5f2-cae631c787c8"/></div><div style="display:contents" dir="auto"><h2 id="373f61fb-e85c-800f-ae3d-ea54952ae78f" class=""><strong>I. Observation-Based Demographic Collection Fields</strong></h2></div><div style="display:contents" dir="ltr"><table id="373f61fb-e85c-8046-bd8b-ebac28960891" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8095-b515-c23e3c6524c0"><th id="cbT:" class="simple-table-header-color simple-table-header"><strong>Field</strong></th><th id="i{sV" class="simple-table-header-color simple-table-header"><strong>Decision</strong></th><th id="\fLP" class="simple-table-header-color simple-table-header"><strong>Elimination Reason</strong></th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8014-b848-fe9abdea5788"><td id="cbT:" class=""><code>applicant_ethnicity_observed</code></td><td id="i{sV" class="">Eliminate</td><td id="\fLP" class="">Describes how demographic information was collected, not the applicant’s financial profile</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8035-ad92-e7aa08496a4b"><td id="cbT:" class=""><code>co-applicant_ethnicity_observed</code></td><td id="i{sV" class="">Eliminate</td><td id="\fLP" class="">Co-applicant field and not central to the study</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80b4-a40a-d9a712670d9b"><td id="cbT:" class=""><code>applicant_race_observed</code></td><td id="i{sV" class="">Eliminate</td><td id="\fLP" class="">Describes observation method only</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8088-9ebb-ed1057669d5e"><td id="cbT:" class=""><code>co-applicant_race_observed</code></td><td id="i{sV" class="">Eliminate</td><td id="\fLP" class="">Co-applicant field and not central to the study</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8047-84bb-c492e04e1e21"><td id="cbT:" class=""><code>applicant_sex_observed</code></td><td id="i{sV" class="">Eliminate</td><td id="\fLP" class="">Describes observation method only</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80cd-895e-ec901a16f062"><td id="cbT:" class=""><code>co-applicant_sex_observed</code></td><td id="i{sV" class="">Eliminate</td><td id="\fLP" class="">Co-applicant field and not central to the study</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><hr id="373f61fb-e85c-8059-9b6c-d676cd82fd7f"/></div><div style="display:contents" dir="auto"><h2 id="373f61fb-e85c-802e-a8e3-c7d76bd31d14" class=""><strong>J. Application Process Fields</strong></h2></div><div style="display:contents" dir="ltr"><table id="373f61fb-e85c-8087-9e0e-f11c1de6642f" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8084-a0a6-d31ddf702ba4"><th id="&lt;f{&lt;" class="simple-table-header-color simple-table-header"><strong>Field</strong></th><th id="[CC&lt;" class="simple-table-header-color simple-table-header"><strong>Decision</strong></th><th id="^tZ|" class="simple-table-header-color simple-table-header"><strong>Elimination Reason</strong></th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-808d-b565-d9eb7593ae9d"><td id="&lt;f{&lt;" class=""><code>preapproval</code></td><td id="[CC&lt;" class="">Eliminate</td><td id="^tZ|" class="">Preapproval status is not central to final approval/denial analysis</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8018-814d-ce396f26a9be"><td id="&lt;f{&lt;" class=""><code>submission_of_application</code></td><td id="[CC&lt;" class="">Eliminate</td><td id="^tZ|" class="">Describes application channel/process rather than creditworthiness or prompt-bias conditions</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-802b-8b40-ffb4332d3f00"><td id="&lt;f{&lt;" class=""><code>aus-1</code></td><td id="[CC&lt;" class="">Eliminate</td><td id="^tZ|" class="">Automated underwriting system may reflect processing path but is not central to the LLM prompt-bias study</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80b0-91dc-f483ae32b472"><td id="&lt;f{&lt;" class=""><code>aus-2</code> to <code>aus-5</code></td><td id="[CC&lt;" class="">Eliminate</td><td id="^tZ|" class="">High missingness and not central to the study</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><hr id="373f61fb-e85c-8062-8ae4-ea8ebd9beafc"/></div><div style="display:contents" dir="auto"><h2 id="373f61fb-e85c-806c-a2f9-f5ec2464bf50" class=""><strong>K. Record Identifier and Geography Fields</strong></h2></div><div style="display:contents" dir="ltr"><table id="373f61fb-e85c-8017-b1c0-d4ff0009f3aa" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80f2-9f77-eaa4ed04dc43"><th id="lFLQ" class="simple-table-header-color simple-table-header"><strong>Field</strong></th><th id="@=_m" class="simple-table-header-color simple-table-header"><strong>Decision</strong></th><th id="TXpd" class="simple-table-header-color simple-table-header"><strong>Elimination Reason</strong></th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-806f-a42a-f21785ffae9c"><td id="lFLQ" class=""><code>activity_year</code></td><td id="@=_m" class="">Eliminate</td><td id="TXpd" class="">Not needed if using one year of data</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-806e-828c-de1abcbf1127"><td id="lFLQ" class=""><code>lei</code></td><td id="@=_m" class="">Eliminate</td><td id="TXpd" class="">Identifies the reporting institution; may create institution-specific effects that are outside the study goal</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80ad-a304-e06a1f284f1c"><td id="lFLQ" class=""><code>state_code</code></td><td id="@=_m" class="">Eliminate</td><td id="TXpd" class="">Removed to avoid geographic proxy effects</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80e5-896d-fac3bcabd870"><td id="lFLQ" class=""><code>county_code</code></td><td id="@=_m" class="">Eliminate</td><td id="TXpd" class="">Removed to avoid geographic proxy effects</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8068-8a7b-eb22ffe7b71f"><td id="lFLQ" class=""><code>census_tract</code></td><td id="@=_m" class="">Eliminate</td><td id="TXpd" class="">Removed to avoid geographic proxy effects and excessive location specificity</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8050-8603-ec8078f5b885"><td id="lFLQ" class=""><code>derived_msa-md</code></td><td id="@=_m" class="">Eliminate</td><td id="TXpd" class="">Removed to simplify the study and avoid regional market proxy effects</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><hr id="373f61fb-e85c-80ea-b33b-ca1d868118c2"/></div><div style="display:contents" dir="auto"><h2 id="373f61fb-e85c-80be-b58e-eed15069409f" class=""><strong>L. Census Tract Context Fields</strong></h2></div><div style="display:contents" dir="ltr"><table id="373f61fb-e85c-80d0-a0c1-fef3c8438c1e" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8000-9bd6-e1e787679769"><th id="@ZzK" class="simple-table-header-color simple-table-header"><strong>Field</strong></th><th id="gwdj" class="simple-table-header-color simple-table-header"><strong>Decision</strong></th><th id="TDG@" class="simple-table-header-color simple-table-header"><strong>Elimination Reason</strong></th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80b5-9b99-d21a581f9b57"><td id="@ZzK" class=""><code>tract_population</code></td><td id="gwdj" class="">Eliminate</td><td id="TDG@" class="">Neighborhood-level context is outside the main individual-level LLM prompt-bias study</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-807b-81e2-d81d4eadbffa"><td id="@ZzK" class=""><code>tract_minority_population_percent</code></td><td id="gwdj" class="">Eliminate</td><td id="TDG@" class="">Could introduce geographic/racial proxy effects and make it harder to isolate prompt effects</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80b1-bda3-e158d15788d5"><td id="@ZzK" class=""><code>ffiec_msa_md_median_family_income</code></td><td id="gwdj" class="">Eliminate</td><td id="TDG@" class="">Market-level income context is outside the main study goal</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80f3-96a6-cb54e70c789a"><td id="@ZzK" class=""><code>tract_to_msa_income_percentage</code></td><td id="gwdj" class="">Eliminate</td><td id="TDG@" class="">Could introduce socioeconomic proxy effects</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80c9-a231-eb2e1b1722c7"><td id="@ZzK" class=""><code>tract_owner_occupied_units</code></td><td id="gwdj" class="">Eliminate</td><td id="TDG@" class="">Neighborhood housing composition is outside the study goal</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-804b-a2f9-f7c0ca205de1"><td id="@ZzK" class=""><code>tract_one_to_four_family_homes</code></td><td id="gwdj" class="">Eliminate</td><td id="TDG@" class="">Neighborhood housing composition is outside the study goal</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80ba-aa89-cc889c546636"><td id="@ZzK" class=""><code>tract_median_age_of_housing_units</code></td><td id="gwdj" class="">Eliminate</td><td id="TDG@" class="">Neighborhood housing age is outside the study goal</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><hr id="373f61fb-e85c-8050-bbd4-c29289e80a2d"/></div><div style="display:contents" dir="auto"><h1 id="373f61fb-e85c-8065-b648-f1250424fc47" class=""><strong>7. Missing Value Handling Metadata</strong></h1></div><div style="display:contents" dir="ltr"><table id="373f61fb-e85c-80f3-8320-d1cd4e4b6c89" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-809a-ac1e-d4179717c7a5"><th id="x&lt;lS" class="simple-table-header-color simple-table-header"><strong>Field</strong></th><th id="V[qF" class="simple-table-header-color simple-table-header"><strong>Missing Issue</strong></th><th id="phSR" class="simple-table-header-color simple-table-header"><strong>Processing Recommendation</strong></th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8054-9ae4-c625dd6bf8f0"><td id="x&lt;lS" class=""><code>debt_to_income_ratio</code></td><td id="V[qF" class="">Around 35% missing</td><td id="phSR" class="">Keep; create missing indicator or treat <code>NA</code> / <code>Exempt</code> as separate category</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-806f-b41a-e51d7de250c8"><td id="x&lt;lS" class=""><code>combined_loan_to_value_ratio</code></td><td id="V[qF" class="">Around 33% missing</td><td id="phSR" class="">Keep; create missing indicator and convert valid values to numeric</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-807a-862b-f504b21c12d4"><td id="x&lt;lS" class=""><code>property_value</code></td><td id="V[qF" class="">Around 21% missing</td><td id="phSR" class="">Keep; create missing indicator or impute</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8050-adb9-c8cbab240940"><td id="x&lt;lS" class=""><code>income</code></td><td id="V[qF" class="">Around 14% missing</td><td id="phSR" class="">Keep; create missing indicator or impute</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80cc-bdaa-e86ee6c3e8bf"><td id="x&lt;lS" class=""><code>applicant_credit_score_type</code></td><td id="V[qF" class="">Many <code>Not applicable</code> values</td><td id="phSR" class="">Keep as categorical control variable</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><p id="373f61fb-e85c-80c5-b79b-c9b7aeddfc55" class="">Example missing indicators:</p></div><div style="display:contents" dir="auto"><pre id="373f61fb-e85c-8017-b1a4-c69e2314d38d" class="code code-wrap"><code class="language-python" style="white-space:pre-wrap;word-break:break-all">df[&quot;dti_missing&quot;] = df[&quot;debt_to_income_ratio&quot;].isin([&quot;NA&quot;, &quot;Exempt&quot;])
+
+df[&quot;cltv_missing&quot;] = (
+    df[&quot;combined_loan_to_value_ratio&quot;].isna() |
+    df[&quot;combined_loan_to_value_ratio&quot;].isin([&quot;NA&quot;, &quot;Exempt&quot;])
+)
+
+df[&quot;property_value_missing&quot;] = df[&quot;property_value&quot;].isna()
+
+df[&quot;income_missing&quot;] = df[&quot;income&quot;].isna()</code></pre></div><div style="display:contents" dir="auto"><hr id="373f61fb-e85c-8089-a78c-ce1982ac0c4d"/></div><div style="display:contents" dir="auto"><h1 id="373f61fb-e85c-807e-a3c7-f996483371e9" class=""><strong>8. Final Data Processing Summary</strong></h1></div><div style="display:contents" dir="ltr"><table id="373f61fb-e85c-8077-9f3c-e3fd9b76b4c7" class="simple-table"><thead class="simple-table-header"><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80df-93d7-e9c588e05c8f"><th id="j}|C" class="simple-table-header-color simple-table-header" style="width:52px"><strong>Step</strong></th><th id="[ccq" class="simple-table-header-color simple-table-header" style="width:352px"><strong>Processing Action</strong></th><th id="vvau" class="simple-table-header-color simple-table-header" style="width:276px"><strong>Purpose</strong></th></tr></div></thead><tbody><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80b7-800d-e5e9e53631c1"><td id="j}|C" class="" style="width:52px">1</td><td id="[ccq" class="" style="width:352px">Keep <code>action_taken in [1, 2, 3]</code></td><td id="vvau" class="" style="width:276px">Focus on clean approval/denial/origination outcomes</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80a3-9cb7-e1b218e6aa30"><td id="j}|C" class="" style="width:52px">2</td><td id="[ccq" class="" style="width:352px">Filter to conventional first-lien loans</td><td id="vvau" class="" style="width:276px">Remove FHA, VA, USDA, and subordinate-lien loans with different rules</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80d5-967d-f6f26854d976"><td id="j}|C" class="" style="width:52px">3</td><td id="[ccq" class="" style="width:352px">Filter to conforming loans</td><td id="vvau" class="" style="width:276px">Remove jumbo/nonconforming loans</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-800d-a4d0-d5bdd0aca8e1"><td id="j}|C" class="" style="width:52px">4</td><td id="[ccq" class="" style="width:352px">Filter to non-business-purpose loans</td><td id="vvau" class="" style="width:276px">Focus on consumer mortgage applications</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8009-95fc-c5c83e9ff955"><td id="j}|C" class="" style="width:52px">5</td><td id="[ccq" class="" style="width:352px">Filter to loans initially payable to reporting institution</td><td id="vvau" class="" style="width:276px">Keep records that better reflect the institution’s original decision</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-8053-8cf3-ff10a7297cff"><td id="j}|C" class="" style="width:52px">6</td><td id="[ccq" class="" style="width:352px">Remove unavailable applicant age values</td><td id="vvau" class="" style="width:276px">Avoid invalid demographic categories</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-807c-ae26-f26b18138987"><td id="j}|C" class="" style="width:52px">7</td><td id="[ccq" class="" style="width:352px">Remove post-decision and leakage fields</td><td id="vvau" class="" style="width:276px">Prevent outcome leakage</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80f6-90f0-f2f0749f1468"><td id="j}|C" class="" style="width:52px">8</td><td id="[ccq" class="" style="width:352px">Remove redundant detailed demographic fields</td><td id="vvau" class="" style="width:276px">Use cleaner derived demographic categories</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80dc-a731-c2b95d4aa29a"><td id="j}|C" class="" style="width:52px">9</td><td id="[ccq" class="" style="width:352px">Remove high-missing and low-variation fields</td><td id="vvau" class="" style="width:276px">Improve data quality and reduce noise</td></tr></div><div style="display:contents" dir="ltr"><tr id="373f61fb-e85c-80e3-b242-f5bf1cedbe17"><td id="j}|C" class="" style="width:52px">10</td><td id="[ccq" class="" style="width:352px">Keep financial, property, and demographic prompt-bias fields</td><td id="vvau" class="" style="width:276px">Support LLM decision and fairness-response analysis</td></tr></div></tbody></table></div><div style="display:contents" dir="auto"><hr id="373f61fb-e85c-807c-920e-fa48f83bb9c6"/></div><div style="display:contents" dir="auto"><h1 id="373f61fb-e85c-8074-9be6-eed51e7fd573" class=""><strong>9. Final Short Methodology Paragraph</strong></h1></div><div style="display:contents" dir="auto"><p id="373f61fb-e85c-8067-a596-fa1573a42ddd" class="">I processed the HMDA Public LAR data by selecting fields that are available before or during the mortgage application decision and removing variables that could create data leakage, such as denial reasons, interest rate, rate spread, loan costs, points, and lender credits. I filtered the dataset to conforming, conventional first-lien, non-commercial loans that were initially payable to the reporting institution in order to create a more consistent study population. I removed fields with high missingness, low variation, redundant demographic detail, post-origination information, and geography-based variables that could introduce proxy effects. I kept applicant demographic variables, including race, ethnicity, sex, and age, because the purpose of this study is to examine whether LLM-generated mortgage decisions differ under demographic or discrimination-related appeal prompts.</p></div><div style="display:contents" dir="auto"><ol type="1" id="373f61fb-e85c-8002-b146-f9746da7c5a2" class="numbered-list numbered-list-digits-2" start="10"><li>References</li></ol></div><div style="display:contents" dir="auto"><h1 id="373f61fb-e85c-80c1-8a8c-e2f8fc43409a" class=""><strong>10. References / Sources</strong></h1></div><div style="display:contents" dir="auto"><p id="373f61fb-e85c-80d1-aa78-d91d17f685fa" class="">The <strong>Public HMDA LAR Data Fields</strong> page was used as the main source for public LAR field names, field descriptions, and coded values such as <code>action_taken</code>, <code>loan_type</code>, <code>loan_purpose</code>, <code>construction_method</code>, <code>debt_to_income_ratio</code>, and other public loan/application register variables.</p></div><div style="display:contents" dir="auto"><ul id="373f61fb-e85c-804e-bd7c-c64bd5f4c323" class="bulleted-list"><li style="list-style-type:disc">The <strong>2024 HMDA Filing Instructions Guide (FIG)</strong> was used as a reference for the official HMDA filing structure, reporting context, and 2024 data collection/reporting guidance.</li></ul></div><div style="display:contents" dir="ltr"><figure id="373f61fb-e85c-80f4-9f57-de1c52130957"><a href="https://ffiec.cfpb.gov/documentation/fig/2024/overview" class="bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title">2024 FIG (Filing Instructions Guide) | HMDA Documentation</div><div class="bookmark-description">fig2024}</div></div><div class="bookmark-href"><img src="https://ffiec.cfpb.gov/documentation/img/favicon.ico" class="icon bookmark-icon"/>https://ffiec.cfpb.gov/documentation/fig/2024/overview</div></div></a></figure></div><div style="display:contents" dir="auto"><ul id="373f61fb-e85c-8073-91e7-e81a33c389c2" class="bulleted-list"><li style="list-style-type:disc">The <strong>Appended HMDA Data Fields</strong> documentation was used for fields that are added or derived for public HMDA use, including appended geographic, demographic, and derived public-use variables.</li></ul></div><div style="display:contents" dir="ltr"><figure id="373f61fb-e85c-80d4-ba25-edff72a76959"><a href="https://ffiec.cfpb.gov/documentation/publications/general/derived-data-fields" class="bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title">Appended HMDA Data Fields | HMDA Documentation</div><div class="bookmark-description">This guide explains fields that are included in public HMDA data collected in 2018 and beyond, that have been modified from the original loan record to protect privacy, or added to enhance the usefulness of the data. Derived fields used in HMDA data and publication products, such as Race, Sex, and Ethnicity, were aggregated from the source data, following a methodology developed by the CFPB for analysis and privacy protection, but are not an official and sole government definition. Researchers and technical professionals interested in the methodology can refer to the wiki for Derived Fields Categorization or the Data Disclosure Policy.</div></div><div class="bookmark-href"><img src="https://ffiec.cfpb.gov/documentation/img/favicon.ico" class="icon bookmark-icon"/>https://ffiec.cfpb.gov/documentation/publications/general/derived-data-fields</div></div></a></figure></div><div style="display:contents" dir="auto"><ul id="373f61fb-e85c-80a9-beb3-c5d6ea6650d8" class="bulleted-list"><li style="list-style-type:disc">The <strong>CFPB HMDA Platform Derived Fields Categorization 2018 Onward</strong> GitHub documentation was used to understand how derived HMDA fields are categorized from underlying reported fields, especially for derived demographic and product-related variables.</li></ul></div><div style="display:contents" dir="ltr"><figure id="373f61fb-e85c-80e4-a358-ca5538ee9f92"><a href="https://github.com/cfpb/hmda-platform/wiki/Derived-Fields-Categorization-2018-Onward" class="bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title">Derived Fields Categorization 2018 Onward</div><div class="bookmark-description">The HMDA Submission backend applications. Contribute to cfpb/hmda-platform development by creating an account on GitHub.</div></div><div class="bookmark-href"><img src="https://github.com/fluidicon.png" class="icon bookmark-icon"/>https://github.com/cfpb/hmda-platform/wiki/Derived-Fields-Categorization-2018-Onward</div></div><img src="https://opengraph.githubassets.com/ac51cc1b0cf51059a4c6fb2ddb282a842832c5c76208fb16b5ec5711c1d09601/cfpb/hmda-platform" class="bookmark-image"/></a></figure></div><div style="display:contents" dir="auto"><ul id="373f61fb-e85c-80e3-971f-e60b1c835569" class="bulleted-list"><li style="list-style-type:disc">The <strong>HMDA Data Disclosure Policy Guidance Executive Summary</strong> was used to justify why some HMDA fields are excluded, modified, rounded, binned, or reduced in precision in the public dataset. The guidance explains that the Bureau modifies public loan-level HMDA data to balance public disclosure benefits with applicant and borrower privacy risks.</li></ul></div><div style="display:contents" dir="auto"><ul id="373f61fb-e85c-80e4-9764-eca7792c8e0a" class="bulleted-list"><li style="list-style-type:disc"><a href="https://files.consumerfinance.gov/f/documents/HMDA_Data_Disclosure_Policy_Guidance.Executive_Summary.FINAL.12212018.pdf">https://files.consumerfinance.gov/f/documents/HMDA_Data_Disclosure_Policy_Guidance.Executive_Summary.FINAL.12212018.pdf</a></li></ul></div><div style="display:contents" dir="auto"><p id="373f61fb-e85c-8033-884e-ee6be69cd907" class="">
+</p></div><div style="display:contents" dir="auto"><p id="373f61fb-e85c-806f-9cf9-e44aaadb5137" class=""><em>Consumer Financial Protection Bureau. (2018). Executive summary of the HMDA data disclosure policy guidance.</em></p></div><div style="display:contents" dir="auto"><p id="373f61fb-e85c-8019-a2ff-c7dbc2924a30" class=""><em>Federal Financial Institutions Examination Council. (n.d.). Public HMDA - LAR data fields. HMDA Documentation.</em></p></div><div style="display:contents" dir="auto"><p id="373f61fb-e85c-802b-af34-c3d638c17048" class=""><em>Federal Financial Institutions Examination Council. (n.d.). 2024 Filing Instructions Guide: Overview. HMDA Documentation.</em></p></div><div style="display:contents" dir="auto"><p id="373f61fb-e85c-805e-9177-cfe9b55be0b2" class=""><em>Federal Financial Institutions Examination Council. (n.d.). Appended HMDA data fields. HMDA Documentation.</em></p></div><div style="display:contents" dir="auto"><p id="373f61fb-e85c-8097-bfd0-e9b1fc0262bf" class=""><em>Consumer Financial Protection Bureau. (n.d.). Derived Fields Categorization 2018 Onward. HMDA Platform GitHub Wiki.</em></p></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

@@ -1,3 +1,11 @@
+## Extended Research
+
+This project started as a class project and is now being extended into a research project on LLM prompt sensitivity and fairness analysis.
+
+The original class project is kept on the `main` branch.  
+Ongoing research experiments are developed in the `research-extension` branch.
+
+
 # Bias by Prompt LLM Fairness
 
 The goal of this project is to investigate how a given persona or role affects LLM-based data analysis. [Martin Bertran (2026)](https://arxiv.org/pdf/2602.18710) pointed out that LLM-powered agentic data scientists can reach different conclusions depending on the prompt framing or assigned persona, even when they use the same dataset and analytical methods. Based on this study, I wonder whether a model generates different outputs when it is given a sensitive background context and is encouraged to respond with empathy.
@@ -23,10 +31,16 @@ This project uses publicly available HMDA loan application data.
 
 ### Models Used
 
-This project currently uses multiple LLM APIs, including:
-- OpenAI
-- Gemini
-- Anthropic
+**Cloud APIs**
+- OpenAI (GPT)
+- Google (Gemini)
+- Anthropic (Claude)
+
+**Local open-weight models** (served with llama.cpp, OpenAI-compatible API)
+- Qwen2.5-7B-Instruct
+- Planned: Llama-3.1-8B-Instruct, Qwen3-8B
+
+Which models and prompt types run is controlled in [`src/config.py`](src/config.py) (`GPT_MODELS`, `CLAUDE_MODELS`, `GEMINI_MODELS`, `QWEN_MODELS`, `PROMPT_TYPES`, `NUM_ITERATIONS`).
 
 ## Analysis
 
@@ -59,7 +73,16 @@ For categorical variable testing 2 x 2 table for example
 
 ## How to run
 
-### 1. Create data results directories (Optional) 
+### 1. Set up a virtual environment
+From root repo
+
+```sh
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+### 2. Create data and results directories (Optional)
 From root repo
 
 ```sh
@@ -67,76 +90,81 @@ mkdir data
 mkdir results
 ```
 
-### 2. Populate API keys on .env
-From root repo
+### 3. Populate API keys in .env
+Only needed for the cloud models (skip for local Qwen).
 
 ```sh
 cd src
 touch .env
-````
-Add your own API KEYs
+```
+Add your own API keys
 ```.env
 export OPENAI_API_KEY = ""
 export GEMINI_API_KEY = ""
 export ANTHROPIC_API_KEY = ""
 ```
-### 3. Gather data from HMDA and summarize
 
-```sh
-python main.py --gather-data
-```
-or
+### 4. Gather data from HMDA and summarize
+
 ```sh
 python gather_data.py
 ```
 
 1. Retrieve HMDA loan application data from the API `load_data.py`
-2. Filter the dataset to selected decision outcomes and summarize the data to `summarize_raw_data.py`
-3. Create 2 files in data directory
+2. Filter the dataset to selected decision outcomes `preprocess_data.py`
+3. Summarize the preprocessed data by race, sex, and ethnicity `summarize_data.py`
+4. Create 3 files in data directory
   - `hmda_CA_2024.csv`
+  - `preprocessed_data.csv`
   - `summary.txt`
 
-### 4. Call Large Language Models 
+### 5. Call Large Language Models 
 
 > [!WARNING]
-> Skip, if you have data already
+> Skip, if you have data already. Set `NUM_ITERATIONS` in `src/config.py` before running — each iteration is one API call per model and prompt type.
+
+**Cloud models** (from `src/`)
 
 ```sh
-python main.py --call-models
+python call_chatGPT.py
+python call_claude.py
+python call_gemini.py
 ```
 
-or
+**Local Qwen** (no API key needed)
+
+Terminal 1 — start the llama.cpp server (expects the GGUF model path set in `src/local_qwen/Makefile`):
 
 ```sh
-python call_models.py
+cd src/local_qwen
+make serve
 ```
 
-1. Call LLMs with given prompt in `prompts.py` and `summary.txt`
-2. Save jsonls file under data directory
-
- 
-### 5. Analyze Results
+Terminal 2 — run the calls against the local server:
 
 ```sh
-python main.py --analyze
+cd src
+python call_qwen.py
 ```
 
-or 
+Each script loops over its models in `config.py` and all `PROMPT_TYPES`, and appends one JSON line per run to `data/results_{prompt_type}_{model}.jsonl`.
+
+### 6. Analyze Results
 
 ```sh
 python analyze_results.py
 ```
 
-### 6. Optional Run them All 
+Or interactively with the notebook `src/analyze_results.ipynb`.
 
-> [!WARNING]
-> Modify [`src/config.py`](https://github.com/shuseiyokoi/Bias-by-Prompt-LLM-Fairness/blob/4d4085db74ca950b5ec5c7919082ab71d887ec09/src/config.py#L3) for # of iterations of API call for LLM
-> ```python
-> NUM_ITERATIONS = 2
-> ```
+Models are auto-discovered from the `results_*.jsonl` files in `data/`, so this works regardless of which models are active in `config.py`. It prints a coverage table (usable responses per model and prompt — rows that came back as API errors or non-JSON are skipped and counted), then saves to `results/`:
 
-```sh
-python main.py
-```
+- `conclusion-count-by-prompt-{model}.png`
+- `percentages-by-prompt-{model}.png` (with per-bar sample sizes)
+- `confidence-by-prompt-{model}.png`
+- `confidence-by-model-and-conclusion.png`
+- `tableresults.csv` — conclusion counts per model and prompt
+- `stats_vs_control.csv` — chi-square / Fisher exact tests of each prompt type against the control prompt, per model
 
-It will save vidualizations under results directry and show statistical tests' results
+> [!NOTE]
+> `main.py` (the old `--gather-data` / `--call-models` / `--analyze` entry point) is currently out of sync with `config.py` and the per-script workflow above is the supported way to run the pipeline.

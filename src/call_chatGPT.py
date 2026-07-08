@@ -1,14 +1,70 @@
 from dotenv import load_dotenv
 import os
 from openai import OpenAI
-from append_results import append_jsonl
 import json
-from config import (
-    PATH_TO_DATA,
-    GPT_MODEL,
-    NUM_ITERATIONS,
-)
-from prompts import CONTROL_PROMPT, EMOTIONAL_PROMPT
+import time
+
+from config import PATH_TO_DATA, GPT_MODELS, NUM_ITERATIONS, PROMPT_TYPES
+from prompts import get_prompt
+
+
+def parse_json_response(raw_text):
+    raw_text = raw_text.strip()
+
+    if raw_text.startswith("```json"):
+        raw_text = raw_text[len("```json") :].strip()
+    elif raw_text.startswith("```"):
+        raw_text = raw_text[3:].strip()
+
+    if raw_text.endswith("```"):
+        raw_text = raw_text[:-3].strip()
+
+    try:
+        return json.loads(raw_text)
+    except json.JSONDecodeError:
+        return {"raw_text": raw_text}
+
+
+def run_prompt_set(client, model_name, file_id, prompt_text, output_file, prompt_name):
+    for i in range(NUM_ITERATIONS):
+        try:
+            response = client.responses.create(
+                model=model_name,
+                input=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "input_file",
+                                "file_id": file_id,
+                            },
+                            {
+                                "type": "input_text",
+                                "text": prompt_text,
+                            },
+                        ],
+                    }
+                ],
+            )
+
+            parsed_response = parse_json_response(response.output_text)
+
+        except Exception as e:
+            parsed_response = {"error": str(e)}
+
+        result = {
+            "run": i + 1,
+            "model": model_name,
+            "prompt_type": prompt_name,
+            "response": parsed_response,
+        }
+
+        with open(output_file, "a", encoding="utf-8") as f:
+            f.write(json.dumps(result, ensure_ascii=False) + "\n")
+
+        print(f"{model_name} | {prompt_name} | Run {i + 1}: {parsed_response}")
+
+        time.sleep(1)
 
 
 def call_chatGPT():
@@ -20,97 +76,27 @@ def call_chatGPT():
 
     client = OpenAI(api_key=api_key)
 
-    file = client.files.create(
-        file=open(f"{PATH_TO_DATA}/summary.txt", "rb"), purpose="user_data"
+    uploaded_file = client.files.create(
+        file=open(f"{PATH_TO_DATA}summary.txt", "rb"),
+        purpose="user_data",
     )
 
-    for i in range(NUM_ITERATIONS):
-        response = client.responses.create(
-            model=GPT_MODEL,
-            input=[
-                {
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "input_file",
-                            "file_id": file.id,
-                        },
-                        {
-                            "type": "input_text",
-                            "text": CONTROL_PROMPT,
-                        },
-                    ],
-                }
-            ],
-        )
+    for model_name in GPT_MODELS:
+        for prompt_type in PROMPT_TYPES:
+            output_file = f"{PATH_TO_DATA}results_{prompt_type}_{model_name}.jsonl"
 
-        raw_text = response.output_text.strip()
+            print(f"\nStarting: {model_name} | {prompt_type}")
 
-        if raw_text.startswith("```json"):
-            raw_text = raw_text[len("```json") :].strip()
+            run_prompt_set(
+                client=client,
+                model_name=model_name,
+                file_id=uploaded_file.id,
+                prompt_text=get_prompt(prompt_type),
+                output_file=output_file,
+                prompt_name=prompt_type,
+            )
 
-        if raw_text.startswith("```"):
-            raw_text = raw_text[len("```") :].strip()
-
-        if raw_text.endswith("```"):
-            raw_text = raw_text[:-3].strip()
-
-        parsed = json.loads(raw_text)
-
-        result = {"run": i + 1, "response": parsed}
-
-        with open(
-            f"{PATH_TO_DATA}/results_control_prompt_ChatGPT.jsonl",
-            "a",
-            encoding="utf-8",
-        ) as f:
-            f.write(json.dumps(result, ensure_ascii=False) + "\n")
-
-        print(f"Run {i + 1}: {parsed}")
-
-    for i in range(NUM_ITERATIONS):
-        response = client.responses.create(
-            model=GPT_MODEL,
-            input=[
-                {
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "input_file",
-                            "file_id": file.id,
-                        },
-                        {
-                            "type": "input_text",
-                            "text": EMOTIONAL_PROMPT,
-                        },
-                    ],
-                }
-            ],
-        )
-
-        raw_text = response.output_text.strip()
-
-        if raw_text.startswith("```json"):
-            raw_text = raw_text[len("```json") :].strip()
-
-        if raw_text.startswith("```"):
-            raw_text = raw_text[len("```") :].strip()
-
-        if raw_text.endswith("```"):
-            raw_text = raw_text[:-3].strip()
-
-        parsed = json.loads(raw_text)
-
-        result = {"run": i + 1, "response": parsed}
-
-        with open(
-            f"{PATH_TO_DATA}/results_emotional_prompt_ChatGPT.jsonl",
-            "a",
-            encoding="utf-8",
-        ) as f:
-            f.write(json.dumps(result, ensure_ascii=False) + "\n")
-
-        print(f"Run {i + 1}: {parsed}")
+            print(f"Finished: {model_name} | {prompt_type}")
 
 
 if __name__ == "__main__":
