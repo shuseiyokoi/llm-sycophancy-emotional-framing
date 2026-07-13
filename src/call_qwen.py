@@ -1,3 +1,4 @@
+import argparse
 import json
 import os
 import subprocess
@@ -101,8 +102,8 @@ def stop_server(proc):
         proc.kill()
 
 
-def run_prompt_set(client, model_name, prompt_text, output_file, prompt_name):
-    for i in range(NUM_ITERATIONS):
+def run_prompt_set(client, model_name, prompt_text, output_file, prompt_name, num_iterations=NUM_ITERATIONS):
+    for i in range(num_iterations):
         try:
             completion = client.chat.completions.create(
                 model=model_name,
@@ -129,15 +130,15 @@ def run_prompt_set(client, model_name, prompt_text, output_file, prompt_name):
         print(f"{model_name} | {prompt_name} | Run {i + 1}: {parsed_response}")
 
 
-def call_qwen():
+def call_qwen(prompt_types=PROMPT_TYPES, num_iterations=NUM_ITERATIONS, output_prefix="results"):
     client = OpenAI(base_url=BASE_URL, api_key="local")
 
     for model_name in QWEN_MODELS:
         proc = start_server(model_name)
 
         try:
-            for prompt_type in PROMPT_TYPES:
-                output_file = f"{PATH_TO_DATA}results_{prompt_type}_{model_name}.jsonl"
+            for prompt_type in prompt_types:
+                output_file = f"{PATH_TO_DATA}{output_prefix}_{prompt_type}_{model_name}.jsonl"
 
                 print(f"\nStarting: {model_name} | {prompt_type}")
 
@@ -147,6 +148,7 @@ def call_qwen():
                     prompt_text=get_embedded_prompt(prompt_type),
                     output_file=output_file,
                     prompt_name=prompt_type,
+                    num_iterations=num_iterations,
                 )
 
                 print(f"Finished: {model_name} | {prompt_type}")
@@ -155,4 +157,15 @@ def call_qwen():
 
 
 if __name__ == "__main__":
-    call_qwen()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--smoke",
+        action="store_true",
+        help="quick test: control_prompt only, 1 run per model, writes to smoke_*.jsonl",
+    )
+    args = parser.parse_args()
+
+    if args.smoke:
+        call_qwen(prompt_types=["control_prompt"], num_iterations=1, output_prefix="smoke")
+    else:
+        call_qwen()
