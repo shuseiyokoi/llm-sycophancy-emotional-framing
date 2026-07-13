@@ -11,9 +11,9 @@ CLAUDE_MODELS = [
 GEMINI_MODELS = ["gemini-2.5-flash-lite", "gemini-2.5-pro"]
 
 QWEN_MODELS = [
-    "qwen2.5-7b-instruct",  # currently served by `make serve` in local_qwen
-    # planned: "Llama-3.1-8B-Instruct", "Qwen3-8B"
-]
+    "qwen2.5-7b-instruct",
+    "qwen3-8b",
+]  
 
 # prompt_jobs_config.py
 

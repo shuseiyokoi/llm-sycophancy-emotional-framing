@@ -1,0 +1,158 @@
+import json
+import os
+import subprocess
+import time
+import urllib.request
+
+from openai import OpenAI
+
+from config import PATH_TO_DATA, QWEN_MODELS, NUM_ITERATIONS, PROMPT_TYPES
+from prompts import get_embedded_prompt
+
+LLAMA_SERVER = os.getenv("LLAMA_SERVER", "llama-server")
+PORT = int(os.getenv("QWEN_PORT", "8080"))
+BASE_URL = f"http://localhost:{PORT}/v1"
+
+# GGUF file and extra llama-server flags for each model in config.QWEN_MODELS
+QWEN_SERVER_CONFIG = {
+    "qwen2.5-7b-instruct": {
+        "gguf": "local_qwen/models/Qwen2.5-7B-Instruct-Q4_K_M.gguf",
+        "extra_args": [],
+    },
+    "qwen3-8b": {
+        "gguf": "local_qwen/models/Qwen3-8B-Q4_K_M.gguf",
+        # disable thinking so the output is only the strict JSON answer
+        "extra_args": ["--reasoning-budget", "0"],
+    },
+}
+
+
+def parse_json_response(raw_text):
+    raw_text = raw_text.strip()
+
+    if raw_text.startswith("```json"):
+        raw_text = raw_text[len("```json") :].strip()
+    elif raw_text.startswith("```"):
+        raw_text = raw_text[3:].strip()
+
+    if raw_text.endswith("```"):
+        raw_text = raw_text[:-3].strip()
+
+    try:
+        return json.loads(raw_text)
+    except json.JSONDecodeError:
+        return {"raw_text": raw_text}
+
+
+def server_is_up():
+    try:
+        with urllib.request.urlopen(f"http://localhost:{PORT}/health", timeout=2) as r:
+            return r.status == 200
+    except Exception:
+        return False
+
+
+def start_server(model_name):
+    if server_is_up():
+        raise RuntimeError(
+            f"A server is already running on port {PORT}. Stop it first so "
+            "results are labeled with the model this script loads."
+        )
+
+    server_config = QWEN_SERVER_CONFIG[model_name]
+    if not os.path.exists(server_config["gguf"]):
+        raise FileNotFoundError(
+            f"{server_config['gguf']} not found. Run `make download` in local_qwen first."
+        )
+
+    proc = subprocess.Popen(
+        [
+            LLAMA_SERVER,
+            "-m", server_config["gguf"],
+            "--port", str(PORT),
+            "-c", "8192",
+            "-ngl", "99",
+            *server_config["extra_args"],
+        ],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+
+    for _ in range(60):  # model load can take a few minutes
+        if server_is_up():
+            print(f"llama.cpp server is up with {model_name}")
+            return proc
+        if proc.poll() is not None:
+            raise RuntimeError(
+                f"llama-server exited while loading {model_name} "
+                f"(exit code {proc.returncode})"
+            )
+        time.sleep(5)
+
+    proc.terminate()
+    raise RuntimeError(f"Server for {model_name} was not healthy after 5 minutes")
+
+
+def stop_server(proc):
+    proc.terminate()
+    try:
+        proc.wait(timeout=30)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+
+
+def run_prompt_set(client, model_name, prompt_text, output_file, prompt_name):
+    for i in range(NUM_ITERATIONS):
+        try:
+            completion = client.chat.completions.create(
+                model=model_name,
+                max_tokens=1024,
+                messages=[{"role": "user", "content": prompt_text}],
+            )
+
+            raw_text = completion.choices[0].message.content.strip()
+            parsed_response = parse_json_response(raw_text)
+
+        except Exception as e:
+            parsed_response = {"error": str(e)}
+
+        result = {
+            "run": i + 1,
+            "model": model_name,
+            "prompt_type": prompt_name,
+            "response": parsed_response,
+        }
+
+        with open(output_file, "a", encoding="utf-8") as f:
+            f.write(json.dumps(result, ensure_ascii=False) + "\n")
+
+        print(f"{model_name} | {prompt_name} | Run {i + 1}: {parsed_response}")
+
+
+def call_qwen():
+    client = OpenAI(base_url=BASE_URL, api_key="local")
+
+    for model_name in QWEN_MODELS:
+        proc = start_server(model_name)
+
+        try:
+            for prompt_type in PROMPT_TYPES:
+                output_file = f"{PATH_TO_DATA}results_{prompt_type}_{model_name}.jsonl"
+
+                print(f"\nStarting: {model_name} | {prompt_type}")
+
+                run_prompt_set(
+                    client=client,
+                    model_name=model_name,
+                    prompt_text=get_embedded_prompt(prompt_type),
+                    output_file=output_file,
+                    prompt_name=prompt_type,
+                )
+
+                print(f"Finished: {model_name} | {prompt_type}")
+        finally:
+            stop_server(proc)
+
+
+if __name__ == "__main__":
+    call_qwen()

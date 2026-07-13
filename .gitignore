@@ -181,8 +181,6 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-# only for progress report
-local_qwen/
-call_qwen.ipynb
-call_qwen.pysrc/call_qwen.py
-src/call_qwen.py
+
+# local Qwen GGUF weights (re-download with `make download`)
+src/local_qwen/models/
