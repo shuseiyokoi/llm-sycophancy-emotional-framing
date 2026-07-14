@@ -38,9 +38,13 @@ This project uses publicly available HMDA loan application data.
 
 **Local open-weight models** (served with llama.cpp, OpenAI-compatible API)
 - Qwen2.5-7B-Instruct
-- Planned: Llama-3.1-8B-Instruct, Qwen3-8B
+- Qwen3-8B
+- Llama-3.1-8B-Instruct
+- Llama-3.2-3B-Instruct
+- Gemma-2-9B-it
+- Gemma-3-12B-it
 
-Which models and prompt types run is controlled in [`src/config.py`](src/config.py) (`GPT_MODELS`, `CLAUDE_MODELS`, `GEMINI_MODELS`, `QWEN_MODELS`, `PROMPT_TYPES`, `NUM_ITERATIONS`).
+Which models and prompt types run is controlled in [`src/config.py`](src/config.py) (`GPT_MODELS`, `CLAUDE_MODELS`, `GEMINI_MODELS`, `QWEN_MODELS`, `LLAMA_MODELS`, `GEMMA_MODELS`, `PROMPT_TYPES`, `NUM_ITERATIONS`).
 
 ## Analysis
 

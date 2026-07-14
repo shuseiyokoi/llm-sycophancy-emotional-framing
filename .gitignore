@@ -182,5 +182,8 @@ cython_debug/
 .pypirc
 
 
-# local Qwen GGUF weights (re-download with `make download`)
+# local GGUF weights (re-download with `make download`)
 src/local_qwen/models/
+
+# local llama.cpp binaries
+src/local_qwen/llama.cpp/

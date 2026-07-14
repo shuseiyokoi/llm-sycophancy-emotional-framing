@@ -1,6 +1,6 @@
 PATH_TO_DATA = "../data/"
 PATH_TO_RESULTS = "../results/"
-NUM_ITERATIONS = 3
+NUM_ITERATIONS = 300
 
 GPT_MODELS = ["gpt-3.5-turbo", "gpt-4o-mini"]
 
@@ -13,7 +13,20 @@ GEMINI_MODELS = ["gemini-2.5-flash-lite", "gemini-2.5-pro"]
 QWEN_MODELS = [
     "qwen2.5-7b-instruct",
     "qwen3-8b",
-]  
+]
+
+LLAMA_MODELS = [
+    "llama-3.1-8b-instruct",
+    "llama-3.2-3b-instruct",
+]
+
+GEMMA_MODELS = [
+    "gemma-2-9b-it",
+    "gemma-3-12b-it",
+]
+
+# All models served locally with llama.cpp (see call_qwen.py / local_qwen)
+LOCAL_MODELS = QWEN_MODELS + LLAMA_MODELS + GEMMA_MODELS
 
 # prompt_jobs_config.py
 

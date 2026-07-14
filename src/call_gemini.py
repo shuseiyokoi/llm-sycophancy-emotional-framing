@@ -21,7 +21,14 @@ def parse_json_response(raw_text):
     try:
         return json.loads(raw_text)
     except json.JSONDecodeError:
-        return {"raw_text": raw_text}
+        # some models append prose after the JSON object;
+        # fall back to parsing the first JSON object in the text
+        try:
+            start = raw_text.index("{")
+            obj, _ = json.JSONDecoder().raw_decode(raw_text[start:])
+            return obj
+        except (ValueError, json.JSONDecodeError):
+            return {"raw_text": raw_text}
 
 
 def run_prompt_set(

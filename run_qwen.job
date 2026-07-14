@@ -18,6 +18,6 @@ source "$VENV/bin/activate"
 module load cuda
 
 # call_qwen.py starts and stops the llama.cpp server itself,
-# once per model in config.QWEN_MODELS
+# once per model in config.LOCAL_MODELS
 cd "$REPO/src"
 python call_qwen.py
