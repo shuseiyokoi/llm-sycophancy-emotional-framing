@@ -14,7 +14,7 @@ import statsmodels.api as sm
 import statsmodels.formula.api as smf
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-from config import PATH_TO_DATA, PATH_TO_RESULTS
+from config import PATH_TO_DATA, PATH_TO_GROUND_TRUTH
 
 
 def load_and_clean(path):
@@ -153,8 +153,10 @@ def extract_ground_truth_labels(model, alpha=0.05):
 
 
 def main():
-    data_path = os.path.join("..", PATH_TO_DATA, "preprocessed_data.csv")
-    results_path = os.path.join("..", PATH_TO_RESULTS, "ground_truth_labels.csv")
+    data_path = os.path.join(PATH_TO_DATA, "preprocessed_data.csv")
+    results_path = os.path.join(PATH_TO_GROUND_TRUTH, "ground_truth_labels.csv")
+
+    os.makedirs(PATH_TO_GROUND_TRUTH, exist_ok=True)
 
     df = load_and_clean(data_path)
     print(f"Rows after cleaning: {len(df):,}")
@@ -162,14 +164,14 @@ def main():
     model = run_regression(df)
     print(model.summary())
 
-    with open(os.path.join("..", PATH_TO_RESULTS, "regression_summary.txt"), "w") as f:
+    with open(os.path.join(PATH_TO_GROUND_TRUTH, "regression_summary.txt"), "w") as f:
         f.write(model.summary().as_text())
 
     full_summary = (
         model.summary2().tables[1].reset_index().rename(columns={"index": "term"})
     )
     full_summary.to_csv(
-        os.path.join("..", PATH_TO_RESULTS, "full_regression_coefficients.csv"),
+        os.path.join(PATH_TO_GROUND_TRUTH, "full_regression_coefficients.csv"),
         index=False,
     )
 
