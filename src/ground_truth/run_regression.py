@@ -30,7 +30,7 @@ def load_and_clean(path):
         "loan_amount": "loan_amount",
         "property_value": "property_value",
         "action_taken": "action_taken",
-        "applicant_age": "applicant_age"
+        "applicant_age": "applicant_age",
     }
     df = df.rename(columns={k: v for k, v in rename_map.items() if k in df.columns})
 
@@ -52,6 +52,9 @@ def load_and_clean(path):
         s = str(val).strip().replace("%", "")
         if "-<" in s:  # e.g. "30-<36"
             low, high = s.split("-<")
+            return (float(low) + float(high)) / 2
+        if "-" in s and not s.startswith("-"):  # e.g. "50-60" (plain hyphen bucket)
+            low, high = s.split("-")
             return (float(low) + float(high)) / 2
         if s.startswith("<"):  # e.g. "<20"
             return float(s[1:]) - 2.5
@@ -158,6 +161,17 @@ def main():
 
     model = run_regression(df)
     print(model.summary())
+
+    with open(os.path.join("..", PATH_TO_RESULTS, "regression_summary.txt"), "w") as f:
+        f.write(model.summary().as_text())
+
+    full_summary = (
+        model.summary2().tables[1].reset_index().rename(columns={"index": "term"})
+    )
+    full_summary.to_csv(
+        os.path.join("..", PATH_TO_RESULTS, "full_regression_coefficients.csv"),
+        index=False,
+    )
 
     labels = extract_ground_truth_labels(model)
     labels.to_csv(results_path, index=False)
