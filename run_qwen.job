@@ -19,5 +19,5 @@ module load cuda
 
 # call_qwen.py starts and stops the llama.cpp server itself,
 # once per model in config.LOCAL_MODELS
-cd "$REPO/src"
+cd "$REPO/src/call_models"
 python call_qwen.py
