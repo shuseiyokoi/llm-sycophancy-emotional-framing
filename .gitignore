@@ -187,12 +187,8 @@ src/local_qwen/models/
 
 # local llama.cpp binaries
 src/local_qwen/llama.cpp/
-<<<<<<< HEAD
 
 # Track CSV data in this repo (overrides the global ~/.gitignore_global *.csv rule),
 # EXCEPT the raw HMDA download — 384 MB, over GitHub's 100 MB limit
 !*.csv
 hmda_CA_2024.csv
-=======
-data/gather_data/hmda_CA_2024.csv
->>>>>>> eb25d7cb063d4458f8649a64834422f6759393f4
