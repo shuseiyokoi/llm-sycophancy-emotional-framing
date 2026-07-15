@@ -187,3 +187,4 @@ src/local_qwen/models/
 
 # local llama.cpp binaries
 src/local_qwen/llama.cpp/
+data/hmda_CA_2024.csv
