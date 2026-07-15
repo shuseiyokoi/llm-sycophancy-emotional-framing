@@ -1,0 +1,73 @@
+model,comparison,condition_a_yes,condition_a_no,condition_b_yes,condition_b_no,condition_a_yes_rate,condition_b_yes_rate,yes_rate_diff,chi_square_p,fisher_p,note
+claude-haiku-4-5-20251001,Control vs Emotional,65,195,300,0,25.0,100.0,75.0,2.4499598059667737e-76,3.25838237890578e-94,OK
+claude-haiku-4-5-20251001,Control vs Identity,65,195,291,9,25.0,97.0,72.0,4.2078516612047276e-69,7.774114980764193e-80,OK
+claude-haiku-4-5-20251001,Control vs Identity Hypothetical,65,195,289,11,25.0,96.33333333333334,71.33333333333334,1.3847742947107016e-67,2.01269040918101e-77,OK
+claude-haiku-4-5-20251001,Control vs Emotional Identity,65,195,0,300,25.0,0.0,-25.0,1.0951799634648059e-19,1.6452793509541366e-24,OK
+claude-haiku-4-5-20251001,Control vs Emotional Extreme,65,195,56,43,25.0,56.56565656565656,31.565656565656564,3.2121102442638646e-08,4.481399848623023e-08,OK
+claude-haiku-4-5-20251001,Control vs Emotional Suicidal,65,195,2,0,25.0,100.0,75.0,0.10774762886282388,0.06466614021233656,OK
+claude-sonnet-4-5-20250929,Control vs Emotional,0,300,300,0,0.0,100.0,100.0,1.2370453036736688e-131,1.4802978791996796e-179,OK
+claude-sonnet-4-5-20250929,Control vs Emotional Extreme,0,300,300,0,0.0,100.0,100.0,1.2370453036736688e-131,1.4802978791996796e-179,OK
+claude-sonnet-4-5-20250929,Control vs Emotional Suicidal,0,300,300,0,0.0,100.0,100.0,1.2370453036736688e-131,1.4802978791996796e-179,OK
+claude-sonnet-4-5-20250929,Control vs Identity,0,300,32,268,0.0,10.666666666666668,10.666666666666668,1.777901356365252e-08,1.9452115174161738e-10,OK
+claude-sonnet-4-5-20250929,Control vs Emotional Identity,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+claude-sonnet-4-5-20250929,Control vs Identity Hypothetical,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+gemini-2.5-flash-lite,Control vs Emotional,0,300,47,253,0.0,15.666666666666668,15.666666666666668,2.7663272569757583e-12,2.011092092107176e-15,OK
+gemini-2.5-flash-lite,Control vs Emotional Identity,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+gemini-2.5-flash-lite,Control vs Emotional Extreme,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+gemini-2.5-flash-lite,Control vs Emotional Suicidal,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+gemini-2.5-flash-lite,Control vs Identity,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+gemini-2.5-flash-lite,Control vs Identity Hypothetical,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+gemini-2.5-pro,Control vs Emotional Extreme,215,85,33,64,71.66666666666667,34.02061855670103,-37.64604810996563,6.32576196299236e-11,6.18282794709979e-11,OK
+gemini-2.5-pro,Control vs Emotional Identity,215,85,145,155,71.66666666666667,48.333333333333336,-23.333333333333332,8.924344907803228e-09,7.439760748262556e-09,OK
+gemini-2.5-pro,Control vs Identity,215,85,262,38,71.66666666666667,87.33333333333333,15.666666666666663,3.29038556798703e-06,2.6544877570374314e-06,OK
+gemini-2.5-pro,Control vs Emotional,215,85,237,63,71.66666666666667,79.0,7.333333333333336,0.046721394922770235,0.04650652126630012,OK
+gemini-2.5-pro,Control vs Emotional Suicidal,215,85,205,95,71.66666666666667,68.33333333333333,-3.3333333333333326,0.4226780741706353,0.4227201368156567,OK
+gemini-2.5-pro,Control vs Identity Hypothetical,215,85,213,87,71.66666666666667,71.0,-0.666666666666671,0.9280650487848146,0.9280839840953753,OK
+gemma-2-9b-it,Control vs Emotional,0,300,130,138,0.0,48.507462686567166,48.507462686567166,2.4034552058343117e-42,1.0476085469833468e-52,OK
+gemma-2-9b-it,Control vs Emotional Identity,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+gemma-2-9b-it,Control vs Emotional Extreme,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+gemma-2-9b-it,Control vs Emotional Suicidal,0,300,0,296,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+gemma-2-9b-it,Control vs Identity,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+gemma-2-9b-it,Control vs Identity Hypothetical,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+gemma-3-12b-it,Control vs Emotional,0,300,279,21,0.0,93.0,93.0,1.2974141846361836e-114,6.430490013413762e-147,OK
+gemma-3-12b-it,Control vs Emotional Identity,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+gemma-3-12b-it,Control vs Emotional Extreme,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+gemma-3-12b-it,Control vs Emotional Suicidal,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+gemma-3-12b-it,Control vs Identity,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+gemma-3-12b-it,Control vs Identity Hypothetical,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+gpt-3.5-turbo,Control vs Emotional Identity,46,254,4,296,15.333333333333332,1.3333333333333335,-13.999999999999998,1.3946014921473678e-09,9.267641396671299e-11,OK
+gpt-3.5-turbo,Control vs Emotional Extreme,46,254,12,288,15.333333333333332,4.0,-11.333333333333332,5.138150584593544e-06,2.869177894311527e-06,OK
+gpt-3.5-turbo,Control vs Emotional Suicidal,46,254,12,288,15.333333333333332,4.0,-11.333333333333332,5.138150584593544e-06,2.869177894311527e-06,OK
+gpt-3.5-turbo,Control vs Identity,46,254,14,286,15.333333333333332,4.666666666666667,-10.666666666666666,2.458613671466384e-05,1.652112563601298e-05,OK
+gpt-3.5-turbo,Control vs Identity Hypothetical,46,254,29,271,15.333333333333332,9.666666666666666,-5.666666666666666,0.048258743378447266,0.04770104792565998,OK
+gpt-3.5-turbo,Control vs Emotional,46,254,38,262,15.333333333333332,12.666666666666668,-2.6666666666666643,0.4101746007958813,0.41029285672867244,OK
+gpt-4o-mini,Control vs Emotional,19,281,300,0,6.333333333333334,100.0,93.66666666666667,3.876409716050351e-116,2.629289140998618e-149,OK
+gpt-4o-mini,Control vs Emotional Extreme,19,281,300,0,6.333333333333334,100.0,93.66666666666667,3.876409716050351e-116,2.629289140998618e-149,OK
+gpt-4o-mini,Control vs Emotional Suicidal,19,281,300,0,6.333333333333334,100.0,93.66666666666667,3.876409716050351e-116,2.629289140998618e-149,OK
+gpt-4o-mini,Control vs Emotional Identity,19,281,284,16,6.333333333333334,94.66666666666667,88.33333333333333,4.592464975651168e-103,1.1192905300962781e-123,OK
+gpt-4o-mini,Control vs Identity,19,281,272,28,6.333333333333334,90.66666666666666,84.33333333333333,3.741984045185743e-94,2.1299162400629032e-110,OK
+gpt-4o-mini,Control vs Identity Hypothetical,19,281,218,82,6.333333333333334,72.66666666666667,66.33333333333333,2.041967157150094e-61,6.618144739224772e-69,OK
+llama-3.1-8b-instruct,Control vs Emotional Identity,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+llama-3.1-8b-instruct,Control vs Emotional,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+llama-3.1-8b-instruct,Control vs Emotional Extreme,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+llama-3.1-8b-instruct,Control vs Emotional Suicidal,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+llama-3.1-8b-instruct,Control vs Identity,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+llama-3.1-8b-instruct,Control vs Identity Hypothetical,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+llama-3.2-3b-instruct,Control vs Emotional Identity,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+llama-3.2-3b-instruct,Control vs Emotional,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+llama-3.2-3b-instruct,Control vs Emotional Extreme,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+llama-3.2-3b-instruct,Control vs Emotional Suicidal,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+llama-3.2-3b-instruct,Control vs Identity,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+llama-3.2-3b-instruct,Control vs Identity Hypothetical,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+qwen2.5-7b-instruct,Control vs Emotional Identity,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+qwen2.5-7b-instruct,Control vs Emotional,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+qwen2.5-7b-instruct,Control vs Emotional Extreme,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+qwen2.5-7b-instruct,Control vs Emotional Suicidal,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+qwen2.5-7b-instruct,Control vs Identity,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+qwen2.5-7b-instruct,Control vs Identity Hypothetical,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+qwen3-8b,Control vs Emotional,0,300,12,288,0.0,4.0,4.0,0.0013381720899189318,0.0004364767001053393,OK
+qwen3-8b,Control vs Emotional Identity,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+qwen3-8b,Control vs Emotional Extreme,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+qwen3-8b,Control vs Emotional Suicidal,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+qwen3-8b,Control vs Identity,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+qwen3-8b,Control vs Identity Hypothetical,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
