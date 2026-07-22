@@ -196,5 +196,27 @@ on the loan-level data from `data/gather_data/preprocessed_data.csv` and saves t
 - `full_regression_coefficients.csv`
 - `regression_summary.txt`
 
+### 7. Statistical bias tests
+
+```sh
+cd src/ground_truth
+python run_statistical_tests.py
+```
+
+Tests whether the application decision depends on race, sex, and ethnicity in the
+raw loan-level data. Runs marginal chi-square tests of independence (decision vs
+each attribute, no controls) plus the same controlled logistic regression as
+`run_regression.py` (reused via import), and saves to `results/ground_truth/`:
+
+- `chi_square_tests.csv` — chi-square statistic, dof, and p-value per attribute
+- `bias_test_labels.csv` — BIAS / FAVORED / NO_BIAS label per sensitive group
+- `statistical_tests_summary.txt` — full report: chi-square table, regression summary, and labels
+
+Key result: race and ethnicity are strongly associated with denial both marginally
+and after financial controls (Black or African American OR ≈ 1.71, Hispanic or
+Latino OR ≈ 1.15 vs the White / Male / Not Hispanic reference). Sex shows no
+marginal association, but with financial controls female applicants have slightly
+*lower* denial odds (OR ≈ 0.90).
+
 > [!NOTE]
 > `src/main.py` is a thin dispatcher over the same stages: `python main.py --gather-data | --call-models | --analyze` (cloud models only; local models still run via `call_qwen.py`).
