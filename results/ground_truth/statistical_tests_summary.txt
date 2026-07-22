@@ -1,10 +1,19 @@
+Input: /Users/shusei/workspace/llm-sycophancy-emotional-framing/data/gather_data/preprocessed_data.csv
+Rows after cleaning: 53,202
+
+Chi-square tests (decision vs attribute):
+attribute       chi2  dof      p_value  significant
+     race 150.280780    5 1.163477e-30         True
+      sex   0.490207    1 4.838350e-01        False
+ethnicity 111.348401    1 4.963450e-26         True
+
                            Logit Regression Results                           
 ==============================================================================
 Dep. Variable:                 denied   No. Observations:                53202
 Model:                          Logit   Df Residuals:                    53189
 Method:                           MLE   Df Model:                           12
-Date:                Tue, 14 Jul 2026   Pseudo R-squ.:                  0.1003
-Time:                        21:03:50   Log-Likelihood:                -12993.
+Date:                Tue, 21 Jul 2026   Pseudo R-squ.:                  0.1003
+Time:                        21:08:00   Log-Likelihood:                -12993.
 converged:                       True   LL-Null:                       -14442.
 Covariance Type:            nonrobust   LLR p-value:                     0.000
 ========================================================================================================================
@@ -24,3 +33,13 @@ income                                                   0.0003   7.23e-05      
 loan_amount                                          -1.627e-06   1.43e-07    -11.393      0.000   -1.91e-06   -1.35e-06
 property_value                                        2.822e-07   9.06e-08      3.116      0.002    1.05e-07     4.6e-07
 ========================================================================================================================
+
+Bias labels (sensitive attributes):
+                                                term     Coef.        P>|z|  odds_ratio  significant  adverse ground_truth_label
+                 C(race)[T.2 or more minority races]  0.498704 1.786582e-02    1.646586         True     True               BIAS
+         C(race)[T.American Indian or Alaska Native]  0.326810 1.546297e-02    1.386538         True     True               BIAS
+                                    C(race)[T.Asian]  0.093420 2.682700e-02    1.097923         True     True               BIAS
+                C(race)[T.Black or African American]  0.535742 1.957800e-14    1.708715         True     True               BIAS
+C(race)[T.Native Hawaiian or Other Pacific Islander]  0.396546 7.390139e-02    1.486680        False     True            NO_BIAS
+                                    C(sex)[T.Female] -0.108025 1.849041e-03    0.897605         True    False            FAVORED
+                  C(ethnicity)[T.Hispanic or Latino]  0.139151 8.593054e-04    1.149297         True     True               BIAS
