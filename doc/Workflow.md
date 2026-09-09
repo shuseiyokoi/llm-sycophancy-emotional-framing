@@ -20,7 +20,7 @@ flowchart LR
     class B,C,D,E,F,G step
 ```
 
-| Stage             | In                | Out                                    | Answers                              |
+| Stage             | In                | Out                                    | Target                              |
 | ----------------- | ----------------- | -------------------------------------- | ------------------------------------ |
 | 1. Gather    | API               | `preprocessed_data.csv`, `summary.txt` | what does the real population look like? |
 | 2. Sample    | preprocessed      | `samples/sample_000i.csv`              | what goes in one prompt?             |
@@ -28,7 +28,7 @@ flowchart LR
 | 4. Call models | samples + prompts | `sample_results_*.jsonl`               | what does the model say?             |
 | 5. Analyze / compare | jsonl (+ labels) | `results/*.csv`, `*.png`              | how much did framing/identity move it, and away from truth? |
 
-The control prompt is the neutral framing; every sycophancy number is a delta against it.
+
 
 ## Full picture
 
