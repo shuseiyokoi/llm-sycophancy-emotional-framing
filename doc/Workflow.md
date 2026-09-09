@@ -2,6 +2,38 @@
 
 Five stages. Each lives in one folder under `src/`, writes to one folder under `data/` or `results/`, and is runnable standalone or via `src/main.py`.
 
+## At a glance
+
+**Question:** does an LLM's loan-approval answer change when the same data is wrapped in a different emotional framing or a different applicant identity — and does it drift away from what the data actually says?
+
+**Main line:** pull real mortgage data → cut it into samples → label each sample statistically → ask every model the same samples under 7 framings x N identities → compare the answers to each other and to the labels.
+
+```mermaid
+flowchart LR
+    A([HMDA API]) --> B[1. Gather<br/>filter + derive<br/>53,202 rows]
+    B --> C[2. Sample<br/>N_SAMPLES x SAMPLE_SIZE rows]
+    C --> D[3. Ground truth<br/>logit label per sample]
+    C --> E[4. Call models<br/>prompt x identity x sample<br/>GPT / Claude / Gemini / Qwen]
+    E --> F[5. Analyze<br/>approval rates,<br/>sycophancy delta vs control]
+    D --> G[5. Compare<br/>accuracy / TPR / FPR<br/>vs ground truth]
+    E --> G
+
+    classDef step fill:#f4f4f8,stroke:#8a8aa3,stroke-width:1px
+    class B,C,D,E,F,G step
+```
+
+| Stage             | In                | Out                                    | Answers                              |
+| ----------------- | ----------------- | -------------------------------------- | ------------------------------------ |
+| 1. Gather    | API               | `preprocessed_data.csv`, `summary.txt` | what does the real population look like? |
+| 2. Sample    | preprocessed      | `samples/sample_000i.csv`              | what goes in one prompt?             |
+| 3. Ground truth | samples           | `sample_labels.csv`                    | what *should* the answer be?         |
+| 4. Call models | samples + prompts | `sample_results_*.jsonl`               | what does the model say?             |
+| 5. Analyze / compare | jsonl (+ labels) | `results/*.csv`, `*.png`              | how much did framing/identity move it, and away from truth? |
+
+The control prompt is the neutral framing; every sycophancy number is a delta against it.
+
+## Full picture
+
 ```mermaid
 flowchart TD
     API([FFIEC HMDA Data Browser API]):::ext
@@ -97,13 +129,13 @@ python main.py --compare          #    -> gt_metrics_*.csv, gt_flips_*.csv
 
 All in `src/config.py`:
 
-| Knob | Effect |
-|---|---|
-| `N_SAMPLES`, `SAMPLE_SIZE`, `SAMPLE_SEED` | how many datasets, how many rows each, reproducibility |
-| `USE_SUMMARY` | prompt embeds raw CSV rows (`False`, current) or the aggregate table (`True`) |
-| `PROMPT_TYPES`, `IDENTITY_PROMPT_TYPES` | the 7 framings, and which 3 take a persona |
-| `IDENTITIES`, `SELECTED_IDENTITIES` | the persona cross product (race x ethnicity x sex x age) |
-| `GPT_/CLAUDE_/GEMINI_/QWEN_/LLAMA_/GEMMA_MODELS` | which models run |
+| Knob                                               | Effect                                                                            |
+| -------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `N_SAMPLES`, `SAMPLE_SIZE`, `SAMPLE_SEED`    | how many datasets, how many rows each, reproducibility                            |
+| `USE_SUMMARY`                                    | prompt embeds raw CSV rows (`False`, current) or the aggregate table (`True`) |
+| `PROMPT_TYPES`, `IDENTITY_PROMPT_TYPES`        | the 7 framings, and which 3 take a persona                                        |
+| `IDENTITIES`, `SELECTED_IDENTITIES`            | the persona cross product (race x ethnicity x sex x age)                          |
+| `GPT_/CLAUDE_/GEMINI_/QWEN_/LLAMA_/GEMMA_MODELS` | which models run                                                                  |
 
 Calls per model = `(non-identity prompts + identity prompts x identities) x N_SAMPLES`. The 8/31 run: `(4 + 3 x 16) x 3 = 156`.
 
