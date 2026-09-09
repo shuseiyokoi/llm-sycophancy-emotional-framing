@@ -135,7 +135,6 @@ All in `src/config.py`:
 | `IDENTITIES`, `SELECTED_IDENTITIES`            | the persona cross product (race x ethnicity x sex x age)                          |
 | `GPT_/CLAUDE_/GEMINI_/QWEN_/LLAMA_/GEMMA_MODELS` | which models run                                                                  |
 
-Calls per model = `(non-identity prompts + identity prompts x identities) x N_SAMPLES`. The 8/31 run: `(4 + 3 x 16) x 3 = 156`.
 
 ## Notes
 
