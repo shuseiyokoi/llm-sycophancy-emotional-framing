@@ -2,9 +2,7 @@
 
 Five stages. Each lives in one folder under `src/`, writes to one folder under `data/` or `results/`, and is runnable standalone or via `src/main.py`.
 
-## At a glance
-
-**Question:** does an LLM's loan-approval answer change when the same data is wrapped in a different emotional framing or a different applicant identity — and does it drift away from what the data actually says?
+## Workflow
 
 **Main line:** pull real mortgage data → cut it into samples → label each sample statistically → ask every model the same samples under 7 framings x N identities → compare the answers to each other and to the labels.
 
