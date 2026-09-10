@@ -13,8 +13,7 @@ flowchart LR
     C --> D[3. Ground truth<br/>logit label per sample]
     C --> E[4. Call models<br/>prompt x identity x sample<br/>GPT / Claude / Gemini / Qwen]
     E --> F[5. Analyze<br/>approval rates,<br/>sycophancy delta vs control]
-    D --> G[5. Compare<br/>accuracy / TPR / FPR<br/>vs ground truth]
-    E --> G
+    E --> F
 
     classDef step fill:#f4f4f8,stroke:#8a8aa3,stroke-width:1px
     class B,C,D,E,F,G step
