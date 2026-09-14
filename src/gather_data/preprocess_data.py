@@ -69,7 +69,11 @@ def preprocess_data():
 
     master = master.dropna()
 
-    # Keep only the columns you want after filtering
+    master.loc[master["derived_ethnicity"] == "Hispanic or Latino", "derived_race"] = (
+        "Hispanic or Latino"
+    )
+    master = master.drop(columns=["derived_ethnicity"])
+    summary_cols.remove("derived_ethnicity")
     master = master[summary_cols + ["action_taken"]]
 
     action_map = {

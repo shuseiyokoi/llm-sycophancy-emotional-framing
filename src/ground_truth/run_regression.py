@@ -1,7 +1,7 @@
 """
 Ground truth bias labeling via linear probability model (OLS, HC1 SEs) on HMDA loan-level data.
 
-Model: denied ~ race + sex + ethnicity + dti + ltv + income + loan_amount + property_value
+Model: denied ~ race + sex + dti + ltv + income + loan_amount + property_value
 Label: significant (p < alpha) & positive coef -> BIAS; significant & negative -> FAVORED; else NO_BIAS
 """
 
@@ -21,7 +21,7 @@ def load_and_clean(path):
     rename_map = {
         "derived_race": "race",
         "derived_sex": "sex",
-        "derived_ethnicity": "ethnicity",
+        # "derived_ethnicity": "ethnicity",
         "debt_to_income_ratio": "dti",
         "loan_to_value_ratio": "ltv",
     }
@@ -61,7 +61,7 @@ def load_and_clean(path):
     required = [
         "race",
         "sex",
-        "ethnicity",
+        # "ethnicity",
         "dti",
         "ltv",
         "income",
@@ -73,15 +73,22 @@ def load_and_clean(path):
 
     df = df[~df["race"].isin(["Race Not Available", "Free Form Text Only"])]
     df = df[~df["sex"].isin(["Sex Not Available"])]
-    df = df[~df["ethnicity"].isin(["Ethnicity Not Available"])]
+    # df = df[~df["ethnicity"].isin(["Ethnicity Not Available"])]
     return df
 
 
 def run_regression(
-    df, race_ref="White", sex_ref="Male", eth_ref="Not Hispanic or Latino"
+    df,
+    race_ref="White",
+    sex_ref="Male",
+    # eth_ref="Not Hispanic or Latino"
 ):
     df = df.copy()
-    for col, ref in [("race", race_ref), ("sex", sex_ref), ("ethnicity", eth_ref)]:
+    for col, ref in [
+        ("race", race_ref),
+        ("sex", sex_ref),
+        #  ("ethnicity", eth_ref)
+    ]:
         cats = [ref] + [c for c in sorted(df[col].unique()) if c != ref]
         df[col] = pd.Categorical(df[col], categories=cats)
 
@@ -90,16 +97,15 @@ def run_regression(
     df["property_value_k"] = df["property_value"] / 1e3
 
     formula = (
-        "denied ~ C(race) + C(sex) + C(ethnicity) "
+        "denied ~ C(race) + C(sex)"
+        #   + C(ethnicity) "
         "+ dti + ltv + income_k + loan_amount_k + property_value_k"
     )
     return smf.ols(formula, data=df).fit(cov_type="HC1")
 
 
 def extract_ground_truth_labels(lpm, alpha=0.05, adverse_if_positive=True):
-    terms = lpm.params.index[
-        lpm.params.index.str.startswith(("C(race)", "C(sex)", "C(ethnicity)"))
-    ]
+    terms = lpm.params.index[lpm.params.index.str.startswith(("C(race)", "C(sex)"))]
     out = pd.DataFrame(
         {
             "term": terms,

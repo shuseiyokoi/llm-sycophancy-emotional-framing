@@ -2,37 +2,37 @@
 ==============================================================================
 Dep. Variable:                 denied   R-squared:                       0.049
 Model:                            OLS   Adj. R-squared:                  0.049
-Method:                 Least Squares   F-statistic:                     117.9
-Date:                Mon, 14 Sep 2026   Prob (F-statistic):          8.01e-292
-Time:                        14:00:18   Log-Likelihood:                -3823.4
-No. Observations:               53202   AIC:                             7673.
-Df Residuals:                   53189   BIC:                             7788.
+Method:                 Least Squares   F-statistic:                     117.7
+Date:                Mon, 14 Sep 2026   Prob (F-statistic):          2.94e-291
+Time:                        15:17:00   Log-Likelihood:                -3828.8
+No. Observations:               53202   AIC:                             7684.
+Df Residuals:                   53189   BIC:                             7799.
 Df Model:                          12                                         
 Covariance Type:                  HC1                                         
 ========================================================================================================================
                                                            coef    std err          z      P>|z|      [0.025      0.975]
 ------------------------------------------------------------------------------------------------------------------------
-Intercept                                               -0.1834      0.010    -18.498      0.000      -0.203      -0.164
-C(race)[T.2 or more minority races]                      0.0437      0.021      2.068      0.039       0.002       0.085
-C(race)[T.American Indian or Alaska Native]              0.0291      0.013      2.293      0.022       0.004       0.054
-C(race)[T.Asian]                                         0.0047      0.003      1.853      0.064      -0.000       0.010
-C(race)[T.Black or African American]                     0.0497      0.007      6.928      0.000       0.036       0.064
-C(race)[T.Native Hawaiian or Other Pacific Islander]     0.0377      0.022      1.748      0.080      -0.005       0.080
-C(sex)[T.Female]                                        -0.0085      0.002     -3.641      0.000      -0.013      -0.004
-C(ethnicity)[T.Hispanic or Latino]                       0.0112      0.003      3.640      0.000       0.005       0.017
-dti                                                      0.0064      0.000     30.490      0.000       0.006       0.007
-ltv                                                      0.0005   7.93e-05      6.097      0.000       0.000       0.001
-income_k                                              3.888e-05   7.54e-06      5.154      0.000    2.41e-05    5.37e-05
-loan_amount_k                                           -0.0001   1.06e-05    -12.038      0.000      -0.000      -0.000
-property_value_k                                      2.804e-05    6.6e-06      4.247      0.000    1.51e-05     4.1e-05
+Intercept                                               -0.1833      0.010    -18.471      0.000      -0.203      -0.164
+C(race)[T.2 or more minority races]                      0.0321      0.024      1.366      0.172      -0.014       0.078
+C(race)[T.American Indian or Alaska Native]              0.0001      0.018      0.008      0.994      -0.035       0.035
+C(race)[T.Asian]                                         0.0054      0.003      2.085      0.037       0.000       0.010
+C(race)[T.Black or African American]                     0.0525      0.008      6.980      0.000       0.038       0.067
+C(race)[T.Hispanic or Latino]                            0.0134      0.003      4.292      0.000       0.007       0.020
+C(race)[T.Native Hawaiian or Other Pacific Islander]     0.0216      0.023      0.937      0.349      -0.024       0.067
+C(sex)[T.Female]                                        -0.0084      0.002     -3.617      0.000      -0.013      -0.004
+dti                                                      0.0064      0.000     30.455      0.000       0.006       0.007
+ltv                                                      0.0005   7.96e-05      6.087      0.000       0.000       0.001
+income_k                                              3.895e-05   7.56e-06      5.153      0.000    2.41e-05    5.38e-05
+loan_amount_k                                           -0.0001   1.06e-05    -12.043      0.000      -0.000      -0.000
+property_value_k                                      2.809e-05   6.61e-06      4.248      0.000    1.51e-05    4.11e-05
 ==============================================================================
-Omnibus:                    31644.471   Durbin-Watson:                   1.442
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):           205296.653
-Skew:                           2.986   Prob(JB):                         0.00
-Kurtosis:                      10.546   Cond. No.                     1.64e+04
+Omnibus:                    31651.056   Durbin-Watson:                   1.442
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):           205390.069
+Skew:                           2.987   Prob(JB):                         0.00
+Kurtosis:                      10.547   Cond. No.                     1.91e+04
 ==============================================================================
 
 Notes:
 [1] Standard Errors are heteroscedasticity robust (HC1)
-[2] The condition number is large, 1.64e+04. This might indicate that there are
+[2] The condition number is large, 1.91e+04. This might indicate that there are
 strong multicollinearity or other numerical problems.
