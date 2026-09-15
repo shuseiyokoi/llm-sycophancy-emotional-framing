@@ -86,9 +86,20 @@ def preprocess_data():
     )
     master["action_taken"] = master["action_taken"].map(action_map)
 
-    master.to_csv(f"{PATH_TO_DATA}preprocessed_data.csv", index=False)
 
+    # if call race_summary(master) Shows portion of race
+    def race_summary(df):
+        counts = df["derived_race"].value_counts()
+        pct = df["derived_race"].value_counts(normalize=True) * 100
+        summary = pd.DataFrame({"count": counts, "percentage": pct.round(2)})
+        summary.loc["Total"] = [counts.sum(), 100.0]
+        print(summary)
+        return summary
+
+    master.to_csv(f"{PATH_TO_DATA}preprocessed_data.csv", index=False)
     print("Preprocessed data saved as preprocessed_data.csv")
+
+    # race_summary(master) Shows portion of race
 
 
 if __name__ == "__main__":
