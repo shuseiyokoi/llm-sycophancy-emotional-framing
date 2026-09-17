@@ -87,7 +87,9 @@ def marginal_fallback_labels(df, alpha):
         if race == "White":
             continue
         rows.append(
-            fisher_term(df, df["race"] == race, df["race"] == "White", f"C(race)[T.{race}]")
+            fisher_term(
+                df, df["race"] == race, df["race"] == "White", f"C(race)[T.{race}]"
+            )
         )
     labels = pd.DataFrame(rows)
     labels["significant"] = labels["P>|z|"] < alpha
@@ -178,7 +180,9 @@ def label_samples(samples_dir=PATH_TO_SAMPLES, alpha=0.05, out_suffix=""):
     term_df = pd.concat(term_frames, ignore_index=True)
 
     summary_path = os.path.join(PATH_TO_GROUND_TRUTH, f"sample_labels{out_suffix}.csv")
-    term_path = os.path.join(PATH_TO_GROUND_TRUTH, f"sample_term_labels{out_suffix}.csv")
+    term_path = os.path.join(
+        PATH_TO_GROUND_TRUTH, f"sample_term_labels{out_suffix}.csv"
+    )
     summary_df.to_csv(summary_path, index=False)
     term_df.to_csv(term_path, index=False)
 
@@ -186,12 +190,21 @@ def label_samples(samples_dir=PATH_TO_SAMPLES, alpha=0.05, out_suffix=""):
     print(f"Per-term detail written to {term_path}")
     print("\nLabel distribution:")
     print(
-        summary_df[["bias_any", "bias_latino_female", "bias_ethnicity_hispanic", "bias_sex_female"]]
+        summary_df[
+            [
+                "bias_any",
+                "bias_latino_female",
+                "bias_ethnicity_hispanic",
+                "bias_sex_female",
+            ]
+        ]
         .mean()
         .rename("fraction_true")
         .to_string()
     )
-    print(f"\nRegression failures (Fisher fallback): {(summary_df['method'] != 'logit').sum()}")
+    print(
+        f"\nRegression failures (Fisher fallback): {(summary_df['method'] != 'logit').sum()}"
+    )
     return summary_df
 
 

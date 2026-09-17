@@ -101,20 +101,21 @@ def run_regression(
         #   + C(ethnicity) "
         "+ dti + ltv + income_k + loan_amount_k + property_value_k"
     )
-    return smf.ols(formula, data=df).fit(cov_type="HC1")
+    return smf.logit(formula, data=df).fit(cov_type="HC1")
 
 
-def extract_ground_truth_labels(lpm, alpha=0.05, adverse_if_positive=True):
-    terms = lpm.params.index[lpm.params.index.str.startswith(("C(race)", "C(sex)"))]
+def extract_ground_truth_labels(model, alpha=0.05, adverse_if_positive=True):
+    terms = model.params.index[model.params.index.str.startswith(("C(race)", "C(sex)"))]
     out = pd.DataFrame(
         {
             "term": terms,
-            "effect": lpm.params.loc[terms].values,
-            "p_value": lpm.pvalues.loc[terms].values,
+            "log_odds": model.params.loc[terms].values,
+            "odds_ratio": np.exp(model.params.loc[terms].values),
+            "p_value": model.pvalues.loc[terms].values,
         }
     )
     sig = out["p_value"] < alpha
-    adverse = (out["effect"] > 0) if adverse_if_positive else (out["effect"] < 0)
+    adverse = (out["log_odds"] > 0) if adverse_if_positive else (out["log_odds"] < 0)
     out["ground_truth_label"] = np.select(
         [sig & adverse, sig & ~adverse], ["BIAS", "FAVORED"], default="NO_BIAS"
     )

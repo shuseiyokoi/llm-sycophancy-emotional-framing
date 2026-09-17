@@ -1,38 +1,25 @@
-                            OLS Regression Results                            
+                           Logit Regression Results                           
 ==============================================================================
-Dep. Variable:                 denied   R-squared:                       0.049
-Model:                            OLS   Adj. R-squared:                  0.049
-Method:                 Least Squares   F-statistic:                     117.7
-Date:                Mon, 14 Sep 2026   Prob (F-statistic):          2.94e-291
-Time:                        15:17:00   Log-Likelihood:                -3828.8
-No. Observations:               53202   AIC:                             7684.
-Df Residuals:                   53189   BIC:                             7799.
-Df Model:                          12                                         
-Covariance Type:                  HC1                                         
-========================================================================================================================
-                                                           coef    std err          z      P>|z|      [0.025      0.975]
-------------------------------------------------------------------------------------------------------------------------
-Intercept                                               -0.1833      0.010    -18.471      0.000      -0.203      -0.164
-C(race)[T.2 or more minority races]                      0.0321      0.024      1.366      0.172      -0.014       0.078
-C(race)[T.American Indian or Alaska Native]              0.0001      0.018      0.008      0.994      -0.035       0.035
-C(race)[T.Asian]                                         0.0054      0.003      2.085      0.037       0.000       0.010
-C(race)[T.Black or African American]                     0.0525      0.008      6.980      0.000       0.038       0.067
-C(race)[T.Hispanic or Latino]                            0.0134      0.003      4.292      0.000       0.007       0.020
-C(race)[T.Native Hawaiian or Other Pacific Islander]     0.0216      0.023      0.937      0.349      -0.024       0.067
-C(sex)[T.Female]                                        -0.0084      0.002     -3.617      0.000      -0.013      -0.004
-dti                                                      0.0064      0.000     30.455      0.000       0.006       0.007
-ltv                                                      0.0005   7.96e-05      6.087      0.000       0.000       0.001
-income_k                                              3.895e-05   7.56e-06      5.153      0.000    2.41e-05    5.38e-05
-loan_amount_k                                           -0.0001   1.06e-05    -12.043      0.000      -0.000      -0.000
-property_value_k                                      2.809e-05   6.61e-06      4.248      0.000    1.51e-05    4.11e-05
-==============================================================================
-Omnibus:                    31651.056   Durbin-Watson:                   1.442
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):           205390.069
-Skew:                           2.987   Prob(JB):                         0.00
-Kurtosis:                      10.547   Cond. No.                     1.91e+04
-==============================================================================
-
-Notes:
-[1] Standard Errors are heteroscedasticity robust (HC1)
-[2] The condition number is large, 1.91e+04. This might indicate that there are
-strong multicollinearity or other numerical problems.
+Dep. Variable:                 denied   No. Observations:                88494
+Model:                          Logit   Df Residuals:                    88482
+Method:                           MLE   Df Model:                           11
+Date:                Thu, 17 Sep 2026   Pseudo R-squ.:                  0.1108
+Time:                        10:09:29   Log-Likelihood:                -19699.
+converged:                       True   LL-Null:                       -22153.
+Covariance Type:                  HC1   LLR p-value:                     0.000
+========================================================================================================
+                                           coef    std err          z      P>|z|      [0.025      0.975]
+--------------------------------------------------------------------------------------------------------
+Intercept                               -7.5569      0.175    -43.075      0.000      -7.901      -7.213
+C(race)[T.Asian]                         0.1728      0.034      5.090      0.000       0.106       0.239
+C(race)[T.Black or African American]     0.5878      0.063      9.393      0.000       0.465       0.710
+C(race)[T.Hispanic or Latino]            0.2296      0.034      6.682      0.000       0.162       0.297
+C(race)[T.Other]                         0.2266      0.141      1.612      0.107      -0.049       0.502
+C(sex)[T.Female]                        -0.1060      0.033     -3.186      0.001      -0.171      -0.041
+C(sex)[T.Joint]                         -0.1836      0.032     -5.819      0.000      -0.245      -0.122
+dti                                      0.1152      0.003     36.228      0.000       0.109       0.121
+ltv                                      0.0066      0.001      6.235      0.000       0.005       0.009
+income_k                                 0.0004   6.84e-05      5.622      0.000       0.000       0.001
+loan_amount_k                           -0.0017      0.000    -14.184      0.000      -0.002      -0.001
+property_value_k                         0.0003   6.93e-05      4.230      0.000       0.000       0.000
+========================================================================================================
