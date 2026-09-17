@@ -46,8 +46,8 @@ flowchart TD
     end
 
     subgraph S3["3. Ground truth · src/ground_truth/"]
-        LS[label_samples.py --label-samples<br/>per-sample logit, collapse rare races<br/>Fisher fallback if non-convergent]
-        RR[run_regression.py / run_statistical_tests.py<br/>full-population logit + chi-square]
+        LS[label_samples.py --label-samples<br/>per-sample logit, collapse rare races<br/>method=failed if non-convergent]
+        RR[run_regression.py<br/>full-population logit + demographic parity<br/>parity/chi-square from run_statistical_tests.py]
     end
 
     subgraph S4["4. Call models · src/call_models/ · main.py --call-models"]
@@ -71,7 +71,7 @@ flowchart TD
     SUM[(summary.txt)]:::data
     SAMP[(samples/sample_000i.csv<br/>+ _summary.txt, manifest.csv)]:::data
     GT[(sample_labels.csv<br/>sample_term_labels.csv)]:::data
-    GTF[(ground_truth_labels.csv<br/>chi_square_tests.csv<br/>statistical_tests_summary.txt)]:::out
+    GTF[(ground_truth_labels.csv<br/>demographic_parity.csv<br/>chi_square_tests.csv)]:::out
     JSONL[(call_models/<br/>sample_results_PROMPT_IDENTITY_MODEL.jsonl)]:::data
     BR[(results/benchmark/*.summary.json)]:::out
     R1[(tableresults.csv<br/>stats_vs_control.csv<br/>identity_breakdown.csv<br/>*.png)]:::out
@@ -138,5 +138,5 @@ All in `src/config.py`:
 ## Notes
 
 - **Resume is built in.** `sample_runner.completed_sample_ids()` reads the existing `.jsonl` and skips finished samples, so a crashed run restarts where it stopped.
-- **Two ground-truth paths.** `label_samples.py` labels each *sample* (feeds `--compare`); `run_regression.py` / `run_statistical_tests.py` label the *full population* (standalone reporting). Only the first is wired into scoring.
+- **Two ground-truth paths.** `label_samples.py` labels each *sample* (feeds `--compare`); `run_regression.py` labels the *full population* and reports demographic parity via `run_statistical_tests.py` (standalone reporting). Only the first is wired into scoring.
 - **Model discovery is filename-driven.** `analyze_results.py` and `compare_to_ground_truth.py` glob `sample_results_*.jsonl` rather than reading `config.py`, so they work on archived runs whose models are no longer in the config.

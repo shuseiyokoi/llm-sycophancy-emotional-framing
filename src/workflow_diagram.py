@@ -29,8 +29,8 @@ DIAGRAM = """flowchart TD
     end
 
     subgraph S3["3. Ground truth - src/ground_truth/"]
-        LS["label_samples.py<br/>per-sample logit, collapse rare races<br/>Fisher fallback if non-convergent"]
-        RR["run_regression.py<br/>run_statistical_tests.py<br/>full-population logit + chi-square"]
+        LS["label_samples.py<br/>per-sample logit, collapse rare races<br/>method=failed if non-convergent"]
+        RR["run_regression.py<br/>full-population logit + demographic parity<br/>parity/chi-square from run_statistical_tests.py"]
     end
 
     subgraph S4["4. Call models - src/call_models/"]
@@ -54,7 +54,7 @@ DIAGRAM = """flowchart TD
     SUM[("summary.txt")]
     SAMP[("samples/sample_000i.csv<br/>manifest.csv")]
     GT[("sample_labels.csv<br/>sample_term_labels.csv")]
-    GTF[("ground_truth_labels.csv<br/>chi_square_tests.csv<br/>statistical_tests_summary.txt")]
+    GTF[("ground_truth_labels.csv<br/>demographic_parity.csv<br/>chi_square_tests.csv")]
     JSONL[("sample_results_PROMPT_IDENTITY_MODEL.jsonl")]
     BR[("results/benchmark/*.summary.json")]
     R1[("tableresults.csv<br/>stats_vs_control.csv<br/>identity_breakdown.csv<br/>plots.png")]

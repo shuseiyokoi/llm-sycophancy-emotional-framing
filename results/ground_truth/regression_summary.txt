@@ -4,7 +4,7 @@ Dep. Variable:                 denied   No. Observations:                88494
 Model:                          Logit   Df Residuals:                    88482
 Method:                           MLE   Df Model:                           11
 Date:                Thu, 17 Sep 2026   Pseudo R-squ.:                  0.1108
-Time:                        10:09:29   Log-Likelihood:                -19699.
+Time:                        12:09:31   Log-Likelihood:                -19699.
 converged:                       True   LL-Null:                       -22153.
 Covariance Type:                  HC1   LLR p-value:                     0.000
 ========================================================================================================

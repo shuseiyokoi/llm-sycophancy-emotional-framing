@@ -1,8 +1,12 @@
 """
-Ground truth bias labeling via linear probability model (OLS, HC1 SEs) on HMDA loan-level data.
+Ground truth bias labeling via logistic regression (HC1 SEs) on HMDA loan-level data.
 
 Model: denied ~ race + sex + dti + ltv + income + loan_amount + property_value
 Label: significant (p < alpha) & positive coef -> BIAS; significant & negative -> FAVORED; else NO_BIAS
+
+Also reports demographic parity on the same full dataset (denial rate, parity
+difference / ratio per group + chi-square test of independence per attribute),
+using the functions in run_statistical_tests.py.
 """
 
 import sys
@@ -13,6 +17,7 @@ import statsmodels.formula.api as smf
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from config import PATH_TO_DATA, PATH_TO_GROUND_TRUTH
+from ground_truth.run_statistical_tests import run_demographic_parity
 
 
 def load_and_clean(path):
@@ -129,6 +134,16 @@ def main():
 
     df = load_and_clean(data_path)
     print(f"Rows after cleaning: {len(df):,}")
+
+    parity, chi = run_demographic_parity(df)
+    print("\nDemographic parity (denial rate per group):")
+    print(parity.to_string(index=False))
+    print("\nChi-square tests of independence (decision vs attribute):")
+    print(chi.to_string(index=False))
+    parity.to_csv(
+        os.path.join(PATH_TO_GROUND_TRUTH, "demographic_parity.csv"), index=False
+    )
+    chi.to_csv(os.path.join(PATH_TO_GROUND_TRUTH, "chi_square_tests.csv"), index=False)
 
     lpm = run_regression(df)
     print(lpm.summary())

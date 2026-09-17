@@ -1,4 +1,4 @@
-sample_id,n_rows,method,bias_any,bias_latino_female,bias_ethnicity_hispanic,bias_sex_female,p_ethnicity_hispanic,or_ethnicity_hispanic,p_sex_female,or_sex_female,n_bias_terms
-sample_0000,2000,logit,True,False,False,False,0.9640554835435114,1.0105173717225524,0.4167948173782712,1.156796569895037,1
-sample_0001,2000,logit,False,False,False,False,0.2886963367505061,1.2584050525327688,0.9442839009011903,0.9875309621359607,0
-sample_0002,2000,logit,False,False,False,False,0.5692210456453064,1.1325840565627303,0.4287826958991534,1.1568669477828042,0
+sample_id,n_rows,method,bias_any,bias_sex_female,p_sex_female,or_sex_female,n_bias_terms
+sample_0000,2000,logit,True,False,0.40059059610742087,1.1557550081844563,1
+sample_0001,2000,logit,False,False,0.8784547910955541,0.9744292076546597,0
+sample_0002,2000,logit,False,False,0.4362522271819641,1.1464042760014075,0
