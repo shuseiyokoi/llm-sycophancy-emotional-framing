@@ -62,7 +62,7 @@ def preprocess_data():
                 ]
             )
         )
-        & (~master["derived_sex"].isin(["Joint", "Sex Not Available"]))
+        & (~master["derived_sex"].isin(["Sex Not Available"]))  # Add back "Joint"
         & (master["loan_purpose"] == 1)
         & (master["property_value"] < 999995000.0)
     ]
@@ -74,6 +74,15 @@ def preprocess_data():
     )
     master = master.drop(columns=["derived_ethnicity"])
     summary_cols.remove("derived_ethnicity")
+
+    races_to_merge = [
+        "American Indian or Alaska Native",
+        "2 or more minority races",
+        "Native Hawaiian or Other Pacific Islander",
+    ]
+
+    master["derived_race"] = master["derived_race"].replace(races_to_merge, "Other")
+
     master = master[summary_cols + ["action_taken"]]
 
     action_map = {
@@ -85,7 +94,6 @@ def preprocess_data():
         lambda x: 1 if x in [1, 2] else 3
     )
     master["action_taken"] = master["action_taken"].map(action_map)
-
 
     # if call race_summary(master) Shows portion of race
     def race_summary(df):
@@ -99,7 +107,7 @@ def preprocess_data():
     master.to_csv(f"{PATH_TO_DATA}preprocessed_data.csv", index=False)
     print("Preprocessed data saved as preprocessed_data.csv")
 
-    # race_summary(master) Shows portion of race
+    race_summary(master)  # Shows portion of race
 
 
 if __name__ == "__main__":
