@@ -103,6 +103,7 @@ against ground truth (accuracy / TPR / FPR).
 cd src
 python main.py --sample-data      # data/gather_data/samples/sample_*.{csv,txt} + manifest
 python main.py --label-samples    # results/ground_truth/sample_labels.csv
+python main.py --ground-truth     # full-population parity / chi-square / logit
 # run the call scripts in src/call_models/ (outputs: data/call_models/sample_results_*.jsonl)
 python main.py --compare          # results/analyze_results/gt_metrics_*.csv, gt_flips_*.csv
 ```
@@ -232,23 +233,52 @@ Models are auto-discovered from the `sample_results_*.jsonl` files in `data/call
 
 ### 6. Ground truth regression + demographic parity
 
+One script per statistical test, each runnable on its own against all of
+`data/gather_data/preprocessed_data.csv`:
+
 ```sh
 cd src/ground_truth
-python run_regression.py
+python test_demographic_parity.py   # 1. denial rate per group
+python test_disparate_impact.py     # 2. approval rate per group, four-fifths rule
+python test_chi_square.py           # 3. is the decision independent of the attribute?
+python test_logit_population.py     # 4. same question, financial controls held fixed
 ```
 
-Runs both checks on all of `data/gather_data/preprocessed_data.csv`:
+1. **Demographic parity** (`test_demographic_parity.py`) — whether the denial
+   rate is the same for every group of a sensitive attribute (race, sex). Per
+   group: denial rate, parity difference and parity ratio vs the reference
+   group (White / Male).
+2. **Disparate impact** (`test_disparate_impact.py`) — the same comparison on
+   the *favorable* outcome: each group's approval rate as a fraction of the
+   reference group's, flagged `adverse_impact` when that ratio falls below the
+   EEOC four-fifths threshold (`--threshold`, default 0.8).
+3. **Chi-square test of independence** (`test_chi_square.py`) — the significance
+   test for the gaps above, one per attribute.
+4. **Logistic regression** (`test_logit_population.py`)
+   `denied ~ race + sex + financial controls` — the controlled bias label per
+   sensitive group.
 
-1. **Demographic parity** (functions in `run_statistical_tests.py`) — whether the
-   denial rate is the same for every group of a sensitive attribute (race, sex).
-   Per group: denial rate, parity difference and parity ratio vs the reference
-   group (White / Male); per attribute: a chi-square test of independence.
-2. **Logistic regression** `denied ~ race + sex + financial controls` — the
-   controlled bias label per sensitive group.
+Tests 1 and 2 are not reciprocals of each other: approval is `1 - denial`, so a
+group denied at 2.36× the reference rate is still approved at 0.92× it. The
+four-fifths rule is conventionally defined on the favorable outcome, which makes
+it far less sensitive than the denial-rate view whenever approval is the common
+outcome — see the key result below.
+
+To run all four off a single load of the data:
+
+```sh
+python run_all.py          # or, from src/:  python main.py --ground-truth
+```
+
+Shared code lives in `data_prep.py` (`load_and_clean`) and `model.py` (the logit,
+the BIAS/FAVORED/NO_BIAS rule, and `REFERENCES` — the one place the White/Male
+reference groups are defined). `label_samples.py` reuses both to fit the same
+model per sample.
 
 Saves to `results/ground_truth/`:
 
 - `demographic_parity.csv` — n, denial rate, parity difference and parity ratio per attribute × group
+- `disparate_impact.csv` — n, approval (selection) rate, impact difference, impact ratio and `adverse_impact` per attribute × group
 - `chi_square_tests.csv` — chi-square statistic, dof, p-value and `parity_violated` per attribute
 - `ground_truth_labels.csv` — BIAS / FAVORED / NO_BIAS label per sensitive group
 - `full_regression_coefficients.csv`
@@ -261,6 +291,14 @@ controls (Black or African American OR ≈ 1.80, Hispanic or Latino OR ≈ 1.26)
 Female vs Male denial rates are nearly equal (ratio 1.02) and with controls
 female applicants have slightly *lower* denial odds (OR ≈ 0.90) — the sex
 chi-square is driven by joint applications (ratio 0.74).
+
+The four-fifths rule flags **nothing**, for any group. Because ~92% of
+applications are approved, the worst impact ratio is Black or African American
+at 0.92 — comfortably above 0.8 — even though the same group is denied at 2.36×
+the White rate and the chi-square rejects independence at p ≈ 3e-105. This is a
+known insensitivity of the 80% rule when the favorable outcome is the common
+one, not a contradiction: `disparate_impact.csv` and `demographic_parity.csv`
+are measuring the same gaps on different scales.
 
 > [!NOTE]
 > `src/main.py` is a thin dispatcher over the same stages: `python main.py --gather-data | --call-models | --analyze` (cloud models only; local models still run via `call_qwen.py`).

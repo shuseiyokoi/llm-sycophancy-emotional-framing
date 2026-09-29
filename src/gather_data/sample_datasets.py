@@ -29,7 +29,7 @@ from config import (
 from summarize_data import build_summary
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "ground_truth"))
-from run_regression import load_and_clean
+from data_prep import load_and_clean
 
 
 def load_eligible_rows(data_path):

@@ -30,11 +30,8 @@ import pandas as pd
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from config import PATH_TO_SAMPLES, PATH_TO_GROUND_TRUTH
-from ground_truth.run_regression import (
-    load_and_clean,
-    run_regression,
-    extract_ground_truth_labels,
-)
+from data_prep import load_and_clean
+from model import run_regression, extract_ground_truth_labels
 
 SEX_TERM = "C(sex)[T.Female]"
 

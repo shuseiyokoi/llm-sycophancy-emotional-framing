@@ -17,6 +17,7 @@ from call_models import call_models
 from analyze_results import analyze_results
 from sample_datasets import sample_datasets
 from label_samples import label_samples
+from run_all import run_ground_truth
 from compare_to_ground_truth import compare_to_ground_truth
 
 
@@ -34,6 +35,11 @@ def main():
         "--label-samples",
         action="store_true",
         help="Compute ground-truth bias labels for each sample",
+    )
+    parser.add_argument(
+        "--ground-truth",
+        action="store_true",
+        help="Run the full-population ground-truth tests (parity, chi-square, logit)",
     )
     parser.add_argument(
         "--call-models", action="store_true", help="Run cloud model API calls"
@@ -59,6 +65,9 @@ def main():
 
     if args.label_samples:
         label_samples()
+
+    if args.ground_truth:
+        run_ground_truth()
 
     if args.call_models:
         call_models()
