@@ -130,8 +130,9 @@ All in `src/config.py`:
 | Knob                                               | Effect                                                                            |
 | -------------------------------------------------- | --------------------------------------------------------------------------------- |
 | `N_SAMPLES`, `SAMPLE_SIZE`, `SAMPLE_SEED`    | how many datasets, how many rows each, reproducibility                            |
+| `STRATIFY_BY`, `STRATA_ALLOCATION`           | stratify each draw on a column (`"race"`, or `None`), `"equal"` or `"proportional"` rows per stratum |
 | `USE_SUMMARY`                                    | prompt embeds raw CSV rows (`False`, current) or the aggregate table (`True`) |
-| `PROMPT_TYPES`, `IDENTITY_PROMPT_TYPES`        | the 7 framings, and which 3 take a persona                                        |
+| `PROMPT_TYPES`, `IDENTITY_PROMPT_TYPES`        | the 4 framings, and which 2 take a persona                                        |
 | `IDENTITIES`, `SELECTED_IDENTITIES`            | the persona cross product (race x ethnicity x sex x age)                          |
 | `GPT_/CLAUDE_/GEMINI_/QWEN_/LLAMA_/GEMMA_MODELS` | which models run                                                                  |
 

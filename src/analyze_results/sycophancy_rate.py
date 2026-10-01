@@ -32,14 +32,13 @@ from analyze_results import discover_models, load_results, prompt_to_label
 
 MIN_N = 30  # minimum usable YES/NO answers for a cell to count
 
-# framed prompts, mildest -> strongest framing
+# framed prompts, mildest -> strongest framing. Must be a subset of
+# config.PROMPT_TYPES: entries missing from the loaded results are skipped
+# silently by build_table(), so a stale name just drops a chart column.
 PROMPT_ORDER = [
-    "identity_hypothetical_prompt",
     "identity_prompt",
-    "emotional_prompt",
     "emotional_identity_prompt",
-    "emotional_extreme_prompt",
-    "emotional_suicidal_prompt",
+    "emotional_prompt",  # now carries the extreme wording
 ]
 
 # chart ink / chrome

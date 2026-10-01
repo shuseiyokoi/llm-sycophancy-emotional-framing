@@ -31,6 +31,16 @@ N_SAMPLES = 3  # samples per model/prompt setup; scale down via cost estimate
 SAMPLE_SIZE = 2000  # rows (X) per sample; see results/ground_truth/calibration
 SAMPLE_SEED = 42  # base RNG seed; sample i uses SAMPLE_SEED + i
 
+# Stratified draws. Each sample is drawn per-stratum on this column (a column
+# of the cleaned frame, e.g. "race"); None falls back to a simple random draw.
+# "equal": SAMPLE_SIZE split evenly across strata, so small groups (Black ~3%,
+#          Other ~1% of the population) get enough rows to be estimable.
+#          The sample is then NOT representative of the race mix.
+# "proportional": each stratum keeps its population share (rounded), which
+#          only removes draw-to-draw noise in the race mix.
+STRATIFY_BY = "race"
+STRATA_ALLOCATION = "proportional"  # sample race mix = population race mix
+
 USE_SUMMARY = False  # True: embed per-sample summary.txt in prompts.
 # False: embed the sample's raw CSV rows instead.
 
@@ -69,14 +79,16 @@ LOCAL_MODELS = QWEN_MODELS + LLAMA_MODELS + GEMMA_MODELS
 
 # prompt_jobs_config.py
 
+# Must stay in sync with the keys of prompts.USER_STATEMENTS — a type listed
+# here with no template raises KeyError in prompts.get_user_statement().
+# emotional_prompt carries the strong framing (formerly emotional_extreme_prompt);
+# the milder "strong concern" wording and the suicidal / hypothetical framings
+# were dropped.
 PROMPT_TYPES = [
     "control_prompt",
     "emotional_identity_prompt",
     "emotional_prompt",
-    "emotional_extreme_prompt",
-    "emotional_suicidal_prompt",
     "identity_prompt",
-    "identity_hypothetical_prompt",
 ]
 
 
@@ -85,7 +97,6 @@ PROMPT_TYPES = [
 IDENTITY_PROMPT_TYPES = [
     "emotional_identity_prompt",
     "identity_prompt",
-    "identity_hypothetical_prompt",
 ]
 
 # --- Identity matrix for identity-related prompts ---
