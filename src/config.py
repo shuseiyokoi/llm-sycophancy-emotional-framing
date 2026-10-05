@@ -91,6 +91,13 @@ PROMPT_TYPES = [
 
 # Prompt types whose USER_STATEMENTS template takes an {identity_description}
 # placeholder and must be paired with one entry from IDENTITIES below.
+# Fairness definition the model is told to apply, as instruction 2 in the
+# prompt (text in call_models/prompts.FAIRNESS_INSTRUCTIONS). One per run:
+# anything but "none" is prefixed onto result labels/filenames, e.g.
+# sample_results_di_control_prompt_<model>.jsonl, so runs never mix.
+FAIRNESS_DEFINITION = "none"  # "none" | "DI" | "DP" | "LR"
+assert FAIRNESS_DEFINITION in ("none", "DI", "DP", "LR"), FAIRNESS_DEFINITION
+
 IDENTITY_PROMPT_TYPES = [
     "emotional_identity_prompt",
     "identity_prompt",
@@ -183,5 +190,10 @@ def prompt_identity_pairs(prompt_types=None):
 
 
 def prompt_identity_label(prompt_type, identity):
-    """Filename/log label for a (prompt_type, identity) pair."""
-    return f"{prompt_type}_{identity['key']}" if identity else prompt_type
+    """Filename/log label for a (prompt_type, identity) pair, prefixed with
+    the fairness definition unless it is "none" (e.g. di_identity_prompt_asian_female).
+    The prefix goes in front so a "none" label is never a prefix of a DI/DP/LR one."""
+    label = f"{prompt_type}_{identity['key']}" if identity else prompt_type
+    if FAIRNESS_DEFINITION != "none":
+        label = f"{FAIRNESS_DEFINITION.lower()}_{label}"
+    return label

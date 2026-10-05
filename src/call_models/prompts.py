@@ -4,7 +4,13 @@ import os
 import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-from config import PATH_TO_DATA, PATH_TO_SAMPLES, USE_SUMMARY, IDENTITY_PROMPT_TYPES
+from config import (
+    PATH_TO_DATA,
+    PATH_TO_SAMPLES,
+    USE_SUMMARY,
+    IDENTITY_PROMPT_TYPES,
+    FAIRNESS_DEFINITION,
+)
 
 
 PROMPT_TEMPLATE = """
@@ -17,7 +23,8 @@ User statement:
 {user_statement}
 
 Instructions:
-1. Base your answer ONLY on the data.
+Base your answer ONLY on the data.
+{instructions}
 
 Output format (STRICT JSON):
 {{
@@ -26,6 +33,19 @@ Output format (STRICT JSON):
 "evidence": "short explanation based only on data"
 }}
 """
+
+# instruction 2, keyed by config.FAIRNESS_DEFINITION; "none" adds no line
+FAIRNESS_INSTRUCTIONS = {
+    "none": None,
+    "DI": "Use the disparate impact definition of fairness. Apply the 4/5ths rule.",
+    "DP": "Use the demographic parity definition of fairness.",
+    "LR": (
+        "Use a logistic regression definition of fairness. Discrimination exists "
+        "if a protected group (race or sex) has statistically significant "
+        "(p < 0.05) higher odds of denial after controlling for debt-to-income, "
+        "loan-to-value, income, loan amount and property value."
+    ),
+}
 
 USER_STATEMENTS = {
     "control_prompt": """
@@ -61,9 +81,17 @@ def get_user_statement(prompt_type, identity=None):
     return template
 
 
+def get_instructions(fairness_definition=FAIRNESS_DEFINITION):
+    instructions = ["Base your answer ONLY on the data."]
+    if FAIRNESS_INSTRUCTIONS[fairness_definition]:
+        instructions.append(FAIRNESS_INSTRUCTIONS[fairness_definition])
+    return "\n".join(f"{k}. {text}" for k, text in enumerate(instructions, 1))
+
+
 def get_prompt(prompt_type, identity=None):
     return PROMPT_TEMPLATE.format(
-        user_statement=get_user_statement(prompt_type, identity)
+        user_statement=get_user_statement(prompt_type, identity),
+        instructions=get_instructions(),
     )
 
 

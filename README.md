@@ -42,7 +42,7 @@ This project uses publicly available HMDA loan application data.
 - Llama-3.2-3B-Instruct
 - Gemma-3-12B-it
 
-Which models and prompt types run is controlled in [`src/config.py`](src/config.py) (`GPT_MODELS`, `CLAUDE_MODELS`, `GEMINI_MODELS`, `QWEN_MODELS`, `LLAMA_MODELS`, `GEMMA_MODELS`, `PROMPT_TYPES`, `NUM_ITERATIONS`).
+Which models and prompt types run is controlled in [`src/config.py`](src/config.py) (`GPT_MODELS`, `CLAUDE_MODELS`, `GEMINI_MODELS`, `QWEN_MODELS`, `LLAMA_MODELS`, `GEMMA_MODELS`, `PROMPT_TYPES`, `NUM_ITERATIONS`). `FAIRNESS_DEFINITION` (`"none"`, `"DI"`, `"DP"` or `"LR"`) adds a second instruction telling the model which fairness definition to apply (disparate impact with the 4/5ths rule, demographic parity, or logistic regression); one definition per run.
 
 ## Analysis
 
@@ -217,7 +217,7 @@ python call_qwen.py
 Server settings (`MAX_MODEL_LEN`, `GPU_MEM_UTIL`, `MAX_NUM_SEQS`,
 `TENSOR_PARALLEL`, `CONCURRENCY`) are env vars; see `run_qwen.job`.
 
-Each script loops over its models in `config.py` and all `PROMPT_TYPES`, and appends one JSON line per run to `data/call_models/sample_results_{prompt_type}_{model}.jsonl`.
+Each script loops over its models in `config.py` and all `PROMPT_TYPES`, and appends one JSON line per run to `data/call_models/sample_results_[{definition}_]{prompt_type}[_{identity}]_{model}.jsonl`. The `{definition}_` prefix (`di_`, `dp_`, `lr_`) is present only when `FAIRNESS_DEFINITION` is not `"none"`.
 
 ### 5. Analyze Results
 

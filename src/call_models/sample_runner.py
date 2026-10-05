@@ -4,7 +4,8 @@ Shared loop for the per-sample design: one API call per (model, prompt, sample).
 Each provider script supplies a `send_fn(prompt_text) -> raw response text`;
 this module handles sample iteration, JSON parsing, resume, and output rows.
 
-Output rows (jsonl): {"sample_id", "model", "prompt_type", "response"}.
+Output rows (jsonl): {"sample_id", "model", "prompt_type", "identity",
+"fairness_definition", "response"}.
 """
 
 import json
@@ -13,6 +14,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from prompts import list_sample_ids, get_sample_prompt
+from config import FAIRNESS_DEFINITION  # importable once prompts has set sys.path
 
 
 def parse_json_response(raw_text):
@@ -102,6 +104,7 @@ def run_sample_set(
             "model": model_name,
             "prompt_type": prompt_name,
             "identity": identity["key"] if identity else None,
+            "fairness_definition": FAIRNESS_DEFINITION,
             "response": parsed_response,
         }
 

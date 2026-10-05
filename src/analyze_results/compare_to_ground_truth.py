@@ -2,7 +2,8 @@
 Compare per-sample model decisions to per-sample ground truth labels.
 
 Inputs:
-  data/call_models/sample_results_{prompt_type}[_{identity_key}]_{model}.jsonl  (call stage)
+  data/call_models/sample_results_[{definition}_]{prompt_type}[_{identity_key}]_{model}.jsonl
+                                                                               (call stage)
   results/ground_truth/sample_labels.csv                                       (label stage)
   results/ground_truth/sample_term_labels.csv                                  (label stage)
 
@@ -21,6 +22,9 @@ is a race value) or sex (if Female) was significant & adverse in that sample.
 An identity that is the reference category on both axes (White, Male) has no
 such term, so its ground truth is False for every sample — there is no "bias
 against the reference group" term to test.
+
+Only the results for config.FAIRNESS_DEFINITION are read. Ground truth is the
+logistic-regression labels whatever definition the model was given.
 
 Outputs (results/analyze_results/):
   gt_metrics_by_model_prompt.csv  (one row per model x prompt_type x identity)
