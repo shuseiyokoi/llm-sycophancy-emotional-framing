@@ -10,6 +10,7 @@ Output rows (jsonl): {"sample_id", "model", "prompt_type", "response"}.
 import json
 import os
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from prompts import list_sample_ids, get_sample_prompt
 
@@ -56,6 +57,15 @@ def completed_sample_ids(output_file):
     return done
 
 
+def call_and_parse(send_fn, prompt_name, sample_id, identity):
+    """One model call -> parsed response; errors are recorded, never raised."""
+    try:
+        raw_text = send_fn(get_sample_prompt(prompt_name, sample_id, identity))
+        return parse_json_response(raw_text.strip())
+    except Exception as e:
+        return {"error": str(e)}
+
+
 def run_sample_set(
     send_fn,
     model_name,
@@ -64,10 +74,15 @@ def run_sample_set(
     sample_ids=None,
     sleep_s=1.0,
     identity=None,
+    workers=1,
 ):
     """`identity` (an entry from config.IDENTITIES) is required when
     prompt_name is one of config.IDENTITY_PROMPT_TYPES; get_sample_prompt
-    raises otherwise."""
+    raises otherwise.
+
+    workers > 1 sends that many requests concurrently (for a local vLLM
+    server); rows are still written one at a time from this thread, in
+    completion order, and `sleep_s` is ignored."""
     if sample_ids is None:
         sample_ids = list_sample_ids()
 
@@ -81,13 +96,7 @@ def run_sample_set(
         print(f"{model_name} | {label}: all {len(sample_ids)} samples complete")
         return
 
-    for sample_id in pending:
-        try:
-            raw_text = send_fn(get_sample_prompt(prompt_name, sample_id, identity))
-            parsed_response = parse_json_response(raw_text.strip())
-        except Exception as e:
-            parsed_response = {"error": str(e)}
-
+    def record(sample_id, parsed_response):
         result = {
             "sample_id": sample_id,
             "model": model_name,
@@ -100,6 +109,19 @@ def run_sample_set(
             f.write(json.dumps(result, ensure_ascii=False) + "\n")
 
         print(f"{model_name} | {label} | {sample_id}: {parsed_response}")
+
+    if workers > 1:
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            futures = {
+                pool.submit(call_and_parse, send_fn, prompt_name, s, identity): s
+                for s in pending
+            }
+            for future in as_completed(futures):
+                record(futures[future], future.result())
+        return
+
+    for sample_id in pending:
+        record(sample_id, call_and_parse(send_fn, prompt_name, sample_id, identity))
 
         if sleep_s:
             time.sleep(sleep_s)

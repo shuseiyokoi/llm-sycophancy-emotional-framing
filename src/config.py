@@ -7,7 +7,7 @@ ROOT_DIR = os.path.dirname(SRC_DIR)
 
 # One designated output folder per pipeline stage:
 # 1. src/gather_data/       -> data/gather_data/
-# 2. src/local_qwen/        -> (model weights only, no pipeline outputs)
+# 2. local model server     -> results/logs/ (vLLM, started by call_models/call_qwen.py)
 # 3. src/call_models/       -> data/call_models/
 # 4. src/analyze_results/   -> results/analyze_results/
 # 5. src/ground_truth/      -> results/ground_truth/
@@ -17,9 +17,6 @@ PATH_TO_MODEL_RESULTS = os.path.join(ROOT_DIR, "data", "call_models") + os.sep
 PATH_TO_RESULTS = os.path.join(ROOT_DIR, "results", "analyze_results") + os.sep
 PATH_TO_GROUND_TRUTH = os.path.join(ROOT_DIR, "results", "ground_truth") + os.sep
 
-# llama.cpp server + GGUF weights for the local models
-LOCAL_QWEN_DIR = os.path.join(SRC_DIR, "local_qwen")
-
 
 # --- Sampling design ---
 # N distinct datasets are drawn from the cleaned loan-level data. Each sample
@@ -27,7 +24,7 @@ LOCAL_QWEN_DIR = os.path.join(SRC_DIR, "local_qwen")
 # bias label (logistic regression on the sample's raw rows). Every model x
 # prompt condition is run once per sample, so flips on EXACTLY the same data
 # can be measured pairwise against the control prompt.
-N_SAMPLES = 3  # samples per model/prompt setup; scale down via cost estimate
+N_SAMPLES = 300  # samples per model/prompt setup; scale down via cost estimate
 SAMPLE_SIZE = 2000  # rows (X) per sample; see results/ground_truth/calibration
 SAMPLE_SEED = 42  # base RNG seed; sample i uses SAMPLE_SEED + i
 
@@ -74,7 +71,7 @@ GEMMA_MODELS = [
     "gemma-3-12b-it",
 ]
 
-# All models served locally with llama.cpp (see call_qwen.py / local_qwen)
+# All models served locally with vLLM (see call_models/call_qwen.py)
 LOCAL_MODELS = QWEN_MODELS + LLAMA_MODELS + GEMMA_MODELS
 
 # prompt_jobs_config.py
@@ -100,76 +97,66 @@ IDENTITY_PROMPT_TYPES = [
 ]
 
 # --- Identity matrix for identity-related prompts ---
-# race x ethnicity x sex x age. race/ethnicity/sex match the regression terms
-# already scored in results/ground_truth/sample_term_labels.csv (C(race)[...],
-# C(ethnicity)[T.Hispanic or Latino], C(sex)[T.Female]), so model responses
-# for a given identity can be compared against that identity's ground-truth
-# bias term. Age is not a modeled bias covariate (no C(age)[...] term exists),
-# so ground truth is the same across ages for otherwise-identical identities
-# — age only varies the prompt wording.
+# race x sex. Hispanic or Latino is a race value here, matching the cleaned
+# data (preprocess_data.py folds derived_ethnicity into derived_race), so
+# there is no separate ethnicity axis. race/sex match the regression terms
+# scored in results/ground_truth/sample_term_labels.csv (C(race)[T.<race>],
+# C(sex)[T.Female]), so model responses for a given identity can be compared
+# against that identity's ground-truth bias term. Reference groups are White
+# and Male (ground_truth/model.py REFERENCES). "Other" and sex "Joint" stay in
+# the data and regression but are not identities: Other is ~1% of the
+# population, and Joint describes a co-applied loan, not a person.
 IDENTITY_RACES = [
     "White",
     "Black or African American",
-    # "Asian",
-    # "American Indian or Alaska Native",
-    # "Other or multiple minority races",
+    "Hispanic or Latino",
+    "Asian",
+    # "Other",  # must match the cleaned data's label exactly
 ]
-IDENTITY_ETHNICITIES = ["Hispanic or Latino", "Not Hispanic or Latino"]
 IDENTITY_SEXES = ["Female", "Male"]
-IDENTITY_AGES = [35, 55]  # 35 matches the original single-identity prompt wording
 
 _RACE_KEYS = {
     "White": "white",
     "Black or African American": "black",
-    # "Asian": "asian",
-    # "American Indian or Alaska Native": "aian",
-    # "Other or multiple minority races": "other",
-}
-_ETHNICITY_KEYS = {
     "Hispanic or Latino": "hispanic",
-    "Not Hispanic or Latino": "nonhispanic",
+    "Asian": "asian",
+    "Other": "other",
 }
 _SEX_KEYS = {"Female": "female", "Male": "male"}
 
 
-def make_identity(race, ethnicity, sex, age):
+def make_identity(race, sex):
     return {
-        "key": f"{_RACE_KEYS[race]}_{_ETHNICITY_KEYS[ethnicity]}_{_SEX_KEYS[sex]}_age{age}",
-        "age": age,
+        "key": f"{_RACE_KEYS[race]}_{_SEX_KEYS[sex]}",
         "race": race,
-        "ethnicity": ethnicity,
         "sex": sex,
     }
 
 
 IDENTITIES = [
-    make_identity(race, ethnicity, sex, age)
-    for race in IDENTITY_RACES
-    for ethnicity in IDENTITY_ETHNICITIES
-    for sex in IDENTITY_SEXES
-    for age in IDENTITY_AGES
+    make_identity(race, sex) for race in IDENTITY_RACES for sex in IDENTITY_SEXES
 ]
 
 # Restrict prompt_identity_pairs() to a specific subset of identities instead
 # of the full IDENTITIES cross product — e.g. to cheaply test 1-2 identities
-# instead of all of them. Build entries with make_identity(race, ethnicity,
-# sex, age); age does not need to be one of IDENTITY_AGES. Leave empty ([]) to
-# run every identity in IDENTITIES (the default).
+# instead of all of them. Build entries with make_identity(race, sex); race
+# does not need to be one of IDENTITY_RACES (e.g. "Other"). Leave empty ([])
+# to run every identity in IDENTITIES (the default).
 #
 # Example:
 #   SELECTED_IDENTITIES = [
-#       make_identity("Black or African American", "Hispanic or Latino", "Female", 35),
-#       make_identity("Asian", "Not Hispanic or Latino", "Male", 56),
+#       make_identity("Hispanic or Latino", "Female"),
+#       make_identity("Other", "Male"),
 #   ]
 SELECTED_IDENTITIES = []
 
 
 def all_known_identities():
     """IDENTITIES plus any SELECTED_IDENTITIES entries not already in it
-    (e.g. a custom age outside IDENTITY_AGES). Downstream analysis scripts
-    use this — not IDENTITIES directly — to look up an identity's
-    race/ethnicity/sex/age from its key, so a SELECTED_IDENTITIES run with a
-    custom age still resolves correctly."""
+    (e.g. a race outside IDENTITY_RACES). Downstream analysis scripts use
+    this — not IDENTITIES directly — to look up an identity's race/sex from
+    its key, so a SELECTED_IDENTITIES run with such an identity still
+    resolves correctly."""
     seen = {identity["key"] for identity in IDENTITIES}
     extra = [
         identity for identity in SELECTED_IDENTITIES if identity["key"] not in seen

@@ -1,5 +1,5 @@
 """
-Standalone latency/token/memory benchmark for one local llama.cpp model x
+Standalone latency/token/memory benchmark for one local vLLM-served model x
 one prompt type, over N samples. Does not touch the real pipeline output
 (data/call_models/) or any existing config/call_* files.
 
@@ -67,6 +67,7 @@ def run_one_call(client, model_name, prompt_type, sample_id, iteration):
             model=model_name,
             max_tokens=1024,
             messages=[{"role": "user", "content": prompt_text}],
+            extra_body=LOCAL_SERVER_CONFIG[model_name].get("request_extra"),
         )
         latency_s = time.perf_counter() - t0
         usage = completion.usage
@@ -169,7 +170,7 @@ def run_benchmark(model_name, prompt_type, n_samples):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Latency/token/memory benchmark for one or more local llama.cpp models x one prompt type."
+        description="Latency/token/memory benchmark for one or more local vLLM-served models x one prompt type."
     )
     parser.add_argument(
         "--model", nargs="+", default=None, choices=sorted(LOCAL_SERVER_CONFIG.keys()),

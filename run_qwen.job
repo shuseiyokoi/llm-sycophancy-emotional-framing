@@ -1,23 +1,38 @@
 #!/bin/bash
 
 #SBATCH --job-name=qwen_sycophancy
-#SBATCH --time=8:00:00
+#SBATCH --time=48:00:00
 #SBATCH --partition=gpu
 #SBATCH --account=jonmay_1426
-#SBATCH --gres=gpu:1
-#SBATCH --cpus-per-task=4
+# TODO: pick a GPU type. vLLM needs compute capability >= 7.0, so NOT p100.
+# a100 (40/80GB) is the comfortable choice for ~112k-token prompts; on a40 / l40s
+# (48GB) gemma-3-12b may need fp8 KV cache or TENSOR_PARALLEL=2 with gpu:<type>:2
+#SBATCH --gres=gpu:a100:1
+#SBATCH --cpus-per-task=8
 #SBATCH --mem-per-cpu=8GB
 
 # ---- adjust these paths to where things live on Discovery ----
 REPO=/project2/jonmay_1426/syokoi/llm-sycophancy-emotional-framing
-VENV=/project2/jonmay_1426/syokoi/env_general
-# path to a CUDA build of llama.cpp's server binary
-export LLAMA_SERVER=/project2/jonmay_1426/syokoi/llama.cpp/build/bin/llama-server
+VENV=/project2/jonmay_1426/syokoi/env_general  # needs `pip install vllm`
 
 source "$VENV/bin/activate"
 module load cuda
 
-# call_qwen.py starts and stops the llama.cpp server itself,
-# once per model in config.LOCAL_MODELS
+# HF weights are downloaded on first use; keep them in project storage, not $HOME.
+# Llama 3.x and Gemma 3 are gated: accept their licences on huggingface.co and
+# set HF_TOKEN (or run `huggingface-cli login` once).
+export HF_HOME=/project2/jonmay_1426/syokoi/hf_cache
+# export HF_TOKEN=...
+
+# ---- vLLM knobs (defaults in call_qwen.py) ----
+# export MAX_MODEL_LEN=120000   # raw-mode prompts run up to ~111.6k tokens
+# export GPU_MEM_UTIL=0.90
+# export MAX_NUM_SEQS=16        # sequences the server batches together
+# export TENSOR_PARALLEL=1      # must match the GPU count in --gres
+# export CONCURRENCY=16         # requests call_qwen.py keeps in flight
+
+# call_qwen.py starts and stops the vLLM server itself, once per model in
+# config.LOCAL_MODELS (logs in results/logs/vllm_<model>.log). Re-submitting
+# resumes where the last job stopped.
 cd "$REPO/src/call_models"
 python call_qwen.py

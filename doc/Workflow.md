@@ -55,7 +55,7 @@ flowchart TD
         PI[config.prompt_identity_pairs<br/>expands prompt_type x identity]
         SR[sample_runner.py<br/>loop samples, parse JSON, resume]
         CLOUD[call_chatGPT.py<br/>call_claude.py<br/>call_gemini.py]
-        LOCAL[call_qwen.py<br/>via local_qwen/Makefile: make serve]
+        LOCAL[call_qwen.py<br/>starts vLLM server]
         RP[repair_raw_text.py<br/>re-parse failed rows]
         BM[benchmark_local_model.py<br/>latency / tokens / JSON validity]
     end
@@ -115,8 +115,7 @@ cd call_models                    # 4. one call per (model x prompt x identity x
 python call_chatGPT.py            #    cloud
 python call_claude.py
 python call_gemini.py
-cd ../local_qwen && make serve    #    local: terminal 1
-cd ../call_models && python call_qwen.py   #      terminal 2
+python call_qwen.py               #    local (vLLM, GPU node; or sbatch run_qwen.job)
 
 cd ../                            # 5.
 python main.py --analyze          #    -> results/analyze_results/*.png + .csv

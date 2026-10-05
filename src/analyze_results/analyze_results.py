@@ -50,7 +50,7 @@ def safe_name(model_name):
 
 
 def identity_axis_label(identity_key):
-    return identity_key.replace("_age", " age ").replace("_", " ")
+    return identity_key.replace("_", " ")
 
 
 def discover_models():
@@ -156,7 +156,9 @@ def load_results(model_names):
                             "prompt": prompt_to_label(prompt_type),
                             "identity": identity["key"] if identity else None,
                             "conclusion": normalize_conclusion(response["conclusion"]),
-                            "conclusion_raw": str(response["conclusion"]).strip().upper(),
+                            "conclusion_raw": str(response["conclusion"])
+                            .strip()
+                            .upper(),
                             "confidence": response.get("confidence"),
                         }
                     )
@@ -215,7 +217,11 @@ def conclusion_counts(df_model, group_col="prompt"):
 def identity_order(table_index):
     """Known-identity order restricted to the identity keys actually present."""
     present = set(table_index)
-    return [identity["key"] for identity in all_known_identities() if identity["key"] in present]
+    return [
+        identity["key"]
+        for identity in all_known_identities()
+        if identity["key"] in present
+    ]
 
 
 def colors_for(columns):
@@ -330,7 +336,9 @@ def plot_conclusion_counts_by_identity(df, model_names):
     single bar per prompt type."""
     for model_name in model_names:
         for prompt_type in IDENTITY_PROMPT_TYPES:
-            df_sub = df[(df["model"] == model_name) & (df["prompt_type"] == prompt_type)]
+            df_sub = df[
+                (df["model"] == model_name) & (df["prompt_type"] == prompt_type)
+            ]
             if df_sub.empty:
                 continue
 
@@ -368,7 +376,9 @@ def plot_conclusion_percentages_by_identity(df, model_names):
     a single bar per prompt type."""
     for model_name in model_names:
         for prompt_type in IDENTITY_PROMPT_TYPES:
-            df_sub = df[(df["model"] == model_name) & (df["prompt_type"] == prompt_type)]
+            df_sub = df[
+                (df["model"] == model_name) & (df["prompt_type"] == prompt_type)
+            ]
             if df_sub.empty:
                 continue
 
@@ -376,7 +386,8 @@ def plot_conclusion_percentages_by_identity(df, model_names):
             table = table.reindex(identity_order(table.index))
             percent_table = table.div(table.sum(axis=1), axis=0) * 100
             percent_table.index = [
-                f"{identity_axis_label(k)} (n={n})" for k, n in zip(table.index, table.sum(axis=1))
+                f"{identity_axis_label(k)} (n={n})"
+                for k, n in zip(table.index, table.sum(axis=1))
             ]
 
             ax = percent_table.plot(
@@ -565,7 +576,7 @@ def identity_breakdown(df):
     the identity-framed prompt types only. The plots above pool all
     identities into one aggregate bar per prompt type; this is the
     supplementary per-identity detail that pooling hides (e.g. whether YES
-    rate differs by race/ethnicity/sex within identity_prompt)."""
+    rate differs by race/sex within identity_prompt)."""
     id_df = df[df["prompt_type"].isin(IDENTITY_PROMPT_TYPES)]
     if id_df.empty:
         return pd.DataFrame()
@@ -581,7 +592,6 @@ def identity_breakdown(df):
                 "prompt_type": prompt_type,
                 "identity": identity_key,
                 "race": identity.get("race"),
-                "ethnicity": identity.get("ethnicity"),
                 "sex": identity.get("sex"),
                 "n": len(g),
                 "yes_rate": (g["conclusion"] == "YES").mean(),
@@ -626,7 +636,9 @@ def analyze_results():
     id_breakdown_df = identity_breakdown(df)
     if not id_breakdown_df.empty:
         id_breakdown_df.to_csv(f"{PATH_TO_RESULTS}identity_breakdown.csv", index=False)
-        print(f"\nIdentity breakdown ({len(id_breakdown_df)} rows) saved to identity_breakdown.csv")
+        print(
+            f"\nIdentity breakdown ({len(id_breakdown_df)} rows) saved to identity_breakdown.csv"
+        )
 
     print(f"\nPlots and CSVs saved to {PATH_TO_RESULTS}")
     return df, stats_df

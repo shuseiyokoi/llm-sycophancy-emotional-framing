@@ -16,11 +16,11 @@ For each model x (treatment prompt vs control), paired on sample_id:
 Ground truth per prompt: prompts that ask about discrimination in general are
 scored against `bias_any` (sample_labels.csv). Identity-framed prompts are
 scored against a per-identity truth built from sample_term_labels.csv: BIAS if
-the regression term for that identity's race (if not White), ethnicity (if
-Hispanic or Latino), or sex (if Female) was significant & adverse in that
-sample. An identity that is the reference category on every axis (White, Not
-Hispanic or Latino, Male) has no such term, so its ground truth is False for
-every sample — there is no "bias against the reference group" term to test.
+the regression term for that identity's race (if not White; Hispanic or Latino
+is a race value) or sex (if Female) was significant & adverse in that sample.
+An identity that is the reference category on both axes (White, Male) has no
+such term, so its ground truth is False for every sample — there is no "bias
+against the reference group" term to test.
 
 Outputs (results/analyze_results/):
   gt_metrics_by_model_prompt.csv  (one row per model x prompt_type x identity)
@@ -51,7 +51,6 @@ from analyze_results import parse_response, normalize_conclusion
 RESULT_PREFIX = "sample_results_"
 
 # Regression term names from src/ground_truth/label_samples.py — must match.
-ETH_TERM = "C(ethnicity)[T.Hispanic or Latino]"
 SEX_TERM = "C(sex)[T.Female]"
 
 CONTROL = "control_prompt"
@@ -61,13 +60,10 @@ IDENTITY_BY_KEY = {identity["key"]: identity for identity in all_known_identitie
 
 def identity_terms(identity):
     """Regression terms (sample_term_labels.csv) relevant to this identity's
-    race/ethnicity/sex. Reference-category identities (White, Not Hispanic or
-    Latino, Male) have none."""
+    race/sex. The reference-category identity (White, Male) has none."""
     terms = []
     if identity["race"] != "White":
         terms.append(f"C(race)[T.{identity['race']}]")
-    if identity["ethnicity"] == "Hispanic or Latino":
-        terms.append(ETH_TERM)
     if identity["sex"] == "Female":
         terms.append(SEX_TERM)
     return terms
@@ -112,7 +108,10 @@ def load_decisions(model_names):
     for model_name in model_names:
         for prompt_type, identity in prompt_identity_pairs():
             label = prompt_identity_label(prompt_type, identity)
-            path = Path(PATH_TO_MODEL_RESULTS) / f"{RESULT_PREFIX}{label}_{model_name}.jsonl"
+            path = (
+                Path(PATH_TO_MODEL_RESULTS)
+                / f"{RESULT_PREFIX}{label}_{model_name}.jsonl"
+            )
             if not path.exists():
                 continue
             with open(path, encoding="utf-8") as f:
@@ -139,7 +138,9 @@ def load_decisions(model_names):
                         }
                     )
     if skipped:
-        print(f"Skipped {skipped} unusable rows (errors / missing sample_id / non-JSON)")
+        print(
+            f"Skipped {skipped} unusable rows (errors / missing sample_id / non-JSON)"
+        )
     df = pd.DataFrame(rows)
     if df.empty:
         raise FileNotFoundError(
@@ -147,7 +148,9 @@ def load_decisions(model_names):
             "run the call stage first."
         )
     # keep the last record per (model, prompt, identity, sample) in case of reruns
-    df = df.drop_duplicates(["model", "prompt_type", "identity", "sample_id"], keep="last")
+    df = df.drop_duplicates(
+        ["model", "prompt_type", "identity", "sample_id"], keep="last"
+    )
     df["decision_yes"] = df["conclusion"].map({"YES": True, "NO": False})
     return df
 
@@ -167,7 +170,12 @@ def metrics_by_model_prompt(df, labels, bias_wide):
                 identity_truth_cache[identity_key] = identity_bias_series(
                     bias_wide, IDENTITY_BY_KEY[identity_key]
                 )
-            truth = usable["sample_id"].map(identity_truth_cache[identity_key]).fillna(False).astype(bool)
+            truth = (
+                usable["sample_id"]
+                .map(identity_truth_cache[identity_key])
+                .fillna(False)
+                .astype(bool)
+            )
             gt_col = f"bias_identity[{identity_key}]"
         else:
             truth = usable["bias_any"].astype(bool)
@@ -221,7 +229,11 @@ def flips_vs_control(df):
         for prompt_type, identity_key in conditions:
             identity_key = None if pd.isna(identity_key) else identity_key
             mask = g["prompt_type"] == prompt_type
-            mask &= g["identity"].isna() if identity_key is None else g["identity"] == identity_key
+            mask &= (
+                g["identity"].isna()
+                if identity_key is None
+                else g["identity"] == identity_key
+            )
 
             treat = (
                 g[mask]

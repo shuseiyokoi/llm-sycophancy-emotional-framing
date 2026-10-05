@@ -38,7 +38,7 @@ DIAGRAM = """flowchart TD
         PR["prompts.py<br/>template + user_statement + data<br/>raw CSV rows, or summary if USE_SUMMARY"]
         SR["sample_runner.py<br/>loop samples, parse JSON, resume"]
         CLOUD["call_chatGPT.py<br/>call_claude.py<br/>call_gemini.py"]
-        LOCAL["call_qwen.py<br/>local_qwen/Makefile: make serve"]
+        LOCAL["call_qwen.py<br/>starts vLLM server"]
         RP["repair_raw_text.py<br/>re-parse failed rows"]
         BM["benchmark_local_model.py<br/>latency / tokens / JSON validity"]
     end

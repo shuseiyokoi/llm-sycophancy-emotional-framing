@@ -1,4 +1,18 @@
+"""
+Run the local open-weight models in config.LOCAL_MODELS through vLLM.
+
+For each model this starts `vllm serve` (OpenAI-compatible API on
+localhost:PORT), sends every pending (prompt, identity, sample) with
+CONCURRENCY requests in flight, then stops the server. Server output goes to
+results/logs/vllm_<model>.log. Tune MAX_MODEL_LEN, GPU_MEM_UTIL,
+MAX_NUM_SEQS, TENSOR_PARALLEL and CONCURRENCY via env vars (see run_qwen.job).
+
+    python call_qwen.py           # all prompt types, all samples
+    python call_qwen.py --smoke   # control_prompt, 1 sample per model
+"""
+
 import argparse
+import json
 import os
 import subprocess
 import sys
@@ -9,8 +23,8 @@ from openai import OpenAI
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from config import (
+    ROOT_DIR,
     PATH_TO_MODEL_RESULTS,
-    LOCAL_QWEN_DIR,
     LOCAL_MODELS,
     PROMPT_TYPES,
     prompt_identity_pairs,
@@ -19,47 +33,57 @@ from config import (
 from prompts import list_sample_ids
 from sample_runner import run_sample_set, completed_sample_ids
 
-LLAMA_SERVER = os.getenv("LLAMA_SERVER", "llama-server")
+VLLM = os.getenv("VLLM", "vllm")
 PORT = int(os.getenv("QWEN_PORT", "8080"))
 BASE_URL = f"http://localhost:{PORT}/v1"
 
-MODELS_DIR = os.path.join(LOCAL_QWEN_DIR, "models")
+# server/load knobs, overridable from the job script per GPU
+MAX_MODEL_LEN = os.getenv("MAX_MODEL_LEN", "120000")  # raw-mode prompts run up to ~111.6k tokens + completion
+GPU_MEM_UTIL = os.getenv("GPU_MEM_UTIL", "0.90")
+MAX_NUM_SEQS = os.getenv("MAX_NUM_SEQS", "16")
+TENSOR_PARALLEL = os.getenv("TENSOR_PARALLEL", "1")
+CONCURRENCY = int(os.getenv("CONCURRENCY", "16"))  # in-flight requests per (model, prompt, identity)
+LOAD_TIMEOUT_S = 15 * 60  # first run downloads weights and captures CUDA graphs
 
-# GGUF file and extra llama-server flags for each model in config.LOCAL_MODELS
+PATH_TO_LOGS = os.path.join(ROOT_DIR, "results", "logs")
+
+# HF repo, extra `vllm serve` flags, and extra request fields for each model in
+# config.LOCAL_MODELS. Weights are pulled into $HF_HOME on first use; the
+# Llama and Gemma repos are gated, so accept their licences on HF and set HF_TOKEN.
 LOCAL_SERVER_CONFIG = {
     "qwen2.5-7b-instruct": {
-        "gguf": os.path.join(MODELS_DIR, "Qwen2.5-7B-Instruct-Q4_K_M.gguf"),
-        # this GGUF's baked-in context_length (32768) makes llama-server cap
-        # the slot to 32768 regardless of -c; override the metadata so the
-        # cap isn't applied, and scale RoPE via YaRN so the model still
-        # attends sanely out to the full -c (raw-mode prompts run ~111.6k)
+        "repo": "Qwen/Qwen2.5-7B-Instruct",
+        # native context is 32768; scale RoPE via YaRN so the model attends
+        # sanely out to MAX_MODEL_LEN (raw-mode prompts run ~111.6k)
         "extra_args": [
-            "--override-kv", "qwen2.context_length=int:131072",
-            "--rope-scaling", "yarn",
-            "--rope-scale", "4",
-            "--yarn-orig-ctx", "32768",
+            "--hf-overrides",
+            json.dumps({
+                "rope_scaling": {
+                    "rope_type": "yarn",
+                    "factor": 4.0,
+                    "original_max_position_embeddings": 32768,
+                }
+            }),
         ],
     },
-    "qwen3-8b": {
-        "gguf": os.path.join(MODELS_DIR, "Qwen3-8B-Q4_K_M.gguf"),
-        # disable thinking so the output is only the strict JSON answer
-        "extra_args": ["--reasoning-budget", "0"],
-    },
+    # "qwen3-8b": {
+    #     "repo": "Qwen/Qwen3-8B",
+    #     "extra_args": [],
+    #     # disable thinking so the output is only the strict JSON answer
+    #     "request_extra": {"chat_template_kwargs": {"enable_thinking": False}},
+    # },
     "llama-3.1-8b-instruct": {
-        "gguf": os.path.join(MODELS_DIR, "Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf"),
+        "repo": "meta-llama/Llama-3.1-8B-Instruct",
         "extra_args": [],
     },
     "llama-3.2-3b-instruct": {
-        "gguf": os.path.join(MODELS_DIR, "Llama-3.2-3B-Instruct-Q4_K_M.gguf"),
-        "extra_args": [],
-    },
-    "gemma-2-9b-it": {
-        "gguf": os.path.join(MODELS_DIR, "gemma-2-9b-it-Q4_K_M.gguf"),
+        "repo": "meta-llama/Llama-3.2-3B-Instruct",
         "extra_args": [],
     },
     "gemma-3-12b-it": {
-        "gguf": os.path.join(MODELS_DIR, "google_gemma-3-12b-it-Q4_K_M.gguf"),
-        "extra_args": [],
+        "repo": "google/gemma-3-12b-it",
+        # text-only prompts: don't reserve memory for image inputs
+        "extra_args": ["--limit-mm-per-prompt", json.dumps({"image": 0})],
     },
 }
 
@@ -80,46 +104,54 @@ def start_server(model_name):
         )
 
     server_config = LOCAL_SERVER_CONFIG[model_name]
-    if not os.path.exists(server_config["gguf"]):
-        raise FileNotFoundError(
-            f"{server_config['gguf']} not found. Run `make download` in local_qwen first."
-        )
+    os.makedirs(PATH_TO_LOGS, exist_ok=True)
+    log_path = os.path.join(PATH_TO_LOGS, f"vllm_{model_name}.log")
+    log_file = open(log_path, "w")
 
     proc = subprocess.Popen(
         [
-            LLAMA_SERVER,
-            "-m", server_config["gguf"],
+            VLLM, "serve", server_config["repo"],
             "--port", str(PORT),
-            "-c", "120000",  # raw-mode prompts run up to ~111.6k tokens + completion; 100000 (old value) was too tight
-            "-ngl", "99",
-            "--parallel", "1",  # avoid dividing -c across llama.cpp's default 4 slots
+            "--served-model-name", model_name,
+            "--max-model-len", MAX_MODEL_LEN,
+            "--gpu-memory-utilization", GPU_MEM_UTIL,
+            "--max-num-seqs", MAX_NUM_SEQS,
+            "--tensor-parallel-size", TENSOR_PARALLEL,
             *server_config["extra_args"],
         ],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
+        stdout=log_file,
+        stderr=subprocess.STDOUT,
     )
+    proc.log_file = log_file
 
-    for _ in range(60):  # model load can take a few minutes
+    deadline = time.time() + LOAD_TIMEOUT_S
+    while time.time() < deadline:
         if server_is_up():
-            print(f"llama.cpp server is up with {model_name}")
+            print(f"vLLM server is up with {model_name} (log: {log_path})")
             return proc
         if proc.poll() is not None:
+            log_file.close()
             raise RuntimeError(
-                f"llama-server exited while loading {model_name} "
-                f"(exit code {proc.returncode})"
+                f"vllm serve exited while loading {model_name} "
+                f"(exit code {proc.returncode}); see {log_path}"
             )
         time.sleep(5)
 
-    proc.terminate()
-    raise RuntimeError(f"Server for {model_name} was not healthy after 5 minutes")
+    stop_server(proc)
+    raise RuntimeError(
+        f"Server for {model_name} was not healthy after {LOAD_TIMEOUT_S // 60} "
+        f"minutes; see {log_path}"
+    )
 
 
 def stop_server(proc):
     proc.terminate()
     try:
-        proc.wait(timeout=30)
+        proc.wait(timeout=60)
     except subprocess.TimeoutExpired:
         proc.kill()
+    if hasattr(proc, "log_file"):
+        proc.log_file.close()
 
 
 def call_qwen(prompt_types=PROMPT_TYPES, sample_ids=None, output_prefix="sample_results"):
@@ -148,12 +180,14 @@ def call_qwen(prompt_types=PROMPT_TYPES, sample_ids=None, output_prefix="sample_
             continue
 
         proc = start_server(model_name)
+        request_extra = LOCAL_SERVER_CONFIG[model_name].get("request_extra")
 
         def send_fn(prompt_text):
             completion = client.chat.completions.create(
                 model=model_name,
                 max_tokens=1024,
                 messages=[{"role": "user", "content": prompt_text}],
+                extra_body=request_extra,
             )
             return completion.choices[0].message.content
 
@@ -168,6 +202,7 @@ def call_qwen(prompt_types=PROMPT_TYPES, sample_ids=None, output_prefix="sample_
                     sample_ids=sample_ids,
                     sleep_s=0,
                     identity=identity,
+                    workers=CONCURRENCY,
                 )
                 print(f"Finished: {model_name} | {label}")
         finally:

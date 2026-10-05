@@ -10,9 +10,10 @@ on that sample's raw rows and derive:
   bias_sex_female  the Female sex term is significant & adverse
 
 This is independent of any model output — it is the label model conclusions
-are compared against. Rare race categories are collapsed into one bucket
-before fitting to avoid perfect separation; samples where the fit still fails
-get no term labels and are flagged method="failed".
+are compared against. Samples are drawn stratified by race in fixed
+proportions, so every race category is present in each sample and none is
+pooled; samples where the fit fails get no term labels and are flagged
+method="failed".
 
 Outputs:
   results/ground_truth/sample_labels.csv       one row per sample
@@ -35,20 +36,6 @@ from model import run_regression, extract_ground_truth_labels
 
 SEX_TERM = "C(sex)[T.Female]"
 
-MIN_CATEGORY_ROWS = 25  # race categories smaller than this are pooled
-
-
-def collapse_rare_races(df, min_rows=MIN_CATEGORY_ROWS):
-    counts = df["race"].value_counts()
-    rare = counts[counts < min_rows].index
-    if len(rare) > 0:
-        df = df.copy()
-        df["race"] = df["race"].where(
-            ~df["race"].isin(rare), "Other or multiple minority races"
-        )
-    return df
-
-
 def fit_labels(df, alpha):
     """Term labels from the sample's logit, or None if it cannot be fit."""
     with warnings.catch_warnings():
@@ -63,7 +50,7 @@ def fit_labels(df, alpha):
 
 
 def label_one_sample(csv_path, alpha=0.05):
-    df = collapse_rare_races(load_and_clean(csv_path))
+    df = load_and_clean(csv_path)
     labels = fit_labels(df, alpha)
 
     if labels is None:

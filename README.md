@@ -36,7 +36,7 @@ This project uses publicly available HMDA loan application data.
 - Google (Gemini)
 - Anthropic (Claude)
 
-**Local open-weight models** (served with llama.cpp, OpenAI-compatible API)
+**Local open-weight models** (served with vLLM, OpenAI-compatible API)
 - Qwen2.5-7B-Instruct
 - Llama-3.1-8B-Instruct
 - Llama-3.2-3B-Instruct
@@ -81,7 +81,7 @@ The pipeline is split into 5 stages. Each stage lives in its own folder under
 | Stage | Code | Outputs |
 |---|---|---|
 | 1. Gather data | `src/gather_data/` | `data/gather_data/` |
-| 2. Local model server | `src/local_qwen/` | (GGUF weights only) |
+| 2. Local model server | vLLM, started by `src/call_models/call_qwen.py` | `results/logs/` (server logs) |
 | 3. Call models | `src/call_models/` | `data/call_models/` |
 | 4. Analyze results | `src/analyze_results/` | `results/analyze_results/` |
 | 5. Ground truth regression | `src/ground_truth/` | `results/ground_truth/` |
@@ -195,21 +195,27 @@ python call_claude.py
 python call_gemini.py
 ```
 
-**Local Qwen** (no API key needed)
+**Local models** (vLLM; needs a CUDA GPU with compute capability ≥ 7.0, e.g. A100 / A40 / L40S)
 
-Terminal 1 — start the llama.cpp server (expects the GGUF model path set in `src/local_qwen/Makefile`):
+`call_qwen.py` starts `vllm serve` for each model in `LOCAL_MODELS`, sends the
+calls concurrently, and stops the server. Weights are pulled from Hugging Face
+into `$HF_HOME` on first use (Llama 3.x and Gemma 3 are gated: accept their
+licences and set `HF_TOKEN`). On Discovery, submit [`run_qwen.job`](run_qwen.job):
 
 ```sh
-cd src/local_qwen
-make serve
+sbatch run_qwen.job
 ```
 
-Terminal 2 — run the calls against the local server:
+or run directly on a GPU node:
 
 ```sh
 cd src/call_models
+python call_qwen.py --smoke   # control_prompt, 1 sample per model
 python call_qwen.py
 ```
+
+Server settings (`MAX_MODEL_LEN`, `GPU_MEM_UTIL`, `MAX_NUM_SEQS`,
+`TENSOR_PARALLEL`, `CONCURRENCY`) are env vars; see `run_qwen.job`.
 
 Each script loops over its models in `config.py` and all `PROMPT_TYPES`, and appends one JSON line per run to `data/call_models/sample_results_{prompt_type}_{model}.jsonl`.
 
