@@ -24,7 +24,7 @@ PATH_TO_GROUND_TRUTH = os.path.join(ROOT_DIR, "results", "ground_truth") + os.se
 # bias label (logistic regression on the sample's raw rows). Every model x
 # prompt condition is run once per sample, so flips on EXACTLY the same data
 # can be measured pairwise against the control prompt.
-N_SAMPLES = 300  # samples per model/prompt setup; scale down via cost estimate
+N_SAMPLES = 10  # samples per model/prompt setup; scale down via cost estimate
 SAMPLE_SIZE = 2000  # rows (X) per sample; see results/ground_truth/calibration
 SAMPLE_SEED = 42  # base RNG seed; sample i uses SAMPLE_SEED + i
 
