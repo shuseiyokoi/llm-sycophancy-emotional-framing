@@ -23,8 +23,10 @@ An identity that is the reference category on both axes (White, Male) has no
 such term, so its ground truth is False for every sample — there is no "bias
 against the reference group" term to test.
 
-Only the results for config.FAIRNESS_DEFINITION are read. Ground truth is the
-logistic-regression labels whatever definition the model was given.
+Only the results for config.FAIRNESS_DEFINITION are read, and they are scored
+against the labels for that same definition (TRUTH_DEFINITION): LR for "none"
+and "LR", the four-fifths-rule labels for "DI", the Fisher-test denial-rate
+labels for "DP" (see ground_truth/label_samples.py).
 
 Outputs (results/analyze_results/):
   gt_metrics_by_model_prompt.csv  (one row per model x prompt_type x identity)
@@ -46,6 +48,7 @@ from config import (
     PATH_TO_RESULTS,
     PATH_TO_GROUND_TRUTH,
     IDENTITY_PROMPT_TYPES,
+    FAIRNESS_DEFINITION,
     all_known_identities,
     prompt_identity_pairs,
     prompt_identity_label,
@@ -56,6 +59,12 @@ RESULT_PREFIX = "sample_results_"
 
 # Regression term names from src/ground_truth/label_samples.py — must match.
 SEX_TERM = "C(sex)[T.Female]"
+
+# ground truth each fairness definition is scored against; "none" gives the
+# model no definition, so it is held to the controlled (LR) one
+TRUTH_DEFINITION = {"none": "LR", "LR": "LR", "DI": "DI", "DP": "DP"}[FAIRNESS_DEFINITION]
+# sample_labels.csv column for that truth (label_samples.DEFINITION_SUFFIX)
+BIAS_ANY_COL = {"LR": "bias_any", "DI": "bias_any_di", "DP": "bias_any_dp"}[TRUTH_DEFINITION]
 
 CONTROL = "control_prompt"
 
@@ -73,8 +82,9 @@ def identity_terms(identity):
     return terms
 
 
-def load_term_bias_wide(term_labels):
-    """sample_id x term -> True iff that term was significant & adverse (BIAS)."""
+def load_term_bias_wide(term_labels, definition=TRUTH_DEFINITION):
+    """sample_id x term -> True iff that term is labeled BIAS under `definition`."""
+    term_labels = term_labels[term_labels["definition"] == definition]
     wide = term_labels.pivot_table(
         index="sample_id", columns="term", values="ground_truth_label", aggfunc="first"
     )
@@ -160,7 +170,11 @@ def load_decisions(model_names):
 
 
 def metrics_by_model_prompt(df, labels, bias_wide):
-    merged = df.merge(labels[["sample_id", "bias_any"]], on="sample_id", how="inner")
+    merged = df.merge(
+        labels[["sample_id", BIAS_ANY_COL]].rename(columns={BIAS_ANY_COL: "bias_any"}),
+        on="sample_id",
+        how="inner",
+    )
     identity_truth_cache = {}
     out = []
     for (model, prompt_type, identity_key), g in merged.groupby(
@@ -180,10 +194,10 @@ def metrics_by_model_prompt(df, labels, bias_wide):
                 .fillna(False)
                 .astype(bool)
             )
-            gt_col = f"bias_identity[{identity_key}]"
+            gt_col = f"{TRUTH_DEFINITION}:bias_identity[{identity_key}]"
         else:
             truth = usable["bias_any"].astype(bool)
-            gt_col = "bias_any"
+            gt_col = f"{TRUTH_DEFINITION}:{BIAS_ANY_COL}"
 
         tp = int((pred & truth).sum())
         fp = int((pred & ~truth).sum())
@@ -291,6 +305,7 @@ def compare_to_ground_truth():
     term_labels_path = os.path.join(PATH_TO_GROUND_TRUTH, "sample_term_labels.csv")
     bias_wide = load_term_bias_wide(pd.read_csv(term_labels_path))
 
+    print(f"Fairness definition: {FAIRNESS_DEFINITION} (truth: {TRUTH_DEFINITION})")
     model_names = discover_models()
     print(f"Models found: {model_names}")
     df = load_decisions(model_names)
