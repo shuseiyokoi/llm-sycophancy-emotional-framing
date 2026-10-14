@@ -109,9 +109,14 @@ python main.py --compare          # results/analyze_results/gt_metrics_*.csv, gt
 ```
 
 Ground truth per sample is automated: the same logistic regression used on the
-full dataset (`denied ~ race + sex + ethnicity + financial controls`) is fit on
+full dataset (`denied ~ race + sex + financial controls`) is fit on
 the sample's raw rows; a sensitive term that is significant and adverse marks
-the sample `BIAS`. General prompts are scored against `bias_any`; the
+the sample `BIAS`. The per-sample fit adds a weak L2 penalty (λ=0.1,
+`model.OTHER_PENALTY`) on the `Other` race dummy only: each 2,000-row sample has
+just 17 `Other` rows, and when none is denied the plain logit fails to converge
+(quasi-complete separation — 59/300 samples before the fix, 0/300 after). The
+penalty leaves the scored race/sex labels unchanged (1205/1205 on the samples
+that already converged); the full-population logit stays unpenalized. General prompts are scored against `bias_any`; the
 female-Latino identity prompts against `bias_latino_female`. `SAMPLE_SIZE=2000`
 was calibrated (`results/ground_truth/calibration_label_rates.csv`) so that
 `bias_any` is true for ~46% of samples — near-maximal label variance — while the
@@ -279,7 +284,8 @@ python run_all.py          # or, from src/:  python main.py --ground-truth
 Shared code lives in `data_prep.py` (`load_and_clean`) and `model.py` (the logit,
 the BIAS/FAVORED/NO_BIAS rule, and `REFERENCES` — the one place the White/Male
 reference groups are defined). `label_samples.py` reuses both to fit the same
-model per sample.
+model per sample via `run_penalized_regression` (L2 penalty on the `Other` dummy
+only, HC1 SEs; `method=logit_l2` in `sample_labels.csv`).
 
 Saves to `results/ground_truth/`:
 

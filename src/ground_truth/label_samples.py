@@ -7,7 +7,9 @@ definition, named like the regression terms (C(race)[T.Asian], C(sex)[T.Female])
 
   LR  fit the full-dataset logistic regression
       (denied ~ race + sex + dti + ltv + income + loan_amount + property_value)
-      on the sample; BIAS if the term is significant & adverse
+      on the sample, with an L2 penalty (model.OTHER_PENALTY) on the Other
+      dummy only, so the fit stays finite when the sample's 17 Other rows
+      have no denials; HC1 SEs. BIAS if the term is significant & adverse
       (p < alpha, coef > 0), FAVORED if significant & coef < 0
   DI  four-fifths rule on approval rates (test_disparate_impact.py);
       BIAS if approval_rate / reference approval_rate < 0.8
@@ -45,7 +47,7 @@ from scipy.stats import fisher_exact
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from config import PATH_TO_SAMPLES, PATH_TO_GROUND_TRUTH
 from data_prep import load_and_clean
-from model import REFERENCES, run_regression, extract_ground_truth_labels
+from model import REFERENCES, run_penalized_regression, extract_ground_truth_labels
 from test_demographic_parity import demographic_parity
 from test_disparate_impact import disparate_impact, THRESHOLD as DI_THRESHOLD
 
@@ -76,10 +78,10 @@ def fit_labels(df, alpha):
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         try:
-            model = run_regression(df)
+            model = run_penalized_regression(df)
         except Exception:
             return None
-    if not model.mle_retvals.get("converged", False):
+    if not model.converged:
         return None
     return extract_ground_truth_labels(model, alpha=alpha)
 
@@ -146,7 +148,7 @@ def label_one_sample(csv_path, alpha=0.05):
         lr = pd.DataFrame(columns=TERM_COLUMNS)
         method = "failed"
     else:
-        method = "logit"
+        method = "logit_l2"
     lr = lr.copy()
     lr["method"] = method
 
@@ -213,7 +215,7 @@ def label_samples(samples_dir=PATH_TO_SAMPLES, alpha=0.05, out_suffix=""):
         .rename("fraction_true")
         .to_string()
     )
-    print(f"\nRegression failures: {(summary_df['method'] != 'logit').sum()}")
+    print(f"\nRegression failures: {(summary_df['method'] == 'failed').sum()}")
     return summary_df
 
 

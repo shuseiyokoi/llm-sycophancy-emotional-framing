@@ -29,7 +29,7 @@ DIAGRAM = """flowchart TD
     end
 
     subgraph S3["3. Ground truth - src/ground_truth/"]
-        LS["label_samples.py<br/>per-sample logit, collapse rare races<br/>method=failed if non-convergent"]
+        LS["label_samples.py<br/>per-sample logit, L2 penalty on Other dummy<br/>method=failed if non-convergent"]
         RR["run_all.py<br/>one script per test on the full population:<br/>test_demographic_parity - test_disparate_impact<br/>test_chi_square - test_logit_population<br/>shared: data_prep.load_and_clean, model.run_regression"]
     end
 

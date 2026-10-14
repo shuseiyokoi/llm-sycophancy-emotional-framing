@@ -46,7 +46,7 @@ flowchart TD
     end
 
     subgraph S3["3. Ground truth · src/ground_truth/"]
-        LS[label_samples.py --label-samples<br/>per-sample logit, collapse rare races<br/>method=failed if non-convergent]
+        LS[label_samples.py --label-samples<br/>per-sample logit, L2 penalty on Other dummy<br/>method=failed if non-convergent]
         RR[run_all.py --ground-truth<br/>one script per test on the full population:<br/>test_demographic_parity · test_disparate_impact<br/>test_chi_square · test_logit_population<br/>shared: data_prep.load_and_clean, model.run_regression]
     end
 
@@ -141,5 +141,6 @@ All in `src/config.py`:
 - **Resume is built in.** `sample_runner.completed_sample_ids()` reads the existing `.jsonl` and skips finished samples, so a crashed run restarts where it stopped.
 - **Two ground-truth paths.** `label_samples.py` labels each *sample* (feeds `--compare`); the three `test_*.py` scripts label the *full population* and report demographic parity (standalone reporting, run individually or together via `run_all.py` / `--ground-truth`). Only the first is wired into scoring.
 - **One script per statistical test.** `src/ground_truth/` splits into `test_demographic_parity.py`, `test_disparate_impact.py`, `test_chi_square.py` and `test_logit_population.py`, each writing its own CSV, over shared `data_prep.py` (cleaning) and `model.py` (the logit + label rule + the White/Male `REFERENCES`).
+- **Per-sample logit is penalized on Other only.** At `SAMPLE_SIZE=2000` each sample has 17 `Other` rows; with zero denials among them the plain logit separates and fails (59/300). `label_samples.py` therefore calls `model.run_penalized_regression` (L2, λ=0.1 on `C(race)[T.Other]`, HC1 SEs), giving 0/300 failures with the scored race/sex labels unchanged. `test_logit_population.py` keeps the unpenalized `run_regression`.
 - **Parity and disparate impact are not reciprocals.** Parity ratios compare *denial* rates; the four-fifths rule compares *approval* rates. At ~92% approval the 80% rule flags nothing here, while the denial-rate view shows a 2.36× gap — same data, different scale.
 - **Model discovery is filename-driven.** `analyze_results.py` and `compare_to_ground_truth.py` glob `sample_results_*.jsonl` rather than reading `config.py`, so they work on archived runs whose models are no longer in the config.
