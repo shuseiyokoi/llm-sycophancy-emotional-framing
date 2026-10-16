@@ -47,6 +47,26 @@ LOAD_TIMEOUT_S = 15 * 60  # first run downloads weights and captures CUDA graphs
 
 PATH_TO_LOGS = os.path.join(ROOT_DIR, "results", "logs")
 
+# vLLM structured output: constrain every local model to the prompt's STRICT
+# JSON format (same fields the cloud models are asked for). Restricts only
+# the output shape, not the decision; fixes llama-3.1's markdown answers and
+# gemma's out-of-range confidence. Disable with GUIDED_JSON=0.
+GUIDED_JSON = os.getenv("GUIDED_JSON", "1") == "1"
+RESPONSE_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "conclusion": {"type": "string", "enum": ["YES", "NO"]},
+        "confidence": {"type": "integer", "minimum": 0, "maximum": 10},
+        "evidence": {"type": "string", "maxLength": 1500},
+    },
+    "required": ["conclusion", "confidence", "evidence"],
+    "additionalProperties": False,
+}
+RESPONSE_FORMAT = {
+    "type": "json_schema",
+    "json_schema": {"name": "analysis", "schema": RESPONSE_SCHEMA, "strict": True},
+}
+
 # HF repo, extra `vllm serve` flags, and extra request fields for each model in
 # config.LOCAL_MODELS. Weights are pulled into $HF_HOME on first use; the
 # Llama and Gemma repos are gated, so accept their licences on HF and set HF_TOKEN.
@@ -61,6 +81,10 @@ LOCAL_SERVER_CONFIG = {
         "extra_args": [
             "--hf-overrides",
             json.dumps({
+                # vLLM >=0.31 no longer multiplies by `factor` for YaRN; it
+                # expects max_position_embeddings to already be the scaled
+                # value (32768 * 4)
+                "max_position_embeddings": 131072,
                 "rope_scaling": {
                     "rope_type": "yarn",
                     "factor": 4.0,
@@ -192,11 +216,15 @@ def call_qwen(prompt_types=PROMPT_TYPES, sample_ids=None, output_prefix="sample_
         request_extra = LOCAL_SERVER_CONFIG[model_name].get("request_extra")
 
         def send_fn(prompt_text):
+            kwargs = {}
+            if GUIDED_JSON:
+                kwargs["response_format"] = RESPONSE_FORMAT
             completion = client.chat.completions.create(
                 model=model_name,
                 max_tokens=1024,
                 messages=[{"role": "user", "content": prompt_text}],
                 extra_body=request_extra,
+                **kwargs,
             )
             return completion.choices[0].message.content
 
