@@ -1,40 +1,19 @@
 import os
 
-# Anchor all paths to the repo root so scripts work from any directory
-# (src/, a stage folder like src/call_models/, or the repo root).
 SRC_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(SRC_DIR)
 
-# One designated output folder per pipeline stage:
-# 1. src/gather_data/       -> data/gather_data/
-# 2. local model server     -> results/logs/ (vLLM, started by call_models/call_qwen.py)
-# 3. src/call_models/       -> data/call_models/
-# 4. src/analyze_results/   -> results/analyze_results/
-# 5. src/ground_truth/      -> results/ground_truth/
+
 PATH_TO_DATA = os.path.join(ROOT_DIR, "data", "gather_data") + os.sep
 PATH_TO_SAMPLES = os.path.join(ROOT_DIR, "data", "gather_data", "samples") + os.sep
 PATH_TO_MODEL_RESULTS = os.path.join(ROOT_DIR, "data", "call_models") + os.sep
 PATH_TO_RESULTS = os.path.join(ROOT_DIR, "results", "analyze_results") + os.sep
 PATH_TO_GROUND_TRUTH = os.path.join(ROOT_DIR, "results", "ground_truth") + os.sep
 
-
-# --- Sampling design ---
-# N distinct datasets are drawn from the cleaned loan-level data. Each sample
-# gets its own summary table (what the model sees) and its own ground-truth
-# bias label (logistic regression on the sample's raw rows). Every model x
-# prompt condition is run once per sample, so flips on EXACTLY the same data
-# can be measured pairwise against the control prompt.
 N_SAMPLES = 10  # samples per model/prompt setup; scale down via cost estimate
 SAMPLE_SIZE = 2000  # rows (X) per sample; see results/ground_truth/calibration
 SAMPLE_SEED = 42  # base RNG seed; sample i uses SAMPLE_SEED + i
 
-# Stratified draws. Each sample is drawn per-stratum on this column (a column
-# of the cleaned frame, e.g. "race"); None falls back to a simple random draw.
-# "equal": SAMPLE_SIZE split evenly across strata, so small groups (Black ~3%,
-#          Other ~1% of the population) get enough rows to be estimable.
-#          The sample is then NOT representative of the race mix.
-# "proportional": each stratum keeps its population share (rounded), which
-#          only removes draw-to-draw noise in the race mix.
 STRATIFY_BY = "race"
 STRATA_ALLOCATION = "proportional"  # sample race mix = population race mix
 
@@ -75,12 +54,6 @@ GEMMA_MODELS = [
 LOCAL_MODELS = QWEN_MODELS + LLAMA_MODELS + GEMMA_MODELS
 
 # prompt_jobs_config.py
-
-# Must stay in sync with the keys of prompts.USER_STATEMENTS — a type listed
-# here with no template raises KeyError in prompts.get_user_statement().
-# emotional_prompt carries the strong framing (formerly emotional_extreme_prompt);
-# the milder "strong concern" wording and the suicidal / hypothetical framings
-# were dropped.
 PROMPT_TYPES = [
     "control_prompt",
     "emotional_identity_prompt",
@@ -88,13 +61,6 @@ PROMPT_TYPES = [
     "identity_prompt",
 ]
 
-
-# Prompt types whose USER_STATEMENTS template takes an {identity_description}
-# placeholder and must be paired with one entry from IDENTITIES below.
-# Fairness definition the model is told to apply, as instruction 2 in the
-# prompt (text in call_models/prompts.FAIRNESS_INSTRUCTIONS). One per run:
-# anything but "none" is prefixed onto result labels/filenames, e.g.
-# sample_results_di_control_prompt_<model>.jsonl, so runs never mix.
 FAIRNESS_DEFINITION = "none"  # "none" | "DI" | "DP" | "LR"
 assert FAIRNESS_DEFINITION in ("none", "DI", "DP", "LR"), FAIRNESS_DEFINITION
 
@@ -103,16 +69,6 @@ IDENTITY_PROMPT_TYPES = [
     "identity_prompt",
 ]
 
-# --- Identity matrix for identity-related prompts ---
-# race x sex. Hispanic or Latino is a race value here, matching the cleaned
-# data (preprocess_data.py folds derived_ethnicity into derived_race), so
-# there is no separate ethnicity axis. race/sex match the regression terms
-# scored in results/ground_truth/sample_term_labels.csv (C(race)[T.<race>],
-# C(sex)[T.Female]), so model responses for a given identity can be compared
-# against that identity's ground-truth bias term. Reference groups are White
-# and Male (ground_truth/model.py REFERENCES). "Other" and sex "Joint" stay in
-# the data and regression but are not identities: Other is ~1% of the
-# population, and Joint describes a co-applied loan, not a person.
 IDENTITY_RACES = [
     "White",
     "Black or African American",
@@ -144,17 +100,6 @@ IDENTITIES = [
     make_identity(race, sex) for race in IDENTITY_RACES for sex in IDENTITY_SEXES
 ]
 
-# Restrict prompt_identity_pairs() to a specific subset of identities instead
-# of the full IDENTITIES cross product — e.g. to cheaply test 1-2 identities
-# instead of all of them. Build entries with make_identity(race, sex); race
-# does not need to be one of IDENTITY_RACES (e.g. "Other"). Leave empty ([])
-# to run every identity in IDENTITIES (the default).
-#
-# Example:
-#   SELECTED_IDENTITIES = [
-#       make_identity("Hispanic or Latino", "Female"),
-#       make_identity("Other", "Male"),
-#   ]
 SELECTED_IDENTITIES = []
 
 
