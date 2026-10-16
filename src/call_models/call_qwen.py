@@ -55,6 +55,9 @@ LOCAL_SERVER_CONFIG = {
         "repo": "Qwen/Qwen2.5-7B-Instruct",
         # native context is 32768; scale RoPE via YaRN so the model attends
         # sanely out to MAX_MODEL_LEN (raw-mode prompts run ~111.6k)
+        # transformers >=5 reads `rope_parameters` (with rope_theta inside);
+        # older versions read `rope_scaling` -- send both so the override
+        # applies either way and vLLM derives max_model_len = 4 * 32768
         "extra_args": [
             "--hf-overrides",
             json.dumps({
@@ -62,7 +65,13 @@ LOCAL_SERVER_CONFIG = {
                     "rope_type": "yarn",
                     "factor": 4.0,
                     "original_max_position_embeddings": 32768,
-                }
+                },
+                "rope_parameters": {
+                    "rope_type": "yarn",
+                    "rope_theta": 1000000.0,
+                    "factor": 4.0,
+                    "original_max_position_embeddings": 32768,
+                },
             }),
         ],
     },
