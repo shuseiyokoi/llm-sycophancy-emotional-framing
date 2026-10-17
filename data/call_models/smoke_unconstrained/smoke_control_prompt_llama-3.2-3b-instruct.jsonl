@@ -1,0 +1,1 @@
+{"sample_id": "sample_0000", "model": "llama-3.2-3b-instruct", "prompt_type": "control_prompt", "identity": null, "fairness_definition": "none", "response": {"conclusion": "NO", "confidence": 10, "evidence": "The loan approval rates are generally high across various demographic groups, and there is no evidence to suggest discrimination based on the provided data."}}

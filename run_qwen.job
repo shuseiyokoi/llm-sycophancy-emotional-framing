@@ -1,19 +1,19 @@
 #!/bin/bash
 
 #SBATCH --job-name=qwen_sycophancy
-#SBATCH --time=48:00:00
+#SBATCH --time=12:00:00
 #SBATCH --partition=gpu
 #SBATCH --account=jonmay_1426
 # TODO: pick a GPU type. vLLM needs compute capability >= 7.0, so NOT p100.
 # a100 (40/80GB) is the comfortable choice for ~112k-token prompts; on a40 / l40s
 # (48GB) gemma-3-12b may need fp8 KV cache or TENSOR_PARALLEL=2 with gpu:<type>:2
-#SBATCH --gres=gpu:a100:1
+#SBATCH --gres=gpu:a40:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem-per-cpu=8GB
 
 # ---- adjust these paths to where things live on Discovery ----
-REPO=/project2/jonmay_1426/syokoi/llm-sycophancy-emotional-framing
-VENV=/project2/jonmay_1426/syokoi/env_general  # needs `pip install vllm`
+REPO=/project2/jonmay_1426/syokoi/workspace/llm-sycophancy-emotional-framing
+VENV=/project2/jonmay_1426/syokoi/vllm-env
 
 source "$VENV/bin/activate"
 module load cuda
@@ -22,7 +22,7 @@ module load cuda
 # Llama 3.x and Gemma 3 are gated: accept their licences on huggingface.co and
 # set HF_TOKEN (or run `huggingface-cli login` once).
 export HF_HOME=/project2/jonmay_1426/syokoi/hf_cache
-# export HF_TOKEN=...
+export HF_TOKEN=$(cat ~/.hf_token)
 
 # ---- vLLM knobs (defaults in call_qwen.py) ----
 # export MAX_MODEL_LEN=120000   # raw-mode prompts run up to ~111.6k tokens

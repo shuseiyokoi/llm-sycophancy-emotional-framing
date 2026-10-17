@@ -195,3 +195,4 @@ hmda_CA_2024.csv
 
 # Per-sample datasets are reproducible from SAMPLE_SEED (src/gather_data/sample_datasets.py)
 data/gather_data/samples/
+*.out

@@ -1,0 +1,17 @@
+#!/bin/bash
+#SBATCH --job-name=vllm_smoke
+#SBATCH --account=jonmay_1426
+#SBATCH --partition=gpu
+#SBATCH --gres=gpu:a40:1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=64G
+#SBATCH --time=3:00:00
+#SBATCH --output=smoke_%j.out
+module load cuda
+source /project2/jonmay_1426/syokoi/vllm-env/bin/activate
+nvidia-smi | head -15
+python -c "import torch; print('cuda', torch.cuda.is_available())"
+export HF_HOME=/project2/jonmay_1426/syokoi/hf_cache
+export HF_TOKEN=$(cat ~/.hf_token)
+cd /project2/jonmay_1426/syokoi/workspace/llm-sycophancy-emotional-framing/src/call_models
+python call_qwen.py --smoke
