@@ -219,6 +219,7 @@ def call_qwen(prompt_types=PROMPT_TYPES, sample_ids=None, output_prefix="sample_
             kwargs = {}
             if GUIDED_JSON:
                 kwargs["response_format"] = RESPONSE_FORMAT
+            t0 = time.perf_counter()
             completion = client.chat.completions.create(
                 model=model_name,
                 max_tokens=1024,
@@ -226,7 +227,14 @@ def call_qwen(prompt_types=PROMPT_TYPES, sample_ids=None, output_prefix="sample_
                 extra_body=request_extra,
                 **kwargs,
             )
-            return completion.choices[0].message.content
+            # token usage is recorded in each output row (see token_report.py)
+            usage = completion.usage
+            return completion.choices[0].message.content, {
+                "prompt_tokens": usage.prompt_tokens if usage else None,
+                "completion_tokens": usage.completion_tokens if usage else None,
+                "total_tokens": usage.total_tokens if usage else None,
+                "latency_s": round(time.perf_counter() - t0, 3),
+            }
 
         try:
             for prompt_type, identity, label, output_file in pending:

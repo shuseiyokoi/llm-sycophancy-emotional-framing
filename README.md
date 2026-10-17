@@ -222,6 +222,16 @@ python call_qwen.py
 Server settings (`MAX_MODEL_LEN`, `GPU_MEM_UTIL`, `MAX_NUM_SEQS`,
 `TENSOR_PARALLEL`, `CONCURRENCY`) are env vars; see `run_qwen.job`.
 
+Each local-model row also stores the call's token usage (`usage`: prompt /
+completion / total tokens and `latency_s`). After a run, total it per model ×
+prompt type with:
+
+```sh
+python src/analyze_results/token_report.py                  # or --prefix smoke
+```
+
+which writes `results/token_usage/token_usage_by_{prompt,model}.csv`.
+
 Each script loops over its models in `config.py` and all `PROMPT_TYPES`, and appends one JSON line per run to `data/call_models/sample_results_[{definition}_]{prompt_type}[_{identity}]_{model}.jsonl`. The `{definition}_` prefix (`di_`, `dp_`, `lr_`) is present only when `FAIRNESS_DEFINITION` is not `"none"`.
 
 ### 5. Analyze Results

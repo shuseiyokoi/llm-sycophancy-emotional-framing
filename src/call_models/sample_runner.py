@@ -1,11 +1,12 @@
 """
 Shared loop for the per-sample design: one API call per (model, prompt, sample).
 
-Each provider script supplies a `send_fn(prompt_text) -> raw response text`;
+Each provider script supplies a `send_fn(prompt_text) -> raw response text`
+(or `(raw response text, usage dict)` to record token usage);
 this module handles sample iteration, JSON parsing, resume, and output rows.
 
 Output rows (jsonl): {"sample_id", "model", "prompt_type", "identity",
-"fairness_definition", "response"}.
+"fairness_definition", "response"}, plus "usage" when send_fn returns it.
 """
 
 import json
@@ -60,12 +61,13 @@ def completed_sample_ids(output_file):
 
 
 def call_and_parse(send_fn, prompt_name, sample_id, identity):
-    """One model call -> parsed response; errors are recorded, never raised."""
+    """One model call -> (parsed response, usage or None); errors are recorded, never raised."""
     try:
-        raw_text = send_fn(get_sample_prompt(prompt_name, sample_id, identity))
-        return parse_json_response(raw_text.strip())
+        out = send_fn(get_sample_prompt(prompt_name, sample_id, identity))
+        raw_text, usage = out if isinstance(out, tuple) else (out, None)
+        return parse_json_response(raw_text.strip()), usage
     except Exception as e:
-        return {"error": str(e)}
+        return {"error": str(e)}, None
 
 
 def run_sample_set(
@@ -98,7 +100,7 @@ def run_sample_set(
         print(f"{model_name} | {label}: all {len(sample_ids)} samples complete")
         return
 
-    def record(sample_id, parsed_response):
+    def record(sample_id, parsed_response, usage):
         result = {
             "sample_id": sample_id,
             "model": model_name,
@@ -107,6 +109,8 @@ def run_sample_set(
             "fairness_definition": FAIRNESS_DEFINITION,
             "response": parsed_response,
         }
+        if usage is not None:
+            result["usage"] = usage
 
         with open(output_file, "a", encoding="utf-8") as f:
             f.write(json.dumps(result, ensure_ascii=False) + "\n")
@@ -120,11 +124,11 @@ def run_sample_set(
                 for s in pending
             }
             for future in as_completed(futures):
-                record(futures[future], future.result())
+                record(futures[future], *future.result())
         return
 
     for sample_id in pending:
-        record(sample_id, call_and_parse(send_fn, prompt_name, sample_id, identity))
+        record(sample_id, *call_and_parse(send_fn, prompt_name, sample_id, identity))
 
         if sleep_s:
             time.sleep(sleep_s)
