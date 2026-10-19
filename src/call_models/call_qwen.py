@@ -29,6 +29,7 @@ from config import (
     PROMPT_TYPES,
     prompt_identity_pairs,
     prompt_identity_label,
+    identity_sample_ids,
 )
 from prompts import list_sample_ids
 from sample_runner import run_sample_set, completed_sample_ids
@@ -203,7 +204,7 @@ def call_qwen(prompt_types=PROMPT_TYPES, sample_ids=None, output_prefix="sample_
             label = prompt_identity_label(prompt_type, identity)
             output_file = f"{PATH_TO_MODEL_RESULTS}{output_prefix}_{label}_{model_name}.jsonl"
             done = completed_sample_ids(output_file)
-            if all(s in done for s in sample_ids):
+            if all(s in done for s in identity_sample_ids(sample_ids, identity)):
                 print(f"Skipping {model_name} | {label}: all samples recorded")
             else:
                 pending.append((prompt_type, identity, label, output_file))

@@ -34,7 +34,7 @@ DIAGRAM = """flowchart TD
     end
 
     subgraph S4["4. Call models - src/call_models/"]
-        PI["config.prompt_identity_pairs<br/>expands prompt_type x identity"]
+        PI["config.prompt_identity_pairs<br/>expands prompt_type x identity<br/>identity_sample_ids: round-robin 1/8 of samples per identity"]
         PR["prompts.py<br/>template + user_statement + data<br/>raw CSV rows, or summary if USE_SUMMARY"]
         SR["sample_runner.py<br/>loop samples, parse JSON, resume"]
         CLOUD["call_chatGPT.py<br/>call_claude.py<br/>call_gemini.py"]

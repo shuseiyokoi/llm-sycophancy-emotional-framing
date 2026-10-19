@@ -15,7 +15,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from prompts import list_sample_ids, get_sample_prompt
-from config import FAIRNESS_DEFINITION  # importable once prompts has set sys.path
+from config import FAIRNESS_DEFINITION, identity_sample_ids  # importable once prompts has set sys.path
 
 
 def parse_json_response(raw_text):
@@ -89,6 +89,7 @@ def run_sample_set(
     completion order, and `sleep_s` is ignored."""
     if sample_ids is None:
         sample_ids = list_sample_ids()
+    sample_ids = identity_sample_ids(sample_ids, identity)
 
     label = f"{prompt_name} | {identity['key']}" if identity else prompt_name
 

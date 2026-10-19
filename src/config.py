@@ -10,9 +10,11 @@ PATH_TO_MODEL_RESULTS = os.path.join(ROOT_DIR, "data", "call_models") + os.sep
 PATH_TO_RESULTS = os.path.join(ROOT_DIR, "results", "analyze_results") + os.sep
 PATH_TO_GROUND_TRUTH = os.path.join(ROOT_DIR, "results", "ground_truth") + os.sep
 
-N_SAMPLES = 10  # samples per model/prompt setup; scale down via cost estimate
+N_SAMPLES = 300  # samples per model/prompt setup; scale down via cost estimate
 SAMPLE_SIZE = 2000  # rows (X) per sample; see results/ground_truth/calibration
 SAMPLE_SEED = 42  # base RNG seed; sample i uses SAMPLE_SEED + i
+IDENTITY_SAMPLE_SPLIT = True  # True: each identity runs on 1/len(identities) of
+# the samples (round-robin); False: every identity runs on every sample
 
 STRATIFY_BY = "race"
 STRATA_ALLOCATION = "proportional"  # sample race mix = population race mix
@@ -36,8 +38,15 @@ GEMINI_MODELS = [
 ]  # gemini-2.5-flash-lite / gemini-2.5-pro retired for new users; API pointed to these replacements
 
 QWEN_MODELS = [
-    "qwen2.5-7b-instruct",  # swapped for qwen3-8b: 128K native context vs qwen3-8b's 32K (needs YaRN to reach raw-mode's ~82K tokens/call)
-    #    "qwen3-8b",
+    "qwen3.5-9b",  # 256K native context, post-trained chat model (no -Instruct suffix); disable thinking mode
+    # "qwen3.5-4b",  # same family, smaller tier; pairs with gemma-4-e4b-it
+]
+
+GEMMA_MODELS = [
+    #    "gemma-2-9b-it",   # dropped: 8K context, cannot fit raw-mode prompts (~82K tokens/call)
+    #    "gemma-3-12b-it",  # superseded by Gemma 4
+    "gemma-4-12b-it",  # 256K context
+    "gemma-4-e4b-it",  # ~4B effective, 128K context (fits ~82K raw mode)
 ]
 
 LLAMA_MODELS = [
@@ -45,10 +54,6 @@ LLAMA_MODELS = [
     "llama-3.2-3b-instruct",
 ]
 
-GEMMA_MODELS = [
-    #    "gemma-2-9b-it",  # dropped: hard 8,192-token context limit, cannot fit raw-mode prompts (~82K tokens/call) at any server setting
-    "gemma-3-12b-it",
-]
 
 # All models served locally with vLLM (see call_models/call_qwen.py)
 LOCAL_MODELS = QWEN_MODELS + LLAMA_MODELS + GEMMA_MODELS
@@ -132,6 +137,17 @@ def prompt_identity_pairs(prompt_types=None):
         else:
             pairs.append((prompt_type, None))
     return pairs
+
+
+def identity_sample_ids(sample_ids, identity):
+    """Samples an identity-framed call runs on: every sample unless
+    IDENTITY_SAMPLE_SPLIT, else a round-robin 1/len(identities) share of
+    the sorted sample ids. identity_prompt and emotional_identity_prompt get
+    the same share, so they stay paired per sample."""
+    if identity is None or not IDENTITY_SAMPLE_SPLIT:
+        return sample_ids
+    keys = [i["key"] for i in (SELECTED_IDENTITIES or IDENTITIES)]
+    return sorted(sample_ids)[keys.index(identity["key"]) :: len(keys)]
 
 
 def prompt_identity_label(prompt_type, identity):
