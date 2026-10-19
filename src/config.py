@@ -45,7 +45,7 @@ QWEN_MODELS = [
 GEMMA_MODELS = [
     #    "gemma-2-9b-it",   # dropped: 8K context, cannot fit raw-mode prompts (~82K tokens/call)
     #    "gemma-3-12b-it",  # superseded by Gemma 4
-    # "gemma-4-12b-it",  # 256K context
+    # "gemma-4-12b-it",  # 256K dsfcontext
     # "gemma-4-e4b-it",  # ~4B effective, 128K context (fits ~82K raw mode)
 ]
 

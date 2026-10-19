@@ -39,11 +39,15 @@ PORT = int(os.getenv("QWEN_PORT", "8080"))
 BASE_URL = f"http://localhost:{PORT}/v1"
 
 # server/load knobs, overridable from the job script per GPU
-MAX_MODEL_LEN = os.getenv("MAX_MODEL_LEN", "120000")  # raw-mode prompts run up to ~111.6k tokens + completion
+MAX_MODEL_LEN = os.getenv(
+    "MAX_MODEL_LEN", "120000"
+)  # raw-mode prompts run up to ~111.6k tokens + completion
 GPU_MEM_UTIL = os.getenv("GPU_MEM_UTIL", "0.90")
 MAX_NUM_SEQS = os.getenv("MAX_NUM_SEQS", "16")
 TENSOR_PARALLEL = os.getenv("TENSOR_PARALLEL", "1")
-CONCURRENCY = int(os.getenv("CONCURRENCY", "16"))  # in-flight requests per (model, prompt, identity)
+CONCURRENCY = int(
+    os.getenv("CONCURRENCY", "16")
+)  # in-flight requests per (model, prompt, identity)
 LOAD_TIMEOUT_S = 15 * 60  # first run downloads weights and captures CUDA graphs
 
 PATH_TO_LOGS = os.path.join(ROOT_DIR, "results", "logs")
@@ -81,31 +85,34 @@ LOCAL_SERVER_CONFIG = {
         # applies either way and vLLM derives max_model_len = 4 * 32768
         "extra_args": [
             "--hf-overrides",
-            json.dumps({
-                # vLLM >=0.31 no longer multiplies by `factor` for YaRN; it
-                # expects max_position_embeddings to already be the scaled
-                # value (32768 * 4)
-                "max_position_embeddings": 131072,
-                "rope_scaling": {
-                    "rope_type": "yarn",
-                    "factor": 4.0,
-                    "original_max_position_embeddings": 32768,
-                },
-                "rope_parameters": {
-                    "rope_type": "yarn",
-                    "rope_theta": 1000000.0,
-                    "factor": 4.0,
-                    "original_max_position_embeddings": 32768,
-                },
-            }),
+            json.dumps(
+                {
+                    # vLLM >=0.31 no longer multiplies by `factor` for YaRN; it
+                    # expects max_position_embeddings to already be the scaled
+                    # value (32768 * 4)
+                    "max_position_embeddings": 131072,
+                    "rope_scaling": {
+                        "rope_type": "yarn",
+                        "factor": 4.0,
+                        "original_max_position_embeddings": 32768,
+                    },
+                    "rope_parameters": {
+                        "rope_type": "yarn",
+                        "rope_theta": 1000000.0,
+                        "factor": 4.0,
+                        "original_max_position_embeddings": 32768,
+                    },
+                }
+            ),
         ],
     },
-    # "qwen3-8b": {
-    #     "repo": "Qwen/Qwen3-8B",
-    #     "extra_args": [],
-    #     # disable thinking so the output is only the strict JSON answer
-    #     "request_extra": {"chat_template_kwargs": {"enable_thinking": False}},
-    # },
+    "qwen3.5-9b": {
+        "repo": "Qwen/Qwen3.5-9B",
+        # 256K native context — no YaRN rope_scaling needed for ~82K raw-mode prompts
+        "extra_args": [],
+        # disable thinking so the output is only the strict JSON answer
+        "request_extra": {"chat_template_kwargs": {"enable_thinking": False}},
+    },
     "llama-3.1-8b-instruct": {
         "repo": "meta-llama/Llama-3.1-8B-Instruct",
         "extra_args": [],
@@ -144,13 +151,21 @@ def start_server(model_name):
 
     proc = subprocess.Popen(
         [
-            VLLM, "serve", server_config["repo"],
-            "--port", str(PORT),
-            "--served-model-name", model_name,
-            "--max-model-len", MAX_MODEL_LEN,
-            "--gpu-memory-utilization", GPU_MEM_UTIL,
-            "--max-num-seqs", MAX_NUM_SEQS,
-            "--tensor-parallel-size", TENSOR_PARALLEL,
+            VLLM,
+            "serve",
+            server_config["repo"],
+            "--port",
+            str(PORT),
+            "--served-model-name",
+            model_name,
+            "--max-model-len",
+            MAX_MODEL_LEN,
+            "--gpu-memory-utilization",
+            GPU_MEM_UTIL,
+            "--max-num-seqs",
+            MAX_NUM_SEQS,
+            "--tensor-parallel-size",
+            TENSOR_PARALLEL,
             *server_config["extra_args"],
         ],
         stdout=log_file,
@@ -188,7 +203,9 @@ def stop_server(proc):
         proc.log_file.close()
 
 
-def call_qwen(prompt_types=PROMPT_TYPES, sample_ids=None, output_prefix="sample_results"):
+def call_qwen(
+    prompt_types=PROMPT_TYPES, sample_ids=None, output_prefix="sample_results"
+):
     os.makedirs(PATH_TO_MODEL_RESULTS, exist_ok=True)
 
     if sample_ids is None:
@@ -202,7 +219,9 @@ def call_qwen(prompt_types=PROMPT_TYPES, sample_ids=None, output_prefix="sample_
         pending = []
         for prompt_type, identity in prompt_identity_pairs(prompt_types):
             label = prompt_identity_label(prompt_type, identity)
-            output_file = f"{PATH_TO_MODEL_RESULTS}{output_prefix}_{label}_{model_name}.jsonl"
+            output_file = (
+                f"{PATH_TO_MODEL_RESULTS}{output_prefix}_{label}_{model_name}.jsonl"
+            )
             done = completed_sample_ids(output_file)
             if all(s in done for s in identity_sample_ids(sample_ids, identity)):
                 print(f"Skipping {model_name} | {label}: all samples recorded")
