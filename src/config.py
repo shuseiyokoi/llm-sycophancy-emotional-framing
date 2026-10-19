@@ -42,17 +42,17 @@ QWEN_MODELS = [
     # "qwen3.5-4b",  # same family, smaller tier; pairs with gemma-4-e4b-it
 ]
 
-GEMMA_MODELS = [
-    #    "gemma-2-9b-it",   # dropped: 8K context, cannot fit raw-mode prompts (~82K tokens/call)
-    #    "gemma-3-12b-it",  # superseded by Gemma 4
-    "gemma-4-12b-it",  # 256K context
-    "gemma-4-e4b-it",  # ~4B effective, 128K context (fits ~82K raw mode)
-]
+# GEMMA_MODELS = [
+#     #    "gemma-2-9b-it",   # dropped: 8K context, cannot fit raw-mode prompts (~82K tokens/call)
+#     #    "gemma-3-12b-it",  # superseded by Gemma 4
+#     "gemma-4-12b-it",  # 256K context
+#     "gemma-4-e4b-it",  # ~4B effective, 128K context (fits ~82K raw mode)
+# ]
 
-LLAMA_MODELS = [
-    "llama-3.1-8b-instruct",
-    "llama-3.2-3b-instruct",
-]
+# LLAMA_MODELS = [
+#     "llama-3.1-8b-instruct",
+#     "llama-3.2-3b-instruct",
+# ]
 
 
 # All models served locally with vLLM (see call_models/call_qwen.py)
