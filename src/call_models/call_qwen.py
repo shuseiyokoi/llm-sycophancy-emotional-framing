@@ -113,6 +113,11 @@ LOCAL_SERVER_CONFIG = {
         # disable thinking so the output is only the strict JSON answer
         "request_extra": {"chat_template_kwargs": {"enable_thinking": False}},
     },
+    "qwen3.5-4b": {
+        "repo": "Qwen/Qwen3.5-4B",
+        "extra_args": [],
+        "request_extra": {"chat_template_kwargs": {"enable_thinking": False}},
+    },
     "llama-3.1-8b-instruct": {
         "repo": "meta-llama/Llama-3.1-8B-Instruct",
         "extra_args": [],
