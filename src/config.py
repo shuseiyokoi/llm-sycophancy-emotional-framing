@@ -38,8 +38,8 @@ GEMINI_MODELS = [
 ]  # gemini-2.5-flash-lite / gemini-2.5-pro retired for new users; API pointed to these replacements
 
 QWEN_MODELS = [
-    "qwen3.5-9b",  # 256K native context, post-trained chat model (no -Instruct suffix); disable thinking mode
-    # "qwen3.5-4b",  # same family, smaller tier; pairs with gemma-4-e4b-it
+    # "qwen3.5-9b",  # 256K native context, post-trained chat model (no -Instruct suffix); disable thinking mode
+    "qwen3.5-4b",  # same family, smaller tier; pairs with gemma-4-e4b-it
 ]
 
 GEMMA_MODELS = [
