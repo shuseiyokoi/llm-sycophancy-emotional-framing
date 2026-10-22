@@ -131,6 +131,16 @@ LOCAL_SERVER_CONFIG = {
         # text-only prompts: don't reserve memory for image inputs
         "extra_args": ["--limit-mm-per-prompt", json.dumps({"image": 0})],
     },
+    "gemma-4-12b-it": {
+        "repo": "google/gemma-4-12b-it",
+        # text-only prompts: don't reserve memory for image inputs
+        "extra_args": ["--limit-mm-per-prompt", json.dumps({"image": 0})],
+    },
+    "gemma-4-e4b-it": {
+        "repo": "google/gemma-4-e4b-it",
+        # text-only prompts: don't reserve memory for image inputs
+        "extra_args": ["--limit-mm-per-prompt", json.dumps({"image": 0})],
+    },
 }
 
 
