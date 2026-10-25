@@ -43,7 +43,9 @@ def parse_json_response(raw_text):
 
 
 def completed_sample_ids(output_file):
-    """Sample ids already recorded in the output file (for resume)."""
+    """Sample ids already recorded in the output file (for resume). Rows whose
+    call failed ({"error": ...}, e.g. timeouts) don't count, so a rerun retries
+    them; the retry is appended and analysis keeps the last row per sample."""
     done = set()
     try:
         with open(output_file, encoding="utf-8") as f:
@@ -52,8 +54,12 @@ def completed_sample_ids(output_file):
                 if not line:
                     continue
                 try:
-                    done.add(json.loads(line)["sample_id"])
-                except (json.JSONDecodeError, KeyError):
+                    row = json.loads(line)
+                    response = row.get("response")
+                    if isinstance(response, dict) and "error" in response:
+                        continue
+                    done.add(row["sample_id"])
+                except (json.JSONDecodeError, KeyError, AttributeError):
                     continue
     except FileNotFoundError:
         pass

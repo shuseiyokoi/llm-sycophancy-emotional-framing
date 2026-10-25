@@ -49,6 +49,9 @@ CONCURRENCY = int(
     os.getenv("CONCURRENCY", "16")
 )  # in-flight requests per (model, prompt, identity)
 LOAD_TIMEOUT_S = 15 * 60  # first run downloads weights and captures CUDA graphs
+REQUEST_TIMEOUT_S = float(
+    os.getenv("REQUEST_TIMEOUT_S", "3600")
+)  # per request, including time queued on the server
 
 PATH_TO_LOGS = os.path.join(ROOT_DIR, "results", "logs")
 
@@ -226,7 +229,11 @@ def call_qwen(
     if sample_ids is None:
         sample_ids = list_sample_ids()
 
-    client = OpenAI(base_url=BASE_URL, api_key="local")
+    # ~100K-token prompts queue behind each other on one GPU; the default 600 s
+    # timeout + 2 retries dropped and resent them (E10), so wait instead
+    client = OpenAI(
+        base_url=BASE_URL, api_key="local", timeout=REQUEST_TIMEOUT_S, max_retries=0
+    )
 
     for model_name in LOCAL_MODELS:
         # resume support: skip (model, prompt, identity) pairs whose output

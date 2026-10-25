@@ -30,6 +30,7 @@ export HF_TOKEN=$(cat ~/.hf_token)
 # export MAX_NUM_SEQS=16        # sequences the server batches together
 # export TENSOR_PARALLEL=1      # must match the GPU count in --gres
 # export CONCURRENCY=16         # requests call_qwen.py keeps in flight
+# export REQUEST_TIMEOUT_S=3600 # per request, incl. time queued on the server
 
 # call_qwen.py starts and stops the vLLM server itself, once per model in
 # config.LOCAL_MODELS (logs in results/logs/vllm_<model>.log). Re-submitting
