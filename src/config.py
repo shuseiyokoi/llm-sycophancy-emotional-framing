@@ -54,10 +54,10 @@ LLAMA_MODELS = [
     "llama-3.2-3b-instruct",
 ]
 
-# MINISTRAL_MODELS = [
-#     "ministral-3-8b-instruct",  # 256K context; same generation as qwen3.5 / gemma-4
-#     "ministral-3-3b-instruct",  # same family, smaller tier
-# ]
+MINISTRAL_MODELS = [
+    # "ministral-3-8b-instruct",  # 256K context; same generation as qwen3.5 / gemma-4
+    # "ministral-3-3b-instruct",  # same family, smaller tier
+]
 
 
 # All models served locally with vLLM (see call_models/call_qwen.py)
