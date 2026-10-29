@@ -129,6 +129,35 @@ LOCAL_SERVER_CONFIG = {
         "repo": "meta-llama/Llama-3.2-3B-Instruct",
         "extra_args": [],
     },
+    "ministral-3-8b-instruct": {
+        # BF16 repo to match the other local models (the plain repo is FP8)
+        "repo": "mistralai/Ministral-3-8B-Instruct-2512-BF16",
+        # load with Mistral's own tokenizer/config format (per the model card);
+        # text-only prompts: don't reserve memory for image inputs
+        "extra_args": [
+            "--tokenizer-mode",
+            "mistral",
+            "--config-format",
+            "mistral",
+            "--load-format",
+            "mistral",
+            "--limit-mm-per-prompt",
+            json.dumps({"image": 0}),
+        ],
+    },
+    "ministral-3-3b-instruct": {
+        "repo": "mistralai/Ministral-3-3B-Instruct-2512-BF16",
+        "extra_args": [
+            "--tokenizer-mode",
+            "mistral",
+            "--config-format",
+            "mistral",
+            "--load-format",
+            "mistral",
+            "--limit-mm-per-prompt",
+            json.dumps({"image": 0}),
+        ],
+    },
     "gemma-3-12b-it": {
         "repo": "google/gemma-3-12b-it",
         # text-only prompts: don't reserve memory for image inputs

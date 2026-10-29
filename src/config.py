@@ -45,18 +45,23 @@ QWEN_MODELS = [
 GEMMA_MODELS = [
     #    "gemma-2-9b-it",   # dropped: 8K context, cannot fit raw-mode prompts (~82K tokens/call)
     #    "gemma-3-12b-it",  # superseded by Gemma 4
-    "gemma-4-12b-it",  # 256K dsfcontext
-    "gemma-4-e4b-it",  # ~4B effective, 128K context (fits ~82K raw mode)
+    # "gemma-4-12b-it",  # 256K dsfcontext
+    # "gemma-4-e4b-it",  # ~4B effective, 128K context (fits ~82K raw mode)
 ]
 
 LLAMA_MODELS = [
-    # "llama-3.1-8b-instruct",
-    # "llama-3.2-3b-instruct",
+    "llama-3.1-8b-instruct",
+    "llama-3.2-3b-instruct",
 ]
+
+# MINISTRAL_MODELS = [
+#     "ministral-3-8b-instruct",  # 256K context; same generation as qwen3.5 / gemma-4
+#     "ministral-3-3b-instruct",  # same family, smaller tier
+# ]
 
 
 # All models served locally with vLLM (see call_models/call_qwen.py)
-LOCAL_MODELS = QWEN_MODELS + LLAMA_MODELS + GEMMA_MODELS
+LOCAL_MODELS = QWEN_MODELS + LLAMA_MODELS + GEMMA_MODELS + MINISTRAL_MODELS
 
 # prompt_jobs_config.py
 PROMPT_TYPES = [
