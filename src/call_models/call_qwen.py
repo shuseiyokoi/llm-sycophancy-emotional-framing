@@ -144,6 +144,10 @@ LOCAL_SERVER_CONFIG = {
             "--limit-mm-per-prompt",
             json.dumps({"image": 0}),
         ],
+        # the repo ships no sampling defaults (vLLM would use temperature 1.0);
+        # use Llama 3.x's generation_config.json values so the 8B/3B pairs match
+
+        "request_extra": {"temperature": 0.6, "top_p": 0.9},
     },
     "ministral-3-3b-instruct": {
         "repo": "mistralai/Ministral-3-3B-Instruct-2512-BF16",
@@ -157,6 +161,7 @@ LOCAL_SERVER_CONFIG = {
             "--limit-mm-per-prompt",
             json.dumps({"image": 0}),
         ],
+        "request_extra": {"temperature": 0.6, "top_p": 0.9},
     },
     "gemma-3-12b-it": {
         "repo": "google/gemma-3-12b-it",
