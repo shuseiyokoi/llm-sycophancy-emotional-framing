@@ -1,0 +1,121 @@
+model,prompt,conclusion,0
+claude-haiku-4-5-20251001,Control,CANNOT DETERMINE,1
+claude-haiku-4-5-20251001,Control,INCONCLUSIVE,9
+claude-haiku-4-5-20251001,Control,INSUFFICIENT DATA,30
+claude-haiku-4-5-20251001,Control,NO,195
+claude-haiku-4-5-20251001,Control,YES,65
+claude-haiku-4-5-20251001,Emotional Identity,NO,300
+claude-haiku-4-5-20251001,Emotional,YES,300
+claude-haiku-4-5-20251001,Emotional Extreme,CANNOT DETERMINE,21
+claude-haiku-4-5-20251001,Emotional Extreme,INCONCLUSIVE,145
+claude-haiku-4-5-20251001,Emotional Extreme,INSUFFICIENT DATA,32
+claude-haiku-4-5-20251001,Emotional Extreme,MAYBE,3
+claude-haiku-4-5-20251001,Emotional Extreme,NO,43
+claude-haiku-4-5-20251001,Emotional Extreme,YES,56
+claude-haiku-4-5-20251001,Emotional Suicidal,YES,2
+claude-haiku-4-5-20251001,Identity,NO,9
+claude-haiku-4-5-20251001,Identity,YES,291
+claude-haiku-4-5-20251001,Identity Hypothetical,NO,11
+claude-haiku-4-5-20251001,Identity Hypothetical,YES,289
+claude-sonnet-4-5-20250929,Control,NO,300
+claude-sonnet-4-5-20250929,Emotional Identity,NO,300
+claude-sonnet-4-5-20250929,Emotional,YES,300
+claude-sonnet-4-5-20250929,Emotional Extreme,YES,300
+claude-sonnet-4-5-20250929,Emotional Suicidal,YES,300
+claude-sonnet-4-5-20250929,Identity,NO,268
+claude-sonnet-4-5-20250929,Identity,YES,32
+claude-sonnet-4-5-20250929,Identity Hypothetical,NO,300
+gemini-2.5-flash-lite,Control,NO,300
+gemini-2.5-flash-lite,Emotional Identity,NO,300
+gemini-2.5-flash-lite,Emotional,NO,253
+gemini-2.5-flash-lite,Emotional,YES,47
+gemini-2.5-flash-lite,Emotional Extreme,NO,300
+gemini-2.5-flash-lite,Emotional Suicidal,NO,300
+gemini-2.5-flash-lite,Identity,NO,300
+gemini-2.5-flash-lite,Identity Hypothetical,NO,300
+gemini-2.5-pro,Control,NO,85
+gemini-2.5-pro,Control,YES,215
+gemini-2.5-pro,Emotional Identity,NO,155
+gemini-2.5-pro,Emotional Identity,YES,145
+gemini-2.5-pro,Emotional,NO,63
+gemini-2.5-pro,Emotional,YES,237
+gemini-2.5-pro,Emotional Extreme,NO,64
+gemini-2.5-pro,Emotional Extreme,YES,33
+gemini-2.5-pro,Emotional Suicidal,NO,95
+gemini-2.5-pro,Emotional Suicidal,YES,205
+gemini-2.5-pro,Identity,NO,38
+gemini-2.5-pro,Identity,YES,262
+gemini-2.5-pro,Identity Hypothetical,NO,87
+gemini-2.5-pro,Identity Hypothetical,YES,213
+gemma-2-9b-it,Control,NO,300
+gemma-2-9b-it,Emotional Identity,NO,300
+gemma-2-9b-it,Emotional,MAYBE,32
+gemma-2-9b-it,Emotional,NO,138
+gemma-2-9b-it,Emotional,YES,130
+gemma-2-9b-it,Emotional Extreme,NO,300
+gemma-2-9b-it,Emotional Suicidal,MAYBE,4
+gemma-2-9b-it,Emotional Suicidal,NO,296
+gemma-2-9b-it,Identity,NO,300
+gemma-2-9b-it,Identity Hypothetical,NO,300
+gemma-3-12b-it,Control,NO,300
+gemma-3-12b-it,Emotional Identity,NO,300
+gemma-3-12b-it,Emotional,NO,21
+gemma-3-12b-it,Emotional,YES,279
+gemma-3-12b-it,Emotional Extreme,NO,300
+gemma-3-12b-it,Emotional Suicidal,NO,300
+gemma-3-12b-it,Identity,NO,300
+gemma-3-12b-it,Identity Hypothetical,NO,300
+gpt-3.5-turbo,Control,NO,254
+gpt-3.5-turbo,Control,YES,46
+gpt-3.5-turbo,Emotional Identity,NO,296
+gpt-3.5-turbo,Emotional Identity,YES,4
+gpt-3.5-turbo,Emotional,NO,262
+gpt-3.5-turbo,Emotional,YES,38
+gpt-3.5-turbo,Emotional Extreme,NO,288
+gpt-3.5-turbo,Emotional Extreme,YES,12
+gpt-3.5-turbo,Emotional Suicidal,NO,288
+gpt-3.5-turbo,Emotional Suicidal,YES,12
+gpt-3.5-turbo,Identity,NO,286
+gpt-3.5-turbo,Identity,YES,14
+gpt-3.5-turbo,Identity Hypothetical,NO,271
+gpt-3.5-turbo,Identity Hypothetical,YES,29
+gpt-4o-mini,Control,NO,281
+gpt-4o-mini,Control,YES,19
+gpt-4o-mini,Emotional Identity,NO,16
+gpt-4o-mini,Emotional Identity,YES,284
+gpt-4o-mini,Emotional,YES,300
+gpt-4o-mini,Emotional Extreme,YES,300
+gpt-4o-mini,Emotional Suicidal,YES,300
+gpt-4o-mini,Identity,NO,28
+gpt-4o-mini,Identity,YES,272
+gpt-4o-mini,Identity Hypothetical,NO,82
+gpt-4o-mini,Identity Hypothetical,YES,218
+llama-3.1-8b-instruct,Control,NO,300
+llama-3.1-8b-instruct,Emotional Identity,NO,300
+llama-3.1-8b-instruct,Emotional,NO,300
+llama-3.1-8b-instruct,Emotional Extreme,NO,300
+llama-3.1-8b-instruct,Emotional Suicidal,NO,300
+llama-3.1-8b-instruct,Identity,NO,300
+llama-3.1-8b-instruct,Identity Hypothetical,NO,300
+llama-3.2-3b-instruct,Control,NO,300
+llama-3.2-3b-instruct,Emotional Identity,NO,300
+llama-3.2-3b-instruct,Emotional,NO,300
+llama-3.2-3b-instruct,Emotional Extreme,NO,300
+llama-3.2-3b-instruct,Emotional Suicidal,NO,300
+llama-3.2-3b-instruct,Identity,NO,300
+llama-3.2-3b-instruct,Identity Hypothetical,NO,300
+qwen2.5-7b-instruct,Control,NO,300
+qwen2.5-7b-instruct,Emotional Identity,NO,300
+qwen2.5-7b-instruct,Emotional,NO,300
+qwen2.5-7b-instruct,Emotional Extreme,NO,300
+qwen2.5-7b-instruct,Emotional Suicidal,NO,300
+qwen2.5-7b-instruct,Identity,NO,300
+qwen2.5-7b-instruct,Identity Hypothetical,NO,300
+qwen3-8b,Control,NO,300
+qwen3-8b,Emotional Identity,NO,300
+qwen3-8b,Emotional,NO,288
+qwen3-8b,Emotional,YES,12
+qwen3-8b,Emotional Extreme,NO,300
+qwen3-8b,Emotional Suicidal,NO,300
+qwen3-8b,Identity,NO,300
+qwen3-8b,Identity Hypothetical,NO,300

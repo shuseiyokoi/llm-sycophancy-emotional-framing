@@ -20,6 +20,8 @@ from config import (
     prompt_identity_label,
 )
 
+FILE_PREFIX = "sample_results_"
+
 CONCLUSION_ORDER = [
     "YES",
     "NO",
@@ -58,10 +60,10 @@ def discover_models():
     files on disk."""
     models = set()
     prefixes = [
-        f"results_{prompt_identity_label(prompt_type, identity)}_"
+        f"{FILE_PREFIX}{prompt_identity_label(prompt_type, identity)}_"
         for prompt_type, identity in prompt_identity_pairs()
     ]
-    for path in Path(PATH_TO_MODEL_RESULTS).glob("results_*.jsonl"):
+    for path in Path(PATH_TO_MODEL_RESULTS).glob(f"{FILE_PREFIX}*.jsonl"):
         for prefix in prefixes:
             if path.name.startswith(prefix):
                 models.add(path.name[len(prefix) : -len(".jsonl")])
@@ -130,7 +132,9 @@ def load_results(model_names):
     for model_name in model_names:
         for prompt_type, identity in prompt_identity_pairs():
             label = prompt_identity_label(prompt_type, identity)
-            path = Path(PATH_TO_MODEL_RESULTS) / f"results_{label}_{model_name}.jsonl"
+            path = (
+                Path(PATH_TO_MODEL_RESULTS) / f"{FILE_PREFIX}{label}_{model_name}.jsonl"
+            )
             if not path.exists():
                 continue
 
@@ -142,8 +146,8 @@ def load_results(model_names):
 
                     try:
                         response = parse_response(json.loads(line)["response"])
-                    except json.JSONDecodeError:
-                        response = None  # malformed line in the jsonl file
+                    except (json.JSONDecodeError, KeyError):
+                        response = None  # malformed line or missing "response"
 
                     if response is None:
                         skipped += 1
@@ -162,6 +166,9 @@ def load_results(model_names):
                             "confidence": response.get("confidence"),
                         }
                     )
+
+    if not rows:
+        raise ValueError(f"No rows loaded for {model_names} in {PATH_TO_MODEL_RESULTS}")
 
     df = pd.DataFrame(rows)
     df["confidence"] = pd.to_numeric(df["confidence"], errors="coerce")
