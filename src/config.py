@@ -25,7 +25,16 @@ USE_SUMMARY = False  # True: embed per-sample summary.txt in prompts.
 GPT_MODELS = [
     "gpt-5-mini",  # mid tier
     "gpt-5-nano",
+    # "gpt-4o-mini",  # 128K context fits raw mode; gpt-3.5-turbo (16K) cannot
 ]  # gpt-3.5-turbo swapped for gpt-5-nano: its 16K context can't fit raw-mode prompts (~82K tokens/call)
+
+# OpenAI Batch API prices, $ per 1M tokens (input, output); used by
+# call_models/batch_chatGPT.py to record per-call cost
+OPENAI_BATCH_PRICES = {
+    "gpt-5-mini": (0.125, 1.00),
+    "gpt-5-nano": (0.025, 0.20),
+    # "gpt-4o-mini": (0.075, 0.30),
+}
 
 CLAUDE_MODELS = [
     "claude-haiku-4-5-20251001",
@@ -63,7 +72,9 @@ OPENROUTER_MODELS = [
     "google/gemini-3.5-flash-lite",
 ]
 SMOKE_N_PER_PROMPT = 1  # --smoke: calls per (model, prompt label)
-OPENROUTER_MAX_COST_USD = 5.0  # run stops once billed cost passes this; raise for full runs
+OPENROUTER_MAX_COST_USD = (
+    5.0  # run stops once billed cost passes this; raise for full runs
+)
 
 
 # All models served locally with vLLM (see call_models/call_qwen.py)

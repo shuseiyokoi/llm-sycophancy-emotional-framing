@@ -198,3 +198,6 @@ data/gather_data/samples/
 *.out
 slurm-*.out
 smoke_*.out
+
+# OpenAI Batch API request/result files (contain sample rows)
+data/call_models/batches/
