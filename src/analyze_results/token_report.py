@@ -1,9 +1,11 @@
-"""Token usage summary for local vLLM runs.
+"""Token usage (and cost) summary for local vLLM and OpenRouter runs.
 
 call_qwen.py stores each call's token usage in the result row ("usage":
 prompt/completion/total tokens and latency_s). This totals it per model x
 prompt type x identity. Rows without "usage" (runs made before tracking was
-added) are counted in n_rows but not n_with_usage.
+added) are counted in n_rows but not n_with_usage. call_openrouter.py also
+records reasoning_tokens and cost (USD); est_full_run_cost scales the mean
+cost per call to a full run (calls_per_model_full_run()).
 
     python token_report.py                  # sample_results_* files
     python token_report.py --prefix smoke   # smoke_* files
@@ -22,15 +24,25 @@ import sys
 import pandas as pd
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-from config import ROOT_DIR, PATH_TO_MODEL_RESULTS, LOCAL_MODELS
+from config import (
+    ROOT_DIR, PATH_TO_MODEL_RESULTS, LOCAL_MODELS, OPENROUTER_MODELS, N_SAMPLES,
+    prompt_identity_pairs, identity_sample_ids,
+)
 
-TOKEN_COLS = ["prompt_tokens", "completion_tokens", "total_tokens"]
+TOKEN_COLS = ["prompt_tokens", "completion_tokens", "total_tokens", "reasoning_tokens", "cost"]
+MODELS = LOCAL_MODELS + [m.split("/", 1)[1] for m in OPENROUTER_MODELS]
+
+
+def calls_per_model_full_run():
+    """Calls one model makes in a full run of N_SAMPLES (identity split applied)."""
+    sample_ids = list(range(N_SAMPLES))
+    return sum(len(identity_sample_ids(sample_ids, identity)) for _, identity in prompt_identity_pairs())
 GROUP_COLS = ["model", "fairness_definition", "prompt_type", "identity"]
 
 
 def load_rows(prefix):
     rows = []
-    for model_name in LOCAL_MODELS:
+    for model_name in MODELS:
         for path in sorted(glob.glob(f"{PATH_TO_MODEL_RESULTS}{prefix}_*_{model_name}.jsonl")):
             with open(path, encoding="utf-8") as f:
                 for line in f:
@@ -56,9 +68,10 @@ def summarize(df, by):
     out = g.agg(n_rows=("has_usage", "size"), n_with_usage=("has_usage", "sum"))
     for c in TOKEN_COLS:
         out[f"sum_{c}"] = g[c].sum(min_count=1)
-        out[f"mean_{c}"] = g[c].mean().round(1)
+        out[f"mean_{c}"] = g[c].mean().round(6 if c == "cost" else 1)
         out[f"max_{c}"] = g[c].max()
     out["mean_latency_s"] = g["latency_s"].mean().round(2)
+    out["est_full_run_cost"] = (out["mean_cost"] * calls_per_model_full_run()).round(2)
     return out.reset_index()
 
 
@@ -70,7 +83,7 @@ def main():
 
     df = load_rows(args.prefix)
     if df.empty:
-        print(f"No {args.prefix}_*.jsonl files found for {LOCAL_MODELS}")
+        print(f"No {args.prefix}_*.jsonl files found for {MODELS}")
         return
 
     by_prompt = summarize(df, GROUP_COLS)
@@ -83,8 +96,11 @@ def main():
     by_model.to_csv(os.path.join(args.out, "token_usage_by_model.csv"), index=False)
 
     cols = ["model", "n_rows", "n_with_usage", "sum_prompt_tokens",
-            "sum_completion_tokens", "sum_total_tokens", "mean_total_tokens", "mean_latency_s"]
+            "sum_completion_tokens", "mean_completion_tokens", "max_completion_tokens",
+            "sum_total_tokens", "mean_total_tokens", "mean_latency_s",
+            "sum_cost", "mean_cost", "est_full_run_cost"]
     print(by_model[cols].to_string(index=False))
+    print(f"\nest_full_run_cost = mean_cost x {calls_per_model_full_run()} calls/model (one fairness definition)")
     print(f"\nWrote {args.out}/token_usage_by_prompt.csv and token_usage_by_model.csv")
 
 

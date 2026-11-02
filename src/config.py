@@ -23,8 +23,8 @@ USE_SUMMARY = False  # True: embed per-sample summary.txt in prompts.
 # False: embed the sample's raw CSV rows instead.
 
 GPT_MODELS = [
+    "gpt-5-mini",  # mid tier
     "gpt-5-nano",
-    "gpt-4o-mini",
 ]  # gpt-3.5-turbo swapped for gpt-5-nano: its 16K context can't fit raw-mode prompts (~82K tokens/call)
 
 CLAUDE_MODELS = [
@@ -33,8 +33,8 @@ CLAUDE_MODELS = [
 ]  # claude-sonnet-4-20250514 gives non json responses
 
 GEMINI_MODELS = [
+    "gemini-3.6-flash",  # mid
     "gemini-3.5-flash-lite",
-    "gemini-3.1-pro-preview",
 ]  # gemini-2.5-flash-lite / gemini-2.5-pro retired for new users; API pointed to these replacements
 
 QWEN_MODELS = [
@@ -54,10 +54,16 @@ LLAMA_MODELS = [
     "llama-3.2-3b-instruct",
 ]
 
-# MINISTRAL_MODELS = [
-#     "ministral-3-8b-instruct",  # 256K context; same generation as qwen3.5 / gemma-4
-#     "ministral-3-3b-instruct",  # same family, smaller tier
-# ]
+
+# Cloud models called through OpenRouter (see call_models/call_openrouter.py)
+OPENROUTER_MODELS = [
+    "openai/gpt-5-mini",
+    "openai/gpt-5-nano",
+    "google/gemini-3.6-flash",
+    "google/gemini-3.5-flash-lite",
+]
+SMOKE_N_PER_PROMPT = 1  # --smoke: calls per (model, prompt label)
+OPENROUTER_MAX_COST_USD = 5.0  # run stops once billed cost passes this; raise for full runs
 
 
 # All models served locally with vLLM (see call_models/call_qwen.py)

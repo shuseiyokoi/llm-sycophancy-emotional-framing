@@ -85,6 +85,7 @@ def run_sample_set(
     sleep_s=1.0,
     identity=None,
     workers=1,
+    limit=None,
 ):
     """`identity` (an entry from config.IDENTITIES) is required when
     prompt_name is one of config.IDENTITY_PROMPT_TYPES; get_sample_prompt
@@ -92,10 +93,13 @@ def run_sample_set(
 
     workers > 1 sends that many requests concurrently (for a local vLLM
     server); rows are still written one at a time from this thread, in
-    completion order, and `sleep_s` is ignored."""
+    completion order, and `sleep_s` is ignored.
+
+    limit keeps only the first `limit` samples after the identity split
+    (smoke runs), so every identity still gets its own samples."""
     if sample_ids is None:
         sample_ids = list_sample_ids()
-    sample_ids = identity_sample_ids(sample_ids, identity)
+    sample_ids = identity_sample_ids(sample_ids, identity)[:limit]
 
     label = f"{prompt_name} | {identity['key']}" if identity else prompt_name
 
