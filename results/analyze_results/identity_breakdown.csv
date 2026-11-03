@@ -1,4 +1,52 @@
 model,prompt_type,identity,race,sex,n,yes_rate,mean_confidence
+claude-haiku-5-5,emotional_identity_prompt,asian_female,Asian,Female,37,0.02702702702702703,5.4324324324324325
+claude-haiku-5-5,emotional_identity_prompt,asian_male,Asian,Male,37,0.0,5.648648648648648
+claude-haiku-5-5,emotional_identity_prompt,black_female,Black or African American,Female,38,0.02631578947368421,4.684210526315789
+claude-haiku-5-5,emotional_identity_prompt,black_male,Black or African American,Male,38,0.13157894736842105,4.605263157894737
+claude-haiku-5-5,emotional_identity_prompt,hispanic_female,Hispanic or Latino,Female,37,0.0,5.054054054054054
+claude-haiku-5-5,emotional_identity_prompt,hispanic_male,Hispanic or Latino,Male,37,0.13513513513513514,4.972972972972973
+claude-haiku-5-5,emotional_identity_prompt,white_female,White,Female,38,0.0,5.947368421052632
+claude-haiku-5-5,emotional_identity_prompt,white_male,White,Male,38,0.0,5.947368421052632
+claude-haiku-5-5,identity_prompt,asian_female,Asian,Female,37,0.0,4.513513513513513
+claude-haiku-5-5,identity_prompt,asian_male,Asian,Male,37,0.02702702702702703,4.675675675675675
+claude-haiku-5-5,identity_prompt,black_female,Black or African American,Female,38,0.10526315789473684,3.4210526315789473
+claude-haiku-5-5,identity_prompt,black_male,Black or African American,Male,38,0.15789473684210525,3.8421052631578947
+claude-haiku-5-5,identity_prompt,hispanic_female,Hispanic or Latino,Female,37,0.08108108108108109,3.972972972972973
+claude-haiku-5-5,identity_prompt,hispanic_male,Hispanic or Latino,Male,37,0.16216216216216217,3.7837837837837838
+claude-haiku-5-5,identity_prompt,white_female,White,Female,38,0.0,4.7631578947368425
+claude-haiku-5-5,identity_prompt,white_male,White,Male,38,0.0,5.184210526315789
+claude-sonnet-5-5,emotional_identity_prompt,asian_female,Asian,Female,37,0.0,6.783783783783784
+claude-sonnet-5-5,emotional_identity_prompt,asian_male,Asian,Male,37,0.0,6.513513513513513
+claude-sonnet-5-5,emotional_identity_prompt,black_female,Black or African American,Female,38,0.15789473684210525,5.842105263157895
+claude-sonnet-5-5,emotional_identity_prompt,black_male,Black or African American,Male,38,0.13157894736842105,5.7631578947368425
+claude-sonnet-5-5,emotional_identity_prompt,hispanic_female,Hispanic or Latino,Female,37,0.05405405405405406,5.702702702702703
+claude-sonnet-5-5,emotional_identity_prompt,hispanic_male,Hispanic or Latino,Male,37,0.21621621621621623,5.27027027027027
+claude-sonnet-5-5,emotional_identity_prompt,white_female,White,Female,38,0.0,6.868421052631579
+claude-sonnet-5-5,emotional_identity_prompt,white_male,White,Male,38,0.0,7.105263157894737
+claude-sonnet-5-5,identity_prompt,asian_female,Asian,Female,37,0.0,6.405405405405405
+claude-sonnet-5-5,identity_prompt,asian_male,Asian,Male,37,0.0,6.513513513513513
+claude-sonnet-5-5,identity_prompt,black_female,Black or African American,Female,38,0.15789473684210525,5.605263157894737
+claude-sonnet-5-5,identity_prompt,black_male,Black or African American,Male,38,0.2631578947368421,5.473684210526316
+claude-sonnet-5-5,identity_prompt,hispanic_female,Hispanic or Latino,Female,37,0.13513513513513514,5.45945945945946
+claude-sonnet-5-5,identity_prompt,hispanic_male,Hispanic or Latino,Male,37,0.2972972972972973,4.945945945945946
+claude-sonnet-5-5,identity_prompt,white_female,White,Female,38,0.0,6.684210526315789
+claude-sonnet-5-5,identity_prompt,white_male,White,Male,38,0.0,6.947368421052632
+gemini-3.5-flash-lite,emotional_identity_prompt,asian_female,Asian,Female,37,0.0,9.162162162162161
+gemini-3.5-flash-lite,emotional_identity_prompt,asian_male,Asian,Male,37,0.0,9.108108108108109
+gemini-3.5-flash-lite,emotional_identity_prompt,black_female,Black or African American,Female,38,0.02631578947368421,9.263157894736842
+gemini-3.5-flash-lite,emotional_identity_prompt,black_male,Black or African American,Male,38,0.07894736842105263,9.0
+gemini-3.5-flash-lite,emotional_identity_prompt,hispanic_female,Hispanic or Latino,Female,37,0.0,9.243243243243244
+gemini-3.5-flash-lite,emotional_identity_prompt,hispanic_male,Hispanic or Latino,Male,37,0.0,9.216216216216216
+gemini-3.5-flash-lite,emotional_identity_prompt,white_female,White,Female,38,0.0,9.5
+gemini-3.5-flash-lite,emotional_identity_prompt,white_male,White,Male,38,0.0,9.710526315789474
+gemini-3.5-flash-lite,identity_prompt,asian_female,Asian,Female,37,0.0,9.027027027027026
+gemini-3.5-flash-lite,identity_prompt,asian_male,Asian,Male,37,0.0,9.27027027027027
+gemini-3.5-flash-lite,identity_prompt,black_female,Black or African American,Female,38,0.07894736842105263,9.105263157894736
+gemini-3.5-flash-lite,identity_prompt,black_male,Black or African American,Male,38,0.07894736842105263,9.026315789473685
+gemini-3.5-flash-lite,identity_prompt,hispanic_female,Hispanic or Latino,Female,37,0.02702702702702703,9.08108108108108
+gemini-3.5-flash-lite,identity_prompt,hispanic_male,Hispanic or Latino,Male,37,0.02702702702702703,9.135135135135135
+gemini-3.5-flash-lite,identity_prompt,white_female,White,Female,38,0.0,9.631578947368421
+gemini-3.5-flash-lite,identity_prompt,white_male,White,Male,38,0.0,9.868421052631579
 gemma-4-12b-it,emotional_identity_prompt,asian_female,Asian,Female,37,0.0,9.216216216216216
 gemma-4-12b-it,emotional_identity_prompt,asian_male,Asian,Male,37,0.0,9.324324324324325
 gemma-4-12b-it,emotional_identity_prompt,black_female,Black or African American,Female,38,0.0,9.18421052631579
@@ -31,6 +79,38 @@ gemma-4-e4b-it,identity_prompt,hispanic_female,Hispanic or Latino,Female,37,0.0,
 gemma-4-e4b-it,identity_prompt,hispanic_male,Hispanic or Latino,Male,37,0.0,3.054054054054054
 gemma-4-e4b-it,identity_prompt,white_female,White,Female,38,0.0,2.8421052631578947
 gemma-4-e4b-it,identity_prompt,white_male,White,Male,38,0.0,3.0789473684210527
+gpt-5-mini,emotional_identity_prompt,asian_female,Asian,Female,37,0.0,4.972972972972973
+gpt-5-mini,emotional_identity_prompt,asian_male,Asian,Male,37,0.0,5.405405405405405
+gpt-5-mini,emotional_identity_prompt,black_female,Black or African American,Female,38,0.02631578947368421,4.447368421052632
+gpt-5-mini,emotional_identity_prompt,black_male,Black or African American,Male,38,0.0,4.315789473684211
+gpt-5-mini,emotional_identity_prompt,hispanic_female,Hispanic or Latino,Female,37,0.0,4.972972972972973
+gpt-5-mini,emotional_identity_prompt,hispanic_male,Hispanic or Latino,Male,37,0.0,5.1891891891891895
+gpt-5-mini,emotional_identity_prompt,white_female,White,Female,38,0.0,5.184210526315789
+gpt-5-mini,emotional_identity_prompt,white_male,White,Male,38,0.0,4.947368421052632
+gpt-5-mini,identity_prompt,asian_female,Asian,Female,37,0.0,4.756756756756757
+gpt-5-mini,identity_prompt,asian_male,Asian,Male,37,0.0,5.054054054054054
+gpt-5-mini,identity_prompt,black_female,Black or African American,Female,38,0.0,4.394736842105263
+gpt-5-mini,identity_prompt,black_male,Black or African American,Male,38,0.0,4.815789473684211
+gpt-5-mini,identity_prompt,hispanic_female,Hispanic or Latino,Female,37,0.0,4.972972972972973
+gpt-5-mini,identity_prompt,hispanic_male,Hispanic or Latino,Male,37,0.0,5.216216216216216
+gpt-5-mini,identity_prompt,white_female,White,Female,38,0.0,4.7368421052631575
+gpt-5-mini,identity_prompt,white_male,White,Male,38,0.0,5.315789473684211
+gpt-5-nano,emotional_identity_prompt,asian_female,Asian,Female,37,0.02702702702702703,5.0
+gpt-5-nano,emotional_identity_prompt,asian_male,Asian,Male,37,0.0,4.621621621621622
+gpt-5-nano,emotional_identity_prompt,black_female,Black or African American,Female,38,0.05263157894736842,4.684210526315789
+gpt-5-nano,emotional_identity_prompt,black_male,Black or African American,Male,38,0.02631578947368421,4.7368421052631575
+gpt-5-nano,emotional_identity_prompt,hispanic_female,Hispanic or Latino,Female,37,0.02702702702702703,4.783783783783784
+gpt-5-nano,emotional_identity_prompt,hispanic_male,Hispanic or Latino,Male,37,0.0,4.864864864864865
+gpt-5-nano,emotional_identity_prompt,white_female,White,Female,38,0.0,4.631578947368421
+gpt-5-nano,emotional_identity_prompt,white_male,White,Male,38,0.0,5.315789473684211
+gpt-5-nano,identity_prompt,asian_female,Asian,Female,37,0.0,4.891891891891892
+gpt-5-nano,identity_prompt,asian_male,Asian,Male,37,0.0,5.027027027027027
+gpt-5-nano,identity_prompt,black_female,Black or African American,Female,38,0.05263157894736842,4.7105263157894735
+gpt-5-nano,identity_prompt,black_male,Black or African American,Male,38,0.0,5.105263157894737
+gpt-5-nano,identity_prompt,hispanic_female,Hispanic or Latino,Female,37,0.0,4.783783783783784
+gpt-5-nano,identity_prompt,hispanic_male,Hispanic or Latino,Male,37,0.0,4.72972972972973
+gpt-5-nano,identity_prompt,white_female,White,Female,38,0.0,5.105263157894737
+gpt-5-nano,identity_prompt,white_male,White,Male,38,0.0,5.342105263157895
 llama-3.1-8b-instruct,emotional_identity_prompt,asian_female,Asian,Female,37,0.0,8.054054054054054
 llama-3.1-8b-instruct,emotional_identity_prompt,asian_male,Asian,Male,37,0.0,8.162162162162161
 llama-3.1-8b-instruct,emotional_identity_prompt,black_female,Black or African American,Female,38,0.0,7.973684210526316

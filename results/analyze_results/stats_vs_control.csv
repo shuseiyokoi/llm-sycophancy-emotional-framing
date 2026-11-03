@@ -1,10 +1,25 @@
 model,comparison,condition_a_yes,condition_a_no,condition_b_yes,condition_b_no,condition_a_yes_rate,condition_b_yes_rate,yes_rate_diff,chi_square_p,fisher_p,note
+claude-haiku-5-5,Control vs Emotional,7,292,0,297,2.341137123745819,0.0,-2.341137123745819,0.02306811428931831,0.01508181026973512,OK
+claude-haiku-5-5,Control vs Identity,7,292,20,280,2.341137123745819,6.666666666666667,4.325529542920847,0.01855243940305609,0.016583350136276605,OK
+claude-haiku-5-5,Control vs Emotional Identity,7,292,12,288,2.341137123745819,4.0,1.6588628762541808,0.35487301339075306,0.3514643797760653,OK
+claude-sonnet-5-5,Control vs Emotional Identity,91,209,21,279,30.333333333333336,7.000000000000001,-23.333333333333332,4.849222013604073e-13,9.620381915031088e-14,OK
+claude-sonnet-5-5,Control vs Identity,91,209,32,268,30.333333333333336,10.666666666666668,-19.666666666666664,4.482614076306733e-09,2.5470704275712654e-09,OK
+claude-sonnet-5-5,Control vs Emotional,91,209,46,254,30.333333333333336,15.333333333333332,-15.000000000000002,1.8744227964123397e-05,1.6478053395198355e-05,OK
+gemini-3.5-flash-lite,Control vs Identity,1,299,8,292,0.33333333333333337,2.666666666666667,2.3333333333333335,0.043886746777582336,0.0376622065358648,OK
+gemini-3.5-flash-lite,Control vs Emotional Identity,1,299,4,296,0.33333333333333337,1.3333333333333335,1.0,0.36909096604728053,0.37290794540314265,OK
+gemini-3.5-flash-lite,Control vs Emotional,1,299,0,300,0.33333333333333337,0.0,-0.33333333333333337,1.0,1.0,OK
 gemma-4-12b-it,Control vs Emotional Identity,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
 gemma-4-12b-it,Control vs Emotional,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
 gemma-4-12b-it,Control vs Identity,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
 gemma-4-e4b-it,Control vs Emotional Identity,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
 gemma-4-e4b-it,Control vs Emotional,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
 gemma-4-e4b-it,Control vs Identity,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+gpt-5-mini,Control vs Emotional Identity,0,300,1,299,0.0,0.33333333333333337,0.33333333333333337,1.0,1.0,OK
+gpt-5-mini,Control vs Emotional,0,300,0,299,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+gpt-5-mini,Control vs Identity,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+gpt-5-nano,Control vs Emotional Identity,0,300,5,295,0.0,1.6666666666666667,1.6666666666666667,0.07243809925044635,0.06145921594617495,OK
+gpt-5-nano,Control vs Identity,0,300,2,298,0.0,0.6666666666666667,0.6666666666666667,0.4787662742236909,0.4991652754590985,OK
+gpt-5-nano,Control vs Emotional,0,300,1,299,0.0,0.33333333333333337,0.33333333333333337,1.0,1.0,OK
 llama-3.1-8b-instruct,Control vs Emotional Identity,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
 llama-3.1-8b-instruct,Control vs Emotional,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
 llama-3.1-8b-instruct,Control vs Identity,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.

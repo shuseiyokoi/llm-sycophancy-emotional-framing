@@ -6,6 +6,8 @@ analyze_results/token_report.py summarizes these runs too.
 
     python call_openrouter.py --smoke   # SMOKE_N_PER_PROMPT call(s) per prompt label -> smoke_*.jsonl
     python call_openrouter.py           # full run -> sample_results_*.jsonl
+    python call_openrouter.py --models openai/gpt-5-nano --workers 8 --max-cost 10
+                                        # full run for one model, 8 calls at a time, $10 cap
 
 Prints each call's tokens and cost with running totals, and stops once the
 run's billed cost passes OPENROUTER_MAX_COST_USD.
@@ -47,7 +49,9 @@ def key_spend(api_key):
     return data.get("usage"), data.get("limit")
 
 
-def call_openrouter(smoke=False):
+def call_openrouter(smoke=False, models=None, workers=1, max_cost=None):
+    models = models or OPENROUTER_MODELS
+    max_cost = OPENROUTER_MAX_COST_USD if max_cost is None else max_cost
     load_dotenv()
 
     api_key = os.getenv("OPENROUTER_API_KEY")
@@ -60,7 +64,7 @@ def call_openrouter(smoke=False):
 
     spend_before, limit = key_spend(api_key)
     print(f"OpenRouter key: spent ${spend_before:.4f} so far, limit {limit}")
-    print(f"Run budget: ${OPENROUTER_MAX_COST_USD:.2f}")
+    print(f"Models: {models} | workers: {workers} | run budget: ${max_cost:.2f}")
 
     prefix = "smoke" if smoke else "sample_results"
     limit_n = SMOKE_N_PER_PROMPT if smoke else None
@@ -68,14 +72,14 @@ def call_openrouter(smoke=False):
     lock = threading.Lock()
 
     try:
-        for model_id in OPENROUTER_MODELS:
-            model_name = model_id.split("/", 1)[1]
+        for model_id in models:
+            model_name = model_id.split("/", 1)[1].split(":")[0]  # ":batch" is billing, not a different model
             totals[model_name] = 0.0
 
             def send_fn(prompt_text):
-                if totals["run"] >= OPENROUTER_MAX_COST_USD:
+                if totals["run"] >= max_cost:
                     raise BudgetExceeded(
-                        f"run cost ${totals['run']:.4f} passed budget ${OPENROUTER_MAX_COST_USD:.2f}"
+                        f"run cost ${totals['run']:.4f} passed budget ${max_cost:.2f}"
                     )
                 t0 = time.perf_counter()
                 completion = client.chat.completions.create(
@@ -113,6 +117,7 @@ def call_openrouter(smoke=False):
                 run_sample_set(
                     send_fn, model_name, prompt_type, output_file,
                     identity=identity, limit=limit_n,
+                    sleep_s=0 if workers > 1 else 1.0, workers=workers,
                 )
                 print(f"Finished: {model_name} | {label}")
 
@@ -135,5 +140,8 @@ def call_openrouter(smoke=False):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--smoke", action="store_true", help="SMOKE_N_PER_PROMPT call(s) per prompt label")
+    parser.add_argument("--models", nargs="+", help="OpenRouter model ids (default: config.OPENROUTER_MODELS)")
+    parser.add_argument("--workers", type=int, default=1, help="concurrent calls")
+    parser.add_argument("--max-cost", type=float, help="run budget in USD (default: OPENROUTER_MAX_COST_USD)")
     args = parser.parse_args()
-    call_openrouter(smoke=args.smoke)
+    call_openrouter(smoke=args.smoke, models=args.models, workers=args.workers, max_cost=args.max_cost)

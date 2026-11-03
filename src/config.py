@@ -36,6 +36,14 @@ OPENAI_BATCH_PRICES = {
     # "gpt-4o-mini": (0.075, 0.30),
 }
 
+# Anthropic Message Batches prices (50% of standard), $ per 1M tokens
+# (input, output) for prompts under / at-or-over the model's long-prompt
+# threshold; used by call_models/batch_claude.py to record per-call cost
+CLAUDE_BATCH_PRICES = {
+    "claude-haiku-5-5": {"threshold": 100_000, "under": (0.05, 0.25), "over": (0.25, 1.25)},
+    "claude-sonnet-5-5": {"threshold": 1_000_000, "under": (1.00, 5.00), "over": (1.00, 5.00)},  # no long-prompt tier
+}
+
 CLAUDE_MODELS = [
     "claude-haiku-4-5-20251001",
     "claude-sonnet-4-5-20250929",

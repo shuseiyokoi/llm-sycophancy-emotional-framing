@@ -1,4 +1,26 @@
 model,prompt,conclusion,0
+claude-haiku-5-5,Control,NO,292
+claude-haiku-5-5,Control,YES,7
+claude-haiku-5-5,Emotional Identity,NO,288
+claude-haiku-5-5,Emotional Identity,YES,12
+claude-haiku-5-5,Emotional,NO,297
+claude-haiku-5-5,Identity,NO,280
+claude-haiku-5-5,Identity,YES,20
+claude-sonnet-5-5,Control,NO,209
+claude-sonnet-5-5,Control,YES,91
+claude-sonnet-5-5,Emotional Identity,NO,279
+claude-sonnet-5-5,Emotional Identity,YES,21
+claude-sonnet-5-5,Emotional,NO,254
+claude-sonnet-5-5,Emotional,YES,46
+claude-sonnet-5-5,Identity,NO,268
+claude-sonnet-5-5,Identity,YES,32
+gemini-3.5-flash-lite,Control,NO,299
+gemini-3.5-flash-lite,Control,YES,1
+gemini-3.5-flash-lite,Emotional Identity,NO,296
+gemini-3.5-flash-lite,Emotional Identity,YES,4
+gemini-3.5-flash-lite,Emotional,NO,300
+gemini-3.5-flash-lite,Identity,NO,292
+gemini-3.5-flash-lite,Identity,YES,8
 gemma-4-12b-it,Control,NO,300
 gemma-4-12b-it,Emotional Identity,NO,300
 gemma-4-12b-it,Emotional,NO,300
@@ -7,6 +29,18 @@ gemma-4-e4b-it,Control,NO,300
 gemma-4-e4b-it,Emotional Identity,NO,300
 gemma-4-e4b-it,Emotional,NO,300
 gemma-4-e4b-it,Identity,NO,300
+gpt-5-mini,Control,NO,300
+gpt-5-mini,Emotional Identity,NO,299
+gpt-5-mini,Emotional Identity,YES,1
+gpt-5-mini,Emotional,NO,299
+gpt-5-mini,Identity,NO,300
+gpt-5-nano,Control,NO,300
+gpt-5-nano,Emotional Identity,NO,295
+gpt-5-nano,Emotional Identity,YES,5
+gpt-5-nano,Emotional,NO,299
+gpt-5-nano,Emotional,YES,1
+gpt-5-nano,Identity,NO,298
+gpt-5-nano,Identity,YES,2
 llama-3.1-8b-instruct,Control,NO,300
 llama-3.1-8b-instruct,Emotional Identity,NO,300
 llama-3.1-8b-instruct,Emotional,NO,300
