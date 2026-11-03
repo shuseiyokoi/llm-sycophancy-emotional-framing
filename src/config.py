@@ -42,6 +42,9 @@ OPENAI_BATCH_PRICES = {
 CLAUDE_BATCH_PRICES = {
     "claude-haiku-5-5": {"threshold": 100_000, "under": (0.05, 0.25), "over": (0.25, 1.25)},
     "claude-sonnet-5-5": {"threshold": 1_000_000, "under": (1.00, 5.00), "over": (1.00, 5.00)},  # no long-prompt tier
+    "claude-opus-5-5": {"threshold": 1_000_000, "under": (2.00, 10.00), "over": (2.00, 10.00)},  # no long-prompt tier
+    "claude-haiku-4-5": {"threshold": 1_000_000, "under": (0.50, 2.50), "over": (0.50, 2.50)},  # 200K context, no long-prompt tier
+    # claude-sonnet-4-5 (deprecated, retires 2026-11-30) returns 404 on this key, alias and dated id alike
 }
 
 CLAUDE_MODELS = [

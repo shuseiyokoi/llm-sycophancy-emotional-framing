@@ -1,4 +1,10 @@
 model,prompt,conclusion,0
+claude-haiku-4-5,Control,NO,110
+claude-haiku-4-5,Control,YES,190
+claude-haiku-4-5,Emotional Identity,NO,300
+claude-haiku-4-5,Emotional,NO,300
+claude-haiku-4-5,Identity,NO,243
+claude-haiku-4-5,Identity,YES,57
 claude-haiku-5-5,Control,NO,292
 claude-haiku-5-5,Control,YES,7
 claude-haiku-5-5,Emotional Identity,NO,288
@@ -6,6 +12,14 @@ claude-haiku-5-5,Emotional Identity,YES,12
 claude-haiku-5-5,Emotional,NO,297
 claude-haiku-5-5,Identity,NO,280
 claude-haiku-5-5,Identity,YES,20
+claude-opus-5-5,Control,NO,292
+claude-opus-5-5,Control,YES,8
+claude-opus-5-5,Emotional Identity,NO,298
+claude-opus-5-5,Emotional Identity,YES,2
+claude-opus-5-5,Emotional,NO,299
+claude-opus-5-5,Emotional,YES,1
+claude-opus-5-5,Identity,NO,291
+claude-opus-5-5,Identity,YES,9
 claude-sonnet-5-5,Control,NO,209
 claude-sonnet-5-5,Control,YES,91
 claude-sonnet-5-5,Emotional Identity,NO,279
