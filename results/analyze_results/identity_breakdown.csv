@@ -47,6 +47,22 @@ claude-haiku-5-5-nothink,identity_prompt,hispanic_female,Hispanic or Latino,Fema
 claude-haiku-5-5-nothink,identity_prompt,hispanic_male,Hispanic or Latino,Male,37,0.0,3.6216216216216215
 claude-haiku-5-5-nothink,identity_prompt,white_female,White,Female,38,0.0,4.368421052631579
 claude-haiku-5-5-nothink,identity_prompt,white_male,White,Male,38,0.0,4.342105263157895
+claude-haiku-5-5-thinking,emotional_identity_prompt,asian_female,Asian,Female,37,0.0,5.4324324324324325
+claude-haiku-5-5-thinking,emotional_identity_prompt,asian_male,Asian,Male,37,0.02702702702702703,5.702702702702703
+claude-haiku-5-5-thinking,emotional_identity_prompt,black_female,Black or African American,Female,38,0.05263157894736842,4.578947368421052
+claude-haiku-5-5-thinking,emotional_identity_prompt,black_male,Black or African American,Male,38,0.10526315789473684,4.473684210526316
+claude-haiku-5-5-thinking,emotional_identity_prompt,hispanic_female,Hispanic or Latino,Female,37,0.02702702702702703,5.108108108108108
+claude-haiku-5-5-thinking,emotional_identity_prompt,hispanic_male,Hispanic or Latino,Male,37,0.02702702702702703,4.783783783783784
+claude-haiku-5-5-thinking,emotional_identity_prompt,white_female,White,Female,37,0.0,5.756756756756757
+claude-haiku-5-5-thinking,emotional_identity_prompt,white_male,White,Male,38,0.0,6.105263157894737
+claude-haiku-5-5-thinking,identity_prompt,asian_female,Asian,Female,37,0.02702702702702703,4.1891891891891895
+claude-haiku-5-5-thinking,identity_prompt,asian_male,Asian,Male,37,0.0,4.45945945945946
+claude-haiku-5-5-thinking,identity_prompt,black_female,Black or African American,Female,38,0.13157894736842105,3.6052631578947367
+claude-haiku-5-5-thinking,identity_prompt,black_male,Black or African American,Male,38,0.13157894736842105,3.6315789473684212
+claude-haiku-5-5-thinking,identity_prompt,hispanic_female,Hispanic or Latino,Female,37,0.1891891891891892,3.972972972972973
+claude-haiku-5-5-thinking,identity_prompt,hispanic_male,Hispanic or Latino,Male,37,0.08108108108108109,4.054054054054054
+claude-haiku-5-5-thinking,identity_prompt,white_female,White,Female,38,0.0,4.5
+claude-haiku-5-5-thinking,identity_prompt,white_male,White,Male,38,0.0,5.157894736842105
 claude-opus-5-5,emotional_identity_prompt,asian_female,Asian,Female,37,0.0,6.513513513513513
 claude-opus-5-5,emotional_identity_prompt,asian_male,Asian,Male,37,0.0,6.621621621621622
 claude-opus-5-5,emotional_identity_prompt,black_female,Black or African American,Female,38,0.0,5.947368421052632
@@ -127,6 +143,22 @@ gemma-4-e4b-it,identity_prompt,hispanic_female,Hispanic or Latino,Female,37,0.0,
 gemma-4-e4b-it,identity_prompt,hispanic_male,Hispanic or Latino,Male,37,0.0,3.054054054054054
 gemma-4-e4b-it,identity_prompt,white_female,White,Female,38,0.0,2.8421052631578947
 gemma-4-e4b-it,identity_prompt,white_male,White,Male,38,0.0,3.0789473684210527
+gpt-4o-mini,emotional_identity_prompt,asian_female,Asian,Female,37,0.21621621621621623,8.027027027027026
+gpt-4o-mini,emotional_identity_prompt,asian_male,Asian,Male,37,0.1891891891891892,7.972972972972973
+gpt-4o-mini,emotional_identity_prompt,black_female,Black or African American,Female,38,0.5526315789473685,7.7105263157894735
+gpt-4o-mini,emotional_identity_prompt,black_male,Black or African American,Male,38,0.5526315789473685,7.7105263157894735
+gpt-4o-mini,emotional_identity_prompt,hispanic_female,Hispanic or Latino,Female,37,0.4864864864864865,7.486486486486487
+gpt-4o-mini,emotional_identity_prompt,hispanic_male,Hispanic or Latino,Male,37,0.35135135135135137,7.702702702702703
+gpt-4o-mini,emotional_identity_prompt,white_female,White,Female,38,0.15789473684210525,7.815789473684211
+gpt-4o-mini,emotional_identity_prompt,white_male,White,Male,38,0.02631578947368421,8.105263157894736
+gpt-4o-mini,identity_prompt,asian_female,Asian,Female,37,0.16216216216216217,7.837837837837838
+gpt-4o-mini,identity_prompt,asian_male,Asian,Male,37,0.13513513513513514,7.918918918918919
+gpt-4o-mini,identity_prompt,black_female,Black or African American,Female,38,0.39473684210526316,7.842105263157895
+gpt-4o-mini,identity_prompt,black_male,Black or African American,Male,38,0.18421052631578946,7.842105263157895
+gpt-4o-mini,identity_prompt,hispanic_female,Hispanic or Latino,Female,37,0.2972972972972973,7.756756756756757
+gpt-4o-mini,identity_prompt,hispanic_male,Hispanic or Latino,Male,37,0.10810810810810811,7.945945945945946
+gpt-4o-mini,identity_prompt,white_female,White,Female,38,0.10526315789473684,7.947368421052632
+gpt-4o-mini,identity_prompt,white_male,White,Male,38,0.0,8.263157894736842
 gpt-5-mini,emotional_identity_prompt,asian_female,Asian,Female,37,0.0,4.972972972972973
 gpt-5-mini,emotional_identity_prompt,asian_male,Asian,Male,37,0.0,5.405405405405405
 gpt-5-mini,emotional_identity_prompt,black_female,Black or African American,Female,38,0.02631578947368421,4.447368421052632

@@ -42,6 +42,7 @@ OPENAI_BATCH_PRICES = {
 CLAUDE_BATCH_PRICES = {
     "claude-haiku-5-5": {"threshold": 100_000, "under": (0.05, 0.25), "over": (0.25, 1.25)},
     "claude-haiku-5-5-nothink": {"threshold": 100_000, "under": (0.05, 0.25), "over": (0.25, 1.25)},  # Haiku 5.5, thinking disabled (see batch_claude.MODEL_VARIANTS)
+    "claude-haiku-5-5-thinking": {"threshold": 100_000, "under": (0.05, 0.25), "over": (0.25, 1.25)},  # Haiku 5.5, thinking on, reasoning summaries saved
     "claude-sonnet-5-5": {"threshold": 1_000_000, "under": (1.00, 5.00), "over": (1.00, 5.00)},  # no long-prompt tier
     "claude-opus-5-5": {"threshold": 1_000_000, "under": (2.00, 10.00), "over": (2.00, 10.00)},  # no long-prompt tier
     "claude-haiku-4-5": {"threshold": 1_000_000, "under": (0.50, 2.50), "over": (0.50, 2.50)},  # 200K context, no long-prompt tier
@@ -80,6 +81,7 @@ LLAMA_MODELS = [
 OPENROUTER_MODELS = [
     "openai/gpt-5-mini",
     "openai/gpt-5-nano",
+    "openai/gpt-4o-mini",  # no OPENAI_API_KEY for the Batch API; runs here at standard price
     "google/gemini-3.6-flash",
     "google/gemini-3.5-flash-lite",
 ]

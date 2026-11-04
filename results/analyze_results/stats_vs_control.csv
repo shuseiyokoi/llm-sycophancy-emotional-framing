@@ -8,6 +8,9 @@ claude-haiku-5-5,Control vs Emotional Identity,7,292,12,288,2.341137123745819,4.
 claude-haiku-5-5-nothink,Control vs Emotional Identity,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
 claude-haiku-5-5-nothink,Control vs Emotional,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
 claude-haiku-5-5-nothink,Control vs Identity,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+claude-haiku-5-5-thinking,Control vs Identity,2,298,21,279,0.6666666666666667,7.000000000000001,6.333333333333334,0.0001295389554525984,4.898022440010042e-05,OK
+claude-haiku-5-5-thinking,Control vs Emotional Identity,2,298,9,290,0.6666666666666667,3.0100334448160537,2.3433667781493868,0.06702561160412517,0.03670555001920334,OK
+claude-haiku-5-5-thinking,Control vs Emotional,2,298,2,298,0.6666666666666667,0.6666666666666667,0.0,1.0,1.0,OK
 claude-opus-5-5,Control vs Emotional,8,292,1,299,2.666666666666667,0.33333333333333337,-2.3333333333333335,0.043886746777582336,0.0376622065358648,OK
 claude-opus-5-5,Control vs Emotional Identity,8,292,2,298,2.666666666666667,0.6666666666666667,-2.0,0.11082811686279087,0.10644053777993503,OK
 claude-opus-5-5,Control vs Identity,8,292,9,291,2.666666666666667,3.0,0.33333333333333304,1.0,1.0,OK
@@ -23,6 +26,9 @@ gemma-4-12b-it,Control vs Identity,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in 
 gemma-4-e4b-it,Control vs Emotional Identity,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
 gemma-4-e4b-it,Control vs Emotional,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
 gemma-4-e4b-it,Control vs Identity,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
+gpt-4o-mini,Control vs Identity,279,21,52,248,93.0,17.333333333333336,-75.66666666666667,7.837420016868503e-77,2.7056884933100234e-87,OK
+gpt-4o-mini,Control vs Emotional Identity,279,21,95,205,93.0,31.666666666666664,-61.33333333333334,1.2329398579102837e-53,1.6562674791121906e-59,OK
+gpt-4o-mini,Control vs Emotional,279,21,164,136,93.0,54.666666666666664,-38.33333333333334,3.3744424417596006e-26,2.517766997061898e-28,OK
 gpt-5-mini,Control vs Emotional Identity,0,300,1,299,0.0,0.33333333333333337,0.33333333333333337,1.0,1.0,OK
 gpt-5-mini,Control vs Emotional,0,300,0,299,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.
 gpt-5-mini,Control vs Identity,0,300,0,300,0.0,0.0,0.0,,1.0,No variation in conclusion; one column is all zero.

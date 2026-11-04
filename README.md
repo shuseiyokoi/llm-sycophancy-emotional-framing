@@ -258,6 +258,13 @@ Models are auto-discovered from the `sample_results_*.jsonl` files in `data/call
 - `answer-change-by-identity.csv` — per model × prompt type × identity: n, YES rates, Δ YES, share changed, NO→YES and YES→NO flips, Δ confidence
 - `answer-change-pairs.csv` — one row per paired (identity call, control call)
 
+`python ground_truth_plots.py` scores each answer against the per-sample ground truth (`results/ground_truth/sample_labels_l2.csv` / `sample_term_labels_l2.csv`; identity prompts against that identity's own race/sex terms) and saves:
+
+- `gt-hit-vs-false-alarm.png` / `gt-hit-false-alarm.csv` — per model and prompt: hit rate (YES when biased) vs false alarm (YES when not biased), arrows from control to each framed prompt
+- `gt-identity-truth-vs-yes.png` / `gt-identity-truth-vs-yes.csv` — per identity: share of samples truly biased against it vs the model's YES rate
+
+`python reasoning_to_markdown.py` turns the reasoning summaries in `data/call_models/reasoning/` (saved by `batch_claude.py` for variants that request them, e.g. `claude-haiku-5-5-thinking`) into one readable Markdown file per prompt in `results/reasoning/`, YES answers first.
+
 ### 6. Ground truth regression + demographic parity
 
 One script per statistical test, each runnable on its own against all of

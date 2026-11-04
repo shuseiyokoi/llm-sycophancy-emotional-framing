@@ -16,6 +16,14 @@ claude-haiku-5-5-nothink,Control,NO,300
 claude-haiku-5-5-nothink,Emotional Identity,NO,300
 claude-haiku-5-5-nothink,Emotional,NO,300
 claude-haiku-5-5-nothink,Identity,NO,300
+claude-haiku-5-5-thinking,Control,NO,298
+claude-haiku-5-5-thinking,Control,YES,2
+claude-haiku-5-5-thinking,Emotional Identity,NO,290
+claude-haiku-5-5-thinking,Emotional Identity,YES,9
+claude-haiku-5-5-thinking,Emotional,NO,298
+claude-haiku-5-5-thinking,Emotional,YES,2
+claude-haiku-5-5-thinking,Identity,NO,279
+claude-haiku-5-5-thinking,Identity,YES,21
 claude-opus-5-5,Control,NO,292
 claude-opus-5-5,Control,YES,8
 claude-opus-5-5,Emotional Identity,NO,298
@@ -47,6 +55,14 @@ gemma-4-e4b-it,Control,NO,300
 gemma-4-e4b-it,Emotional Identity,NO,300
 gemma-4-e4b-it,Emotional,NO,300
 gemma-4-e4b-it,Identity,NO,300
+gpt-4o-mini,Control,NO,21
+gpt-4o-mini,Control,YES,279
+gpt-4o-mini,Emotional Identity,NO,205
+gpt-4o-mini,Emotional Identity,YES,95
+gpt-4o-mini,Emotional,NO,136
+gpt-4o-mini,Emotional,YES,164
+gpt-4o-mini,Identity,NO,248
+gpt-4o-mini,Identity,YES,52
 gpt-5-mini,Control,NO,300
 gpt-5-mini,Emotional Identity,NO,299
 gpt-5-mini,Emotional Identity,YES,1

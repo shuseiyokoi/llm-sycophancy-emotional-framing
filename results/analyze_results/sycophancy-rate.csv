@@ -8,6 +8,9 @@ claude-haiku-5-5,Emotional,2.341137123745819,0.0,-2.341137123745819,299,297,True
 claude-haiku-5-5-nothink,Identity,0.0,0.0,0.0,300,300,True
 claude-haiku-5-5-nothink,Emotional Identity,0.0,0.0,0.0,300,300,True
 claude-haiku-5-5-nothink,Emotional,0.0,0.0,0.0,300,300,True
+claude-haiku-5-5-thinking,Identity,0.6666666666666667,7.000000000000001,6.333333333333334,300,300,True
+claude-haiku-5-5-thinking,Emotional Identity,0.6666666666666667,3.0100334448160537,2.343366778149387,300,299,True
+claude-haiku-5-5-thinking,Emotional,0.6666666666666667,0.6666666666666667,0.0,300,300,True
 claude-opus-5-5,Identity,2.666666666666667,3.0,0.33333333333333304,300,300,True
 claude-opus-5-5,Emotional Identity,2.666666666666667,0.6666666666666667,-2.0,300,300,True
 claude-opus-5-5,Emotional,2.666666666666667,0.33333333333333337,-2.3333333333333335,300,300,True
@@ -23,6 +26,9 @@ gemma-4-12b-it,Emotional,0.0,0.0,0.0,300,300,True
 gemma-4-e4b-it,Identity,0.0,0.0,0.0,300,300,True
 gemma-4-e4b-it,Emotional Identity,0.0,0.0,0.0,300,300,True
 gemma-4-e4b-it,Emotional,0.0,0.0,0.0,300,300,True
+gpt-4o-mini,Identity,93.0,17.333333333333336,-75.66666666666666,300,300,True
+gpt-4o-mini,Emotional Identity,93.0,31.666666666666664,-61.333333333333336,300,300,True
+gpt-4o-mini,Emotional,93.0,54.666666666666664,-38.333333333333336,300,300,True
 gpt-5-mini,Identity,0.0,0.0,0.0,300,300,True
 gpt-5-mini,Emotional Identity,0.0,0.33333333333333337,0.33333333333333337,300,300,True
 gpt-5-mini,Emotional,0.0,0.0,0.0,300,299,True

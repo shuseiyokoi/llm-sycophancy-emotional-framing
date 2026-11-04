@@ -46,7 +46,12 @@ GUESS_OUTPUT_TOKENS = 2000  # for the pre-submit estimate only (thinking + JSON 
 # result-file model name -> (API model id, extra request params)
 MODEL_VARIANTS = {
     "claude-haiku-5-5-nothink": ("claude-haiku-5-5", {"thinking": {"type": "disabled"}}),
+    "claude-haiku-5-5-thinking": ("claude-haiku-5-5", {"thinking": {"type": "adaptive", "display": "summarized"}}),
 }
+
+# reasoning summaries (thinking text) go here, one file per answer file, joinable on sample_id;
+# only written when the API returns thinking text (display: "summarized")
+REASONING_DIR = f"{PATH_TO_MODEL_RESULTS}reasoning{os.sep}"
 
 
 def load_state():
@@ -175,6 +180,23 @@ def write_row(model_name, prefix, label, sample_id, response, usage=None):
         f.write(json.dumps(row, ensure_ascii=False) + "\n")
 
 
+def write_reasoning(model_name, prefix, label, sample_id, response, thinking):
+    prompt_type, identity_key = label_fields(label)
+    row = {
+        "sample_id": sample_id,
+        "model": model_name,
+        "prompt_type": prompt_type,
+        "identity": identity_key,
+        "conclusion": response.get("conclusion"),
+        "confidence": response.get("confidence"),
+        "evidence": response.get("evidence"),
+        "thinking": thinking,
+    }
+    os.makedirs(REASONING_DIR, exist_ok=True)
+    with open(f"{REASONING_DIR}{prefix}_{label}_{model_name}.jsonl", "a", encoding="utf-8") as f:
+        f.write(json.dumps(row, ensure_ascii=False) + "\n")
+
+
 def collect(client):
     """Write rows for ended batches; returns True when every batch is collected."""
     state = load_state()
@@ -209,6 +231,9 @@ def collect(client):
                 text = "".join(blk.text for blk in msg.content if blk.type == "text")
                 response = parse_json_response(text.strip())
             write_row(model_name, prefix, label, sample_id, response, usage)
+            thinking = "".join(blk.thinking for blk in msg.content if blk.type == "thinking")
+            if thinking.strip():
+                write_reasoning(model_name, prefix, label, sample_id, response, thinking)
             n_ok += 1
         b["status"] = "collected"
         b["cost"] = round(cost, 4)

@@ -4,8 +4,8 @@ Compare per-sample model decisions to per-sample ground truth labels.
 Inputs:
   data/call_models/sample_results_[{definition}_]{prompt_type}[_{identity_key}]_{model}.jsonl
                                                                                (call stage)
-  results/ground_truth/sample_labels.csv                                       (label stage)
-  results/ground_truth/sample_term_labels.csv                                  (label stage)
+  results/ground_truth/sample_labels_l2.csv                                    (label stage)
+  results/ground_truth/sample_term_labels_l2.csv                               (label stage)
 
 For each model x prompt condition x identity (identity-framed prompts only):
   - classification metrics vs ground truth (accuracy, TPR, FPR, yes-rate)
@@ -299,10 +299,10 @@ def flips_vs_control(df):
 def compare_to_ground_truth():
     Path(PATH_TO_RESULTS).mkdir(parents=True, exist_ok=True)
 
-    labels_path = os.path.join(PATH_TO_GROUND_TRUTH, "sample_labels.csv")
+    labels_path = os.path.join(PATH_TO_GROUND_TRUTH, "sample_labels_l2.csv")  # N=300 labels (L2 logit)
     labels = pd.read_csv(labels_path)
 
-    term_labels_path = os.path.join(PATH_TO_GROUND_TRUTH, "sample_term_labels.csv")
+    term_labels_path = os.path.join(PATH_TO_GROUND_TRUTH, "sample_term_labels_l2.csv")
     bias_wide = load_term_bias_wide(pd.read_csv(term_labels_path))
 
     print(f"Fairness definition: {FAIRNESS_DEFINITION} (truth: {TRUTH_DEFINITION})")
