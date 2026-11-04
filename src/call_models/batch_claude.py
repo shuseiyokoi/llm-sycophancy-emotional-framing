@@ -40,8 +40,13 @@ from sample_runner import completed_sample_ids, parse_json_response
 BATCH_DIR = f"{PATH_TO_MODEL_RESULTS}batches{os.sep}"
 STATE_FILE = f"{BATCH_DIR}claude_batches.json"
 CHUNK_SIZE = 250  # ~300 KB per prompt -> ~75 MB per batch (API limit 256 MB)
-MAX_TOKENS = 16000  # Haiku 5.5 always thinks, and thinking counts toward max_tokens
+MAX_TOKENS = 16000  # Haiku 5.5 thinks by default (except the -nothink variant), and thinking counts toward max_tokens
 GUESS_OUTPUT_TOKENS = 2000  # for the pre-submit estimate only (thinking + JSON answer)
+
+# result-file model name -> (API model id, extra request params)
+MODEL_VARIANTS = {
+    "claude-haiku-5-5-nothink": ("claude-haiku-5-5", {"thinking": {"type": "disabled"}}),
+}
 
 
 def load_state():
@@ -90,10 +95,12 @@ def submit(client, models, smoke=False, yes=False):
             print(f"{model_name}: nothing to submit")
             continue
 
+        api_model, extra_params = MODEL_VARIANTS.get(model_name, (model_name, {}))
+
         # count one prompt's tokens (free) to pick the price tier before spending anything
         _, _, prompt_type, identity, sample_id = todo[0]
         n_in = client.messages.count_tokens(
-            model=model_name,
+            model=api_model,
             messages=[{"role": "user", "content": get_sample_prompt(prompt_type, sample_id, identity)}],
         ).input_tokens
         in_price, out_price = prices(model_name, n_in)
@@ -114,9 +121,10 @@ def submit(client, models, smoke=False, yes=False):
                 requests.append({
                     "custom_id": custom_id,
                     "params": {
-                        "model": model_name,
+                        "model": api_model,
                         "max_tokens": MAX_TOKENS,
                         "messages": [{"role": "user", "content": get_sample_prompt(prompt_type, sample_id, identity)}],
+                        **extra_params,
                     },
                 })
             batch = client.messages.batches.create(requests=requests)

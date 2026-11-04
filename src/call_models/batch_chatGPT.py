@@ -48,7 +48,7 @@ LIVE = ("validating", "in_progress", "finalizing")
 # mean tokens per call measured in the OpenRouter smoke run (2026-11-02), for the
 # pre-submit cost estimate only
 SMOKE_MEAN_TOKENS = {"gpt-5-mini": (73807, 1165), "gpt-5-nano": (73807, 2727),
-                     "gpt-4o-mini": (73807, 150)}  # 4o-mini: not smoke-tested; no reasoning, output guessed
+                     "gpt-4o-mini": (73808, 74)}  # 4o-mini: OpenRouter smoke run 2026-11-03
 
 
 def load_state():

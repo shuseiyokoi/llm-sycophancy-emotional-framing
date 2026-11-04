@@ -252,6 +252,12 @@ Models are auto-discovered from the `sample_results_*.jsonl` files in `data/call
 - `tableresults.csv` — conclusion counts per model and prompt
 - `stats_vs_control.csv` — chi-square / Fisher exact tests of each prompt type against the control prompt, per model
 
+`python answer_change.py` pairs every identity-framed answer with the same model's control answer on the same sample, and saves:
+
+- `answer-change-dyes-heatmap.png` — Δ YES rate vs control (pp), models × identities, one panel per identity prompt type
+- `answer-change-by-identity.csv` — per model × prompt type × identity: n, YES rates, Δ YES, share changed, NO→YES and YES→NO flips, Δ confidence
+- `answer-change-pairs.csv` — one row per paired (identity call, control call)
+
 ### 6. Ground truth regression + demographic parity
 
 One script per statistical test, each runnable on its own against all of

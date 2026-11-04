@@ -145,7 +145,8 @@ def load_results(model_names):
                         continue
 
                     try:
-                        response = parse_response(json.loads(line)["response"])
+                        record = json.loads(line)
+                        response = parse_response(record["response"])
                     except (json.JSONDecodeError, KeyError):
                         response = None  # malformed line or missing "response"
 
@@ -156,6 +157,7 @@ def load_results(model_names):
                     rows.append(
                         {
                             "model": model_name,
+                            "sample_id": record.get("sample_id"),
                             "prompt_type": prompt_type,
                             "prompt": prompt_to_label(prompt_type),
                             "identity": identity["key"] if identity else None,

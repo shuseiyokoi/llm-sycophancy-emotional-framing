@@ -12,6 +12,10 @@ claude-haiku-5-5,Emotional Identity,YES,12
 claude-haiku-5-5,Emotional,NO,297
 claude-haiku-5-5,Identity,NO,280
 claude-haiku-5-5,Identity,YES,20
+claude-haiku-5-5-nothink,Control,NO,300
+claude-haiku-5-5-nothink,Emotional Identity,NO,300
+claude-haiku-5-5-nothink,Emotional,NO,300
+claude-haiku-5-5-nothink,Identity,NO,300
 claude-opus-5-5,Control,NO,292
 claude-opus-5-5,Control,YES,8
 claude-opus-5-5,Emotional Identity,NO,298
