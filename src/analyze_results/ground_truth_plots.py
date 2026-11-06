@@ -1,4 +1,4 @@
-"""Model answers vs per-sample ground truth, as two charts.
+"""Model answers vs per-sample ground truth, as four figures.
 
 Ground truth is scored the same way as compare_to_ground_truth.py:
 control_prompt / emotional_prompt against `bias_any` (any adverse,
@@ -6,18 +6,29 @@ significant race/sex term in the sample), identity-framed prompts against
 that identity's own terms (its race if not White, Female if female). Only the
 labels for config.FAIRNESS_DEFINITION's truth definition are used.
 
-Accuracy alone hides the result (with ~45% of samples biased, a model that
-always says NO is already ~55% accurate), so answers are split into:
+Because the two truths differ (~45% of samples biased for bias_any, ~14% for
+identity terms), identity-prompt numbers are compared within their own
+column, never against control.
+
+Accuracy alone hides the result (a model that always says NO is already
+55-86% accurate), so answers are split into:
 
     hit rate     = P(YES | sample is biased)
     false alarm  = P(YES | sample is not biased)
+    J            = hit rate - false alarm   (0 = YES unrelated to truth)
 
-Outputs to results/analyze_results/:
-    gt-hit-false-alarm.csv          one row per model × prompt type
-    gt-hit-vs-false-alarm.png       hit rate vs false alarm, one panel per model,
-                                    arrows from control to each framed prompt
-    gt-identity-truth-vs-yes.csv    one row per model × identity prompt type × identity
-    gt-identity-truth-vs-yes.png    per identity: ground-truth bias rate vs YES rate
+Outputs to results/analyze_results/ (each figure as .png and .pdf):
+    gt-hit-false-alarm.csv           one row per model × prompt type, with
+                                     bootstrap 95% CI on J
+    gt-yes-decomposition             YES rate split into YES-on-biased and
+                                     YES-on-not-biased, vs the true biased share
+    gt-discrimination                J with 95% CI per model × prompt type
+    gt-identity-truth-vs-yes.csv     one row per model × identity prompt type ×
+                                     identity, with Wilson 95% CI on YES rate
+    gt-identity-gap-heatmap          YES rate minus true biased rate, per
+                                     model × identity
+    gt-sample-barcode                every answer: models × samples, biased
+                                     samples first
 """
 
 import math
@@ -27,7 +38,9 @@ import sys
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.colors import LinearSegmentedColormap, ListedColormap, to_rgb
 from matplotlib.lines import Line2D
+from matplotlib.patches import Patch, Rectangle
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from config import PATH_TO_RESULTS, PATH_TO_GROUND_TRUTH, IDENTITIES, all_known_identities
@@ -48,8 +61,21 @@ FRAMED = [  # (prompt type, label, colour: categorical slots 1-3)
     ("emotional_prompt", "Emotional", "#eb6834"),
     ("emotional_identity_prompt", "Emotional + identity", "#1baf7a"),
 ]
-INK, MUTED, GRID = "#0b0b0b", "#898781", "#e1e0d9"
+INK, MUTED, GRID, SURFACE = "#0b0b0b", "#898781", "#e1e0d9", "#ffffff"
+SECONDARY = "#52514e"
+# column order for the multi-prompt figures: bias_any truth first, identity truth second
+PROMPTS = [
+    (CONTROL, "Control", INK),
+    ("emotional_prompt", "Emotional", "#eb6834"),
+    ("identity_prompt", "Identity", "#2a78d6"),
+    ("emotional_identity_prompt", "Emotional + identity", "#1baf7a"),
+]
+IDENTITY_PROMPTS = {"identity_prompt", "emotional_identity_prompt"}
+# diverging: blue (under-calls) <-> neutral grey <-> red (over-calls)
+DIVERGING = LinearSegmentedColormap.from_list("gap", ["#184f95", "#6da7ec", "#f0efec", "#ef8a89", "#b8302f"])
 IDENTITY_BY_KEY = {i["key"]: i for i in all_known_identities()}
+RNG_SEED = 0
+N_BOOT = 2000
 
 
 def attach_truth(df):
@@ -78,18 +104,41 @@ def attach_truth(df):
     return df
 
 
+def wilson(k, n, z=1.96):
+    """Wilson 95% interval for k successes out of n."""
+    if n == 0:
+        return np.nan, np.nan
+    p = k / n
+    centre = (p + z * z / (2 * n)) / (1 + z * z / n)
+    half = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / (1 + z * z / n)
+    return max(0.0, centre - half), min(1.0, centre + half)
+
+
 def hit_false_alarm(df):
+    rng = np.random.default_rng(RNG_SEED)
     rows = []
     for (model, prompt_type), g in df.groupby(["model", "prompt_type"]):
         biased, unbiased = g[g["truth"]], g[~g["truth"]]
+        tp, fp = int(biased["yes"].sum()), int(unbiased["yes"].sum())
+        hit = tp / len(biased) if len(biased) else np.nan
+        fa = fp / len(unbiased) if len(unbiased) else np.nan
+        # bootstrap stratified by truth: resampling Bernoulli answers within a
+        # stratum is the same as drawing a binomial at the observed rate
+        boot_j = (rng.binomial(len(biased), hit, N_BOOT) / len(biased)
+                  - rng.binomial(len(unbiased), fa, N_BOOT) / len(unbiased))
         rows.append({
             "model": model,
             "prompt_type": prompt_type,
             "n": len(g),
             "n_biased": len(biased),
             "n_unbiased": len(unbiased),
-            "hit_rate": biased["yes"].mean() if len(biased) else np.nan,
-            "false_alarm": unbiased["yes"].mean() if len(unbiased) else np.nan,
+            "tp": tp,
+            "fp": fp,
+            "hit_rate": hit,
+            "false_alarm": fa,
+            "j": hit - fa,
+            "j_lo": np.percentile(boot_j, 2.5),
+            "j_hi": np.percentile(boot_j, 97.5),
             "yes_rate": g["yes"].mean(),
             "accuracy": (g["yes"] == g["truth"]).mean(),
             "always_no_accuracy": (~g["truth"]).mean(),
@@ -97,140 +146,246 @@ def hit_false_alarm(df):
     return pd.DataFrame(rows)
 
 
-def plot_hit_vs_false_alarm(table, path):
+def model_order(table):
+    """Models that ever say YES, best control J first; then the always-NO
+    models. Same order in every figure."""
     ctrl = table[table["prompt_type"] == CONTROL].set_index("model")
-    order = (ctrl["hit_rate"] - ctrl["false_alarm"]).sort_values(ascending=False).index.tolist()
-    order += sorted(set(table["model"]) - set(order))  # models without a control run
     ever_yes = table.groupby("model")["yes_rate"].max()
-    never = sorted(m for m in order if ever_yes[m] == 0)
-    order = [m for m in order if ever_yes[m] > 0]
+    active = [m for m in ever_yes.index if ever_yes[m] > 0]
+    active.sort(key=lambda m: (-ctrl["j"].get(m, -1), -ever_yes[m]))
+    never = sorted(m for m in ever_yes.index if ever_yes[m] == 0)
+    return active, never
 
-    ncols = 4
-    nrows = math.ceil(len(order) / ncols)
-    fig, axes = plt.subplots(nrows, ncols, figsize=(3.3 * ncols, 3.3 * nrows + 0.9),
-                             constrained_layout=True)
-    axes = np.atleast_1d(axes).ravel()
-    for ax in axes[len(order):]:
-        ax.axis("off")
 
-    for ax, model in zip(axes, order):
-        t = table[table["model"] == model].set_index("prompt_type")
-        ax.plot([0, 100], [0, 100], ls="--", lw=0.8, color=MUTED, zorder=1)
-        ax.set_xlim(-4, 104)
-        ax.set_ylim(-4, 104)
-        ax.set_aspect("equal")
-        ax.set_xticks([0, 50, 100])
-        ax.set_yticks([0, 50, 100])
-        ax.grid(color=GRID, lw=0.6)
-        ax.set_axisbelow(True)
-        ax.tick_params(length=0, labelsize=8, colors="#52514e")
-        for spine in ax.spines.values():
-            spine.set_visible(False)
+def tint(color, amount):
+    """Mix `color` toward white; amount=1 is the colour, 0 is white."""
+    r, g, b = to_rgb(color)
+    return (1 - amount * (1 - r), 1 - amount * (1 - g), 1 - amount * (1 - b))
 
-        if CONTROL in t.index:
-            x0, y0 = t.loc[CONTROL, "false_alarm"] * 100, t.loc[CONTROL, "hit_rate"] * 100
-            for prompt_type, _, color in FRAMED:
-                if prompt_type not in t.index:
-                    continue
-                x1, y1 = t.loc[prompt_type, "false_alarm"] * 100, t.loc[prompt_type, "hit_rate"] * 100
-                if math.hypot(x1 - x0, y1 - y0) > 2:
-                    ax.annotate("", xy=(x1, y1), xytext=(x0, y0),
-                                arrowprops=dict(arrowstyle="-|>", color=color, lw=1.4,
-                                                shrinkA=4, shrinkB=4, mutation_scale=10),
-                                zorder=2)
-                ax.scatter(x1, y1, s=40, color=color, edgecolor="white", linewidth=1.2, zorder=3)
-            ax.scatter(x0, y0, s=55, color=INK, edgecolor="white", linewidth=1.2, zorder=4)
-            n = t.loc[CONTROL]
-            ax.text(100, 2, f"control n: {int(n['n_biased'])} biased /\n{int(n['n_unbiased'])} not",
-                    ha="right", va="bottom", fontsize=7, color=MUTED)
-        ax.set_title(model, loc="left", fontsize=9.5, fontweight="bold")
 
-    for ax in axes[: len(order)]:
-        if ax.get_subplotspec().is_first_col():
-            ax.set_ylabel("hit rate: YES when biased (%)", fontsize=8)
-        if ax.get_subplotspec().is_last_row() or ax is axes[len(order) - 1] or \
-                list(axes).index(ax) + ncols >= len(order):
-            ax.set_xlabel("false alarm: YES when not biased (%)", fontsize=8)
+def style_axis(ax):
+    ax.tick_params(length=0, labelsize=8, colors=SECONDARY)
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+    ax.set_axisbelow(True)
 
-    handles = [Line2D([], [], marker="o", ls="", color=INK, markersize=7, label="Control")]
-    handles += [Line2D([], [], marker="o", ls="", color=c, markersize=6, label=lbl) for _, lbl, c in FRAMED]
-    handles += [Line2D([], [], ls="--", color=MUTED, label="No better than guessing")]
-    fig.legend(handles=handles, loc="outside lower center", ncol=5, fontsize=8.5, frameon=False)
-    note = f"\nAlways NO under every prompt (not shown): {', '.join(never)}." if never else ""
-    fig.suptitle(
-        f"Does YES land on biased samples? Hit rate vs false alarm against {TRUTH_DEFINITION} ground truth "
-        f"(bottom-left corner = always NO; arrows: control → framed prompt){note}",
-        x=0.01, ha="left", fontsize=11,
-    )
-    fig.savefig(path, dpi=150, facecolor="white")
+
+def grey_never_labels(ax, never):
+    for label in ax.get_yticklabels():
+        if label.get_text() in never:
+            label.set_color(MUTED)
+
+
+def save(fig, name):
+    for ext in ("png", "pdf"):
+        fig.savefig(os.path.join(PATH_TO_RESULTS, f"{name}.{ext}"), dpi=300, facecolor="white")
     plt.close(fig)
+
+
+def plot_yes_decomposition(table, active, never):
+    models = active + never
+    y = np.arange(len(models))
+    fig, axes = plt.subplots(1, len(PROMPTS), figsize=(15, 0.36 * len(models) + 1.8),
+                             sharey=True, constrained_layout=True)
+    fig.get_layout_engine().set(wspace=0.06)
+    for ax, (prompt_type, label, color) in zip(axes, PROMPTS):
+        t = table[table["prompt_type"] == prompt_type].set_index("model").reindex(models)
+        tp = t["tp"] / t["n"] * 100
+        fp = t["fp"] / t["n"] * 100
+        ax.barh(y, tp, height=0.62, color=color, edgecolor=SURFACE, linewidth=1)
+        ax.barh(y, fp, left=tp, height=0.62, color=tint(color, 0.3), edgecolor=SURFACE, linewidth=1)
+        truth_share = t["n_biased"] / t["n"] * 100
+        ax.scatter(truth_share, y, marker="|", s=170, linewidths=1.8, color=INK, zorder=4)
+        for yi, (_, r) in zip(y, t.iterrows()):
+            if pd.isna(r["n"]):
+                continue
+            ax.text(1.02, yi, f"{r['accuracy'] * 100:.0f} | {r['always_no_accuracy'] * 100:.0f}",
+                    transform=ax.get_yaxis_transform(), va="center", ha="left", fontsize=7, color=SECONDARY)
+        ax.text(1.02, -0.9, "acc | base", transform=ax.get_yaxis_transform(),
+                va="center", ha="left", fontsize=7, color=MUTED)
+        if never:
+            ax.axhline(len(active) - 0.5, color=GRID, lw=1)
+        truth_name = "identity's own terms" if prompt_type in IDENTITY_PROMPTS else "bias_any"
+        ax.set_title(f"{label}\ntruth: {truth_name}", loc="left", fontsize=9.5, fontweight="bold")
+        ax.set_xlim(0, 100)
+        ax.set_xticks([0, 25, 50, 75, 100])
+        ax.grid(axis="x", color=GRID, lw=0.6)
+        ax.set_xlabel("% of all answers", fontsize=8)
+        style_axis(ax)
+    axes[0].set_yticks(y, models)
+    axes[0].set_ylim(len(models) - 0.5, -1.4)
+    grey_never_labels(axes[0], never)
+
+    handles = [
+        Patch(facecolor=MUTED, label="YES on a biased sample (hit)"),
+        Patch(facecolor=tint(MUTED, 0.3), label="YES on a not-biased sample (false alarm)"),
+        Line2D([], [], marker="|", ls="", color=INK, markersize=12, markeredgewidth=1.8,
+               label="True share of biased samples"),
+    ]
+    fig.legend(handles=handles, loc="outside lower center", ncol=3, fontsize=8.5, frameon=False)
+    fig.suptitle(
+        f"How often each model says YES, and where those YES answers land ({TRUTH_DEFINITION} ground truth). "
+        "Bar left of the tick = under-calls bias; right = over-calls.\n"
+        "acc | base = accuracy vs always-NO accuracy (%). Grey names: always NO under every prompt.",
+        x=0.01, ha="left", fontsize=10.5,
+    )
+    save(fig, "gt-yes-decomposition")
+
+
+def plot_discrimination(table, active, never):
+    models = active + never
+    y = np.arange(len(models))
+    offsets = np.linspace(-0.27, 0.27, len(PROMPTS))
+    fig, ax = plt.subplots(figsize=(8, 0.42 * len(models) + 1.6), constrained_layout=True)
+    for yi in y[::2]:
+        ax.axhspan(yi - 0.5, yi + 0.5, color="#f6f5f2", lw=0, zorder=0)
+    ax.axvline(0, color=MUTED, lw=1, ls="--", zorder=1)
+    for off, (prompt_type, label, color) in zip(offsets, PROMPTS):
+        t = table[table["prompt_type"] == prompt_type].set_index("model").reindex(models)
+        yy = y + off
+        ax.hlines(yy, t["j_lo"] * 100, t["j_hi"] * 100, color=color, lw=1.6, zorder=2)
+        ax.scatter(t["j"] * 100, yy, s=36, color=color, edgecolor=SURFACE, linewidth=1.2,
+                   zorder=3, label=label)
+    if never:
+        ax.axhline(len(active) - 0.5, color=GRID, lw=1)
+    ax.set_yticks(y, models)
+    ax.set_ylim(len(models) - 0.5, -0.5)
+    grey_never_labels(ax, never)
+    ax.set_xlim(-12, 52)
+    ax.grid(axis="x", color=GRID, lw=0.6)
+    ax.set_xlabel("J = hit rate − false-alarm rate (percentage points), 95% bootstrap CI", fontsize=8)
+    ax.text(0.5, -0.45, "← YES unrelated to truth", fontsize=7, color=MUTED, ha="left", va="center")
+    style_axis(ax)
+    fig.legend(loc="outside lower center", ncol=4, fontsize=8.5, frameon=False)
+    fig.suptitle(
+        f"Does YES track the ground truth? ({TRUTH_DEFINITION})\n"
+        "Control/Emotional use bias_any truth; Identity prompts use the identity's own\n"
+        "terms — compare within a prompt type, not across.",
+        x=0.01, ha="left", fontsize=10,
+    )
+    save(fig, "gt-discrimination")
 
 
 def identity_truth_vs_yes(df):
     framed = df[df["identity"].notna()]
     out = (
         framed.groupby(["model", "prompt_type", "identity"])
-        .agg(n=("yes", "size"), truth_rate=("truth", "mean"), yes_rate=("yes", "mean"),
+        .agg(n=("yes", "size"), n_yes=("yes", "sum"), n_biased=("truth", "sum"),
+             truth_rate=("truth", "mean"), yes_rate=("yes", "mean"),
              hits=("yes", lambda s: int((s & framed.loc[s.index, "truth"]).sum())),
              false_alarms=("yes", lambda s: int((s & ~framed.loc[s.index, "truth"]).sum())))
         .reset_index()
     )
+    ci = [wilson(k, n) for k, n in zip(out["n_yes"], out["n"])]
+    out["yes_lo"] = [lo for lo, _ in ci]
+    out["yes_hi"] = [hi for _, hi in ci]
     return out
 
 
-def plot_identity_truth_vs_yes(table, path):
-    identities = [i["key"] for i in IDENTITIES if i["key"] in set(table["identity"])]
-    identities += sorted(set(table["identity"]) - set(identities))
-    yes_any = table.groupby("model")["yes_rate"].max()
-    models = yes_any[yes_any > 0].sort_values(ascending=False).index.tolist()
-    never = sorted(yes_any[yes_any == 0].index)
+def plot_identity_gap(ident, active, df):
+    identities = [i["key"] for i in IDENTITIES if i["key"] in set(ident["identity"])]
+    identities += sorted(set(ident["identity"]) - set(identities))
+    yes_any = ident.groupby("model")["yes_rate"].max()
+    models = [m for m in active if yes_any.get(m, 0) > 0]
+    never = sorted(m for m in yes_any.index if yes_any[m] == 0)
 
-    # truth rate per identity (same samples for every model)
-    truth = table.groupby("identity")["truth_rate"].first().reindex(identities)
+    # true biased count per identity, from the samples that identity actually saw
+    seen = df[df["identity"].notna()].drop_duplicates(["identity", "sample_id"])
+    truth_k = seen.groupby("identity")["truth"].sum().reindex(identities)
+    truth_n = seen.groupby("identity")["truth"].size().reindex(identities)
+    xlabels = [f"{k.replace('_', chr(10))}\n{int(truth_k[k])}/{int(truth_n[k])} biased" for k in identities]
 
-    ncols = min(4, len(models))
-    nrows = math.ceil(len(models) / ncols)
-    fig, axes = plt.subplots(nrows, ncols, figsize=(3.6 * ncols, 3.2 * nrows + 1.0),
-                             sharey=True, constrained_layout=True)
-    axes = np.atleast_1d(axes).ravel()
-    for ax in axes[len(models):]:
-        ax.axis("off")
+    fig, axes = plt.subplots(1, 2, figsize=(14, 0.5 * len(models) + 2.6), sharey=True,
+                             constrained_layout=True)
+    for ax, prompt_type, title in [(axes[0], "identity_prompt", "Identity prompt"),
+                                   (axes[1], "emotional_identity_prompt", "Emotional + identity prompt")]:
+        t = ident[ident["prompt_type"] == prompt_type].set_index(["model", "identity"])
+        for yi, model in enumerate(models):
+            for xi, key in enumerate(identities):
+                if (model, key) not in t.index:
+                    continue
+                r = t.loc[(model, key)]
+                gap = (r["yes_rate"] - r["truth_rate"]) * 100
+                within_noise = r["yes_lo"] <= r["truth_rate"] <= r["yes_hi"]
+                color = DIVERGING((np.clip(gap, -30, 30) + 30) / 60)
+                ax.add_patch(Rectangle((xi - 0.5, yi - 0.5), 1, 1, facecolor=color,
+                                       edgecolor=SURFACE, linewidth=2))
+                if not within_noise:
+                    ax.add_patch(Rectangle((xi - 0.44, yi - 0.42), 0.88, 0.84, fill=False,
+                                           edgecolor=INK, linewidth=1.3))
+                strong = abs(gap) > 20
+                ax.text(xi, yi - 0.12, f"{int(r['n_yes'])}/{int(r['n'])}", ha="center", va="center",
+                        fontsize=7.5, color="white" if strong else INK)
+                ax.text(xi, yi + 0.22, f"{int(r['hits'])} hit", ha="center", va="center",
+                        fontsize=6.5, color="white" if strong else SECONDARY)
+        ax.set_xlim(-0.5, len(identities) - 0.5)
+        ax.set_ylim(len(models) - 0.5, -0.5)
+        ax.set_xticks(range(len(identities)), xlabels)
+        ax.xaxis.tick_top()
+        ax.set_yticks(range(len(models)), models)
+        ax.set_title(title, loc="left", fontsize=10, fontweight="bold")
+        style_axis(ax)
+        ax.tick_params(axis="x", labelsize=7.5)
 
-    y = np.arange(len(identities))
-    for ax, model in zip(axes, models):
-        t = table[table["model"] == model]
-        for yi in y:
-            ax.axhline(yi, color=GRID, lw=0.6, zorder=0)
-        ax.scatter(truth.values * 100, y, marker="D", s=38, color=INK, zorder=3,
-                   label="Ground truth: share of samples biased against this identity")
-        for prompt_type, lbl, filled in [("identity_prompt", "Identity", True),
-                                         ("emotional_identity_prompt", "Emotional + identity", False)]:
-            r = t[t["prompt_type"] == prompt_type].set_index("identity").reindex(identities)
-            ax.scatter(r["yes_rate"] * 100, y, s=42, zorder=4,
-                       facecolor="#2a78d6" if filled else "white", edgecolor="#2a78d6", linewidth=1.5,
-                       label=f"YES rate, {lbl.lower()} prompt")
-        ax.set_xlim(-3, 103)
-        ax.set_xticks([0, 25, 50, 75, 100])
-        ax.set_yticks(y, [k.replace("_", " ") for k in identities])
-        ax.set_ylim(len(identities) - 0.5, -0.5)  # first identity on top (shared axis: set, don't invert)
-        ax.tick_params(length=0, labelsize=8, colors="#52514e")
-        ax.grid(axis="x", color=GRID, lw=0.6)
-        ax.set_axisbelow(True)
-        for spine in ax.spines.values():
-            spine.set_visible(False)
-        ax.set_title(model, loc="left", fontsize=9.5, fontweight="bold")
-        ax.set_xlabel("% of this identity's samples", fontsize=8)
-
-    handles, labels = axes[0].get_legend_handles_labels()
-    fig.legend(handles, labels, loc="outside lower center", ncol=3, fontsize=8.5, frameon=False)
+    sm = plt.cm.ScalarMappable(cmap=DIVERGING, norm=plt.Normalize(-30, 30))
+    cbar = fig.colorbar(sm, ax=axes, location="bottom", shrink=0.4, aspect=40, pad=0.02)
+    cbar.set_label("YES rate − true biased rate (pp)   ← under-calls  |  over-calls →", fontsize=8)
+    cbar.ax.tick_params(labelsize=7, length=0)
+    cbar.outline.set_visible(False)
     note = f"\nNever YES under identity prompts (not shown): {', '.join(never)}." if never else ""
     fig.suptitle(
-        f"Do YES answers follow the identities that are actually biased against? ({TRUTH_DEFINITION} ground truth, "
-        f"n≈{int(table['n'].median())} samples per identity){note}",
+        f"Do YES answers follow the identities actually biased against? ({TRUTH_DEFINITION} truth: identity's own terms)\n"
+        "Cell text: YES answers / answers, and how many YES landed on a biased sample.\n"
+        f"Outlined cells: true rate outside the YES rate's Wilson 95% CI (gap beyond sampling noise). Colour clipped at ±30 pp.{note}",
+        x=0.01, ha="left", fontsize=10,
+    )
+    save(fig, "gt-identity-gap-heatmap")
+
+
+def plot_sample_barcode(df, active, never):
+    models = active + never
+    fig, axes = plt.subplots(len(PROMPTS), 1, figsize=(14, len(PROMPTS) * (0.17 * len(models) + 0.9) + 1),
+                             constrained_layout=True)
+    for ax, (prompt_type, label, color) in zip(axes, PROMPTS):
+        g = df[df["prompt_type"] == prompt_type].copy()
+        if prompt_type in IDENTITY_PROMPTS:
+            g["col"] = g["sample_id"].astype(str) + "|" + g["identity"].astype(str)
+        else:
+            g["col"] = g["sample_id"].astype(str)
+        answers = g.pivot_table(index="model", columns="col", values="yes", aggfunc="first")
+        truth = g.groupby("col")["truth"].first()
+        n_yes = answers.sum(axis=0)
+        cols = sorted(truth.index, key=lambda c: (not truth[c], -n_yes.get(c, 0), c))
+        n_biased = int(truth.sum())
+
+        m = answers.reindex(index=models, columns=cols).astype(float).values  # 1 YES, 0 NO, NaN missing
+        cmap = ListedColormap([SURFACE, color])
+        cmap.set_bad(GRID)
+        ax.imshow(np.ma.masked_invalid(m), aspect="auto", cmap=cmap, vmin=0, vmax=1,
+                  interpolation="nearest")
+        ax.axvline(n_biased - 0.5, color=INK, lw=1.2)
+        if never:
+            ax.axhline(len(active) - 0.5, color=GRID, lw=1)
+        ax.set_yticks(range(len(models)), models)
+        grey_never_labels(ax, never)
+        ax.set_xticks([n_biased / 2, n_biased + (len(cols) - n_biased) / 2],
+                      [f"biased ({n_biased})", f"not biased ({len(cols) - n_biased})"])
+        unit = "sample × identity" if prompt_type in IDENTITY_PROMPTS else "sample"
+        truth_name = "identity's own terms" if prompt_type in IDENTITY_PROMPTS else "bias_any"
+        ax.set_title(f"{label}  —  one column per {unit}, truth: {truth_name}",
+                     loc="left", fontsize=9.5, fontweight="bold")
+        style_axis(ax)
+        ax.tick_params(axis="y", labelsize=6.5)
+
+    handles = [Patch(facecolor=MUTED, label="YES"), Patch(facecolor=SURFACE, edgecolor=GRID, label="NO"),
+               Patch(facecolor=GRID, label="no valid answer")]
+    fig.legend(handles=handles, loc="outside lower center", ncol=3, fontsize=8.5, frameon=False)
+    fig.suptitle(
+        f"Every answer, sample by sample ({TRUTH_DEFINITION} ground truth). Columns sorted: biased first, "
+        "then by how many models said YES. Ideal = filled left of the line, empty right of it.",
         x=0.01, ha="left", fontsize=10.5,
     )
-    fig.savefig(path, dpi=150, facecolor="white")
-    plt.close(fig)
+    save(fig, "gt-sample-barcode")
 
 
 def main():
@@ -239,16 +394,23 @@ def main():
 
     table = hit_false_alarm(df)
     table.to_csv(os.path.join(PATH_TO_RESULTS, "gt-hit-false-alarm.csv"), index=False)
-    plot_hit_vs_false_alarm(table, os.path.join(PATH_TO_RESULTS, "gt-hit-vs-false-alarm.png"))
+    active, never = model_order(table)
+    plot_yes_decomposition(table, active, never)
+    plot_discrimination(table, active, never)
 
     ident = identity_truth_vs_yes(df)
     ident.to_csv(os.path.join(PATH_TO_RESULTS, "gt-identity-truth-vs-yes.csv"), index=False)
-    plot_identity_truth_vs_yes(ident, os.path.join(PATH_TO_RESULTS, "gt-identity-truth-vs-yes.png"))
+    plot_identity_gap(ident, active, df)
 
-    print(f"Saved gt-hit-false-alarm.csv/.png and gt-identity-truth-vs-yes.csv/.png to {PATH_TO_RESULTS}")
-    show = table.assign(hit=table["hit_rate"] * 100, fa=table["false_alarm"] * 100)
-    print("\nHit rate / false alarm (%), control prompt:")
-    print(show[show["prompt_type"] == CONTROL][["model", "hit", "fa", "n_biased", "n_unbiased"]]
+    plot_sample_barcode(df, active, never)
+
+    print(f"Saved gt-hit-false-alarm.csv, gt-identity-truth-vs-yes.csv and "
+          f"gt-yes-decomposition / gt-discrimination / gt-identity-gap-heatmap / gt-sample-barcode "
+          f"(.png, .pdf) to {PATH_TO_RESULTS}")
+    show = table.assign(hit=table["hit_rate"] * 100, fa=table["false_alarm"] * 100,
+                        J=table["j"] * 100, J_lo=table["j_lo"] * 100, J_hi=table["j_hi"] * 100)
+    print("\nHit rate / false alarm / J (%), control prompt:")
+    print(show[show["prompt_type"] == CONTROL][["model", "hit", "fa", "J", "J_lo", "J_hi"]]
           .round(1).to_string(index=False))
 
 
