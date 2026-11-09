@@ -27,8 +27,6 @@ Outputs to results/analyze_results/ (each figure as .png and .pdf):
                                      identity, with Wilson 95% CI on YES rate
     gt-identity-gap-heatmap          YES rate minus true biased rate, per
                                      model × identity
-    gt-sample-barcode                every answer: models × samples, biased
-                                     samples first
 """
 
 import math
@@ -38,7 +36,7 @@ import sys
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib.colors import LinearSegmentedColormap, ListedColormap, to_rgb
+from matplotlib.colors import LinearSegmentedColormap, to_rgb
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch, Rectangle
 
@@ -342,52 +340,6 @@ def plot_identity_gap(ident, active, df):
     save(fig, "gt-identity-gap-heatmap")
 
 
-def plot_sample_barcode(df, active, never):
-    models = active + never
-    fig, axes = plt.subplots(len(PROMPTS), 1, figsize=(14, len(PROMPTS) * (0.17 * len(models) + 0.9) + 1),
-                             constrained_layout=True)
-    for ax, (prompt_type, label, color) in zip(axes, PROMPTS):
-        g = df[df["prompt_type"] == prompt_type].copy()
-        if prompt_type in IDENTITY_PROMPTS:
-            g["col"] = g["sample_id"].astype(str) + "|" + g["identity"].astype(str)
-        else:
-            g["col"] = g["sample_id"].astype(str)
-        answers = g.pivot_table(index="model", columns="col", values="yes", aggfunc="first")
-        truth = g.groupby("col")["truth"].first()
-        n_yes = answers.sum(axis=0)
-        cols = sorted(truth.index, key=lambda c: (not truth[c], -n_yes.get(c, 0), c))
-        n_biased = int(truth.sum())
-
-        m = answers.reindex(index=models, columns=cols).astype(float).values  # 1 YES, 0 NO, NaN missing
-        cmap = ListedColormap([SURFACE, color])
-        cmap.set_bad(GRID)
-        ax.imshow(np.ma.masked_invalid(m), aspect="auto", cmap=cmap, vmin=0, vmax=1,
-                  interpolation="nearest")
-        ax.axvline(n_biased - 0.5, color=INK, lw=1.2)
-        if never:
-            ax.axhline(len(active) - 0.5, color=GRID, lw=1)
-        ax.set_yticks(range(len(models)), models)
-        grey_never_labels(ax, never)
-        ax.set_xticks([n_biased / 2, n_biased + (len(cols) - n_biased) / 2],
-                      [f"biased ({n_biased})", f"not biased ({len(cols) - n_biased})"])
-        unit = "sample × identity" if prompt_type in IDENTITY_PROMPTS else "sample"
-        truth_name = "identity's own terms" if prompt_type in IDENTITY_PROMPTS else "bias_any"
-        ax.set_title(f"{label}  —  one column per {unit}, truth: {truth_name}",
-                     loc="left", fontsize=9.5, fontweight="bold")
-        style_axis(ax)
-        ax.tick_params(axis="y", labelsize=6.5)
-
-    handles = [Patch(facecolor=MUTED, label="YES"), Patch(facecolor=SURFACE, edgecolor=GRID, label="NO"),
-               Patch(facecolor=GRID, label="no valid answer")]
-    fig.legend(handles=handles, loc="outside lower center", ncol=3, fontsize=8.5, frameon=False)
-    fig.suptitle(
-        f"Every answer, sample by sample ({TRUTH_DEFINITION} ground truth). Columns sorted: biased first, "
-        "then by how many models said YES. Ideal = filled left of the line, empty right of it.",
-        x=0.01, ha="left", fontsize=10.5,
-    )
-    save(fig, "gt-sample-barcode")
-
-
 def main():
     os.makedirs(PATH_TO_RESULTS, exist_ok=True)
     df = attach_truth(load_results(discover_models()))
@@ -402,10 +354,9 @@ def main():
     ident.to_csv(os.path.join(PATH_TO_RESULTS, "gt-identity-truth-vs-yes.csv"), index=False)
     plot_identity_gap(ident, active, df)
 
-    plot_sample_barcode(df, active, never)
 
     print(f"Saved gt-hit-false-alarm.csv, gt-identity-truth-vs-yes.csv and "
-          f"gt-yes-decomposition / gt-discrimination / gt-identity-gap-heatmap / gt-sample-barcode "
+          f"gt-yes-decomposition / gt-discrimination / gt-identity-gap-heatmap "
           f"(.png, .pdf) to {PATH_TO_RESULTS}")
     show = table.assign(hit=table["hit_rate"] * 100, fa=table["false_alarm"] * 100,
                         J=table["j"] * 100, J_lo=table["j_lo"] * 100, J_hi=table["j_hi"] * 100)

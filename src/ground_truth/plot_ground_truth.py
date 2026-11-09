@@ -10,7 +10,7 @@ and draws five figures:
                                        per term, one panel per definition,
                                        with the population label
     gt-overview-barcode                every sample's label per term, same
-                                       sample order in each definition
+                                       sample-id order in each definition
     gt-overview-p-values               per-sample p-values (LR, DP) vs alpha:
                                        how many labels sit near the cut-off
     gt-overview-identity-truth         share of the samples each identity sees
@@ -194,9 +194,8 @@ def plot_label_rates(counts, pop):
 
 
 def plot_barcode(terms, samples):
-    # one sample order for all panels: LR bias count, then DP, then DI
-    order = samples.sort_values(["n_bias_terms", "n_bias_terms_dp", "n_bias_terms_di", "sample_id"],
-                                ascending=[False, False, False, True])["sample_id"].tolist()
+    # plain sample_id order, the same in every panel (no sorting by label)
+    order = sorted(samples["sample_id"])
     code = {"NO_BIAS": 0, "FAVORED": 1, "BIAS": 2}
     cmap = plt.matplotlib.colors.ListedColormap(
         [LABEL_COLOR["NO_BIAS"], LABEL_COLOR["FAVORED"], LABEL_COLOR["BIAS"]])
@@ -220,14 +219,14 @@ def plot_barcode(terms, samples):
     any_matrix = samples.set_index("sample_id").loc[order, list(any_cols.values())].T.astype(float)
     axes[3].imshow(any_matrix.values * 2, aspect="auto", cmap=cmap, vmin=0, vmax=2, interpolation="nearest")
     axes[3].set_yticks(range(3), [f"bias_any ({d})" for d in any_cols])
-    axes[3].set_xlabel("300 samples (same order in every panel: most LR BIAS terms first)", fontsize=8)
+    axes[3].set_xlabel("300 samples, sample_0000 → sample_0299 (same order in every panel)", fontsize=8)
     axes[3].set_xticks([])
     style_axis(axes[3])
 
     lr, di, dp = (samples[c] for c in any_cols.values())
     label_legend(fig)
     fig.suptitle(
-        "Every sample's label, term by term. Columns are samples, aligned across panels.\n"
+        "Every sample's label, term by term. Each column is one sample, in sample-id order, aligned across panels.\n"
         f"bias_any agreement: LR ∧ DP {int((lr & dp).sum())}, DP only {int((dp & ~lr).sum())}, "
         f"LR only {int((lr & ~dp).sum())}, neither {int((~lr & ~dp).sum())}; "
         f"the {int(di.sum())} DI samples are all inside LR ∧ DP.",

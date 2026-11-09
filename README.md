@@ -265,7 +265,6 @@ Models are auto-discovered from the `sample_results_*.jsonl` files in `data/call
 - `gt-discrimination.png/.pdf` — J with 95% CI per model × prompt (0 = YES unrelated to truth)
 - `gt-identity-truth-vs-yes.csv` — per model, identity prompt and identity: true biased rate vs YES rate, with Wilson 95% CI
 - `gt-identity-gap-heatmap.png/.pdf` — YES rate minus true biased rate per model × identity; outlined cells are beyond sampling noise
-- `gt-sample-barcode.png/.pdf` — every answer, models × samples, biased samples first
 
 `python reasoning_to_markdown.py` turns the reasoning summaries in `data/call_models/reasoning/` (saved by `batch_claude.py` for variants that request them, e.g. `claude-haiku-5-5-thinking`) into one readable Markdown file per prompt in `results/reasoning/`, YES answers first.
 
