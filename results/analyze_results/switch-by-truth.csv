@@ -1,0 +1,129 @@
+model,comparison,direction,n_eligible,n_switched,k_biased,n_biased,k_not_biased,n_not_biased,rate_biased,rate_not_biased,rd,rd_lo,rd_hi,fisher_p
+claude-haiku-4-5,Emo + identity vs control (both change),no_to_yes,110,0,0,13,0,97,0.0,0.0,0.0,-0.03809538920445529,0.22810184305529166,1.0
+claude-haiku-4-5,Emo + identity vs control (both change),yes_to_no,190,190,30,30,160,160,1.0,1.0,0.0,-0.11351709139047794,0.023447036650032782,1.0
+claude-haiku-4-5,Emotional + identity vs identity,no_to_yes,243,0,0,28,0,215,0.0,0.0,0.0,-0.017554249283500026,0.12064720365810762,1.0
+claude-haiku-4-5,Emotional + identity vs identity,yes_to_no,57,57,15,15,42,42,1.0,1.0,0.0,-0.2038892663043479,0.08380161250916185,1.0
+claude-haiku-4-5,Emotional vs control,no_to_yes,110,0,0,41,0,69,0.0,0.0,0.0,-0.05273909414400562,0.08567044886890744,1.0
+claude-haiku-4-5,Emotional vs control,yes_to_no,190,190,95,95,95,95,1.0,1.0,0.0,-0.038866226366226164,0.038866226366226164,1.0
+claude-haiku-4-5,Identity vs control (question change),no_to_yes,110,16,4,13,12,97,0.3076923076923077,0.12371134020618557,0.18398096748612214,-0.01387934726730658,0.45749357519896866,0.09481891607245961
+claude-haiku-4-5,Identity vs control (question change),yes_to_no,190,149,19,30,130,160,0.6333333333333333,0.8125,-0.1791666666666667,-0.3650497977945998,-0.01654759831954916,0.04990523600329216
+claude-haiku-5-5,Emo + identity vs control (both change),no_to_yes,292,12,6,42,6,250,0.14285714285714285,0.024,0.11885714285714286,0.038365104446071274,0.255031499370975,0.0029865927063192103
+claude-haiku-5-5,Emo + identity vs control (both change),yes_to_no,7,7,0,0,7,7,,1.0,,,,
+claude-haiku-5-5,Emotional + identity vs identity,no_to_yes,280,9,4,36,5,244,0.1111111111111111,0.020491803278688523,0.09061930783242259,0.018499860901242504,0.23314120517886114,0.018227098068432923
+claude-haiku-5-5,Emotional + identity vs identity,yes_to_no,20,17,5,7,12,13,0.7142857142857143,0.9230769230769231,-0.20879120879120883,-0.5697264038336973,0.1184104500967112,0.2701754385964912
+claude-haiku-5-5,Emotional vs control,no_to_yes,289,0,0,130,0,159,0.0,0.0,0.0,-0.023591023423989943,0.02870258574314712,1.0
+claude-haiku-5-5,Emotional vs control,yes_to_no,7,7,5,5,2,2,1.0,1.0,0.0,-0.43449149475208093,0.6576280471103808,1.0
+claude-haiku-5-5,Identity vs control (question change),no_to_yes,292,19,6,42,13,250,0.14285714285714285,0.052,0.09085714285714286,0.0074914951234744676,0.22808678975618066,0.03940507455728726
+claude-haiku-5-5,Identity vs control (question change),yes_to_no,7,7,0,0,7,7,,1.0,,,,
+claude-haiku-5-5-nothink,Emo + identity vs control (both change),no_to_yes,300,0,0,43,0,257,0.0,0.0,0.0,-0.014727712144075176,0.08201257002322722,1.0
+claude-haiku-5-5-nothink,Emo + identity vs control (both change),yes_to_no,0,0,0,0,0,0,,,,,,
+claude-haiku-5-5-nothink,Emotional + identity vs identity,no_to_yes,300,0,0,43,0,257,0.0,0.0,0.0,-0.014727712144075176,0.08201257002322722,1.0
+claude-haiku-5-5-nothink,Emotional + identity vs identity,yes_to_no,0,0,0,0,0,0,,,,,,
+claude-haiku-5-5-nothink,Emotional vs control,no_to_yes,300,0,0,136,0,164,0.0,0.0,0.0,-0.022888247013851153,0.02747108156657246,1.0
+claude-haiku-5-5-nothink,Emotional vs control,yes_to_no,0,0,0,0,0,0,,,,,,
+claude-haiku-5-5-nothink,Identity vs control (question change),no_to_yes,300,0,0,43,0,257,0.0,0.0,0.0,-0.014727712144075176,0.08201257002322722,1.0
+claude-haiku-5-5-nothink,Identity vs control (question change),yes_to_no,0,0,0,0,0,0,,,,,,
+claude-haiku-5-5-thinking,Emo + identity vs control (both change),no_to_yes,297,9,5,43,4,254,0.11627906976744186,0.015748031496062992,0.10053103827137887,0.030688786217486025,0.22940506842298286,0.004118282165935884
+claude-haiku-5-5-thinking,Emo + identity vs control (both change),yes_to_no,2,2,0,0,2,2,,1.0,,,,
+claude-haiku-5-5-thinking,Emotional + identity vs identity,no_to_yes,278,7,3,36,4,242,0.08333333333333333,0.01652892561983471,0.06680440771349862,0.0066860117908416825,0.2021173703215448,0.04849071881723816
+claude-haiku-5-5-thinking,Emotional + identity vs identity,yes_to_no,21,19,5,7,14,14,0.7142857142857143,1.0,-0.2857142857142857,-0.6410709098517873,0.01054994343882909,0.10000000000000002
+claude-haiku-5-5-thinking,Emotional vs control,no_to_yes,298,2,2,135,0,163,0.014814814814814815,0.0,0.014814814814814815,-0.01059337431421645,0.05240663178568465,0.2043929225137279
+claude-haiku-5-5-thinking,Emotional vs control,yes_to_no,2,2,1,1,1,1,1.0,1.0,0.0,-0.7934567085261071,0.7934567085261071,1.0
+claude-haiku-5-5-thinking,Identity vs control (question change),no_to_yes,298,21,7,43,14,255,0.16279069767441862,0.054901960784313725,0.10788873689010489,0.019023872061465164,0.24656831765127057,0.01935742176452402
+claude-haiku-5-5-thinking,Identity vs control (question change),yes_to_no,2,2,0,0,2,2,,1.0,,,,
+claude-opus-5-5,Emo + identity vs control (both change),no_to_yes,292,2,2,41,0,251,0.04878048780487805,0.0,0.04878048780487805,0.010396675009715514,0.16139266962351367,0.01930047545073671
+claude-opus-5-5,Emo + identity vs control (both change),yes_to_no,8,8,2,2,6,6,1.0,1.0,0.0,-0.6576280471103808,0.39034303365306455,1.0
+claude-opus-5-5,Emotional + identity vs identity,no_to_yes,291,0,0,38,0,253,0.0,0.0,0.0,-0.014957078604089055,0.09181293258383999,1.0
+claude-opus-5-5,Emotional + identity vs identity,yes_to_no,9,7,3,5,4,4,0.6,1.0,-0.4,-0.7692800677911629,0.16545688904236344,0.4444444444444444
+claude-opus-5-5,Emotional vs control,no_to_yes,292,0,0,128,0,164,0.0,0.0,0.0,-0.022888247013851153,0.02913799589810803,1.0
+claude-opus-5-5,Emotional vs control,yes_to_no,8,7,7,8,0,0,0.875,,,,,
+claude-opus-5-5,Identity vs control (question change),no_to_yes,292,9,5,41,4,251,0.12195121951219512,0.01593625498007968,0.10601496453211544,0.03312105472363287,0.2398623710772183,0.0035534690322777916
+claude-opus-5-5,Identity vs control (question change),yes_to_no,8,8,2,2,6,6,1.0,1.0,0.0,-0.6576280471103808,0.39034303365306455,1.0
+claude-sonnet-5-5,Emo + identity vs control (both change),no_to_yes,209,8,5,19,3,190,0.2631578947368421,0.015789473684210527,0.24736842105263157,0.09928486325849922,0.4723709441174242,0.0001722480759934201
+claude-sonnet-5-5,Emo + identity vs control (both change),yes_to_no,91,78,14,24,64,67,0.5833333333333334,0.9552238805970149,-0.37189054726368154,-0.5690893067942573,-0.1827034396481039,5.1978042684876415e-05
+claude-sonnet-5-5,Emotional + identity vs identity,no_to_yes,268,12,9,27,3,241,0.3333333333333333,0.012448132780082987,0.3208852005532503,0.17211379200813187,0.5094862676219514,4.9478577248171955e-08
+claude-sonnet-5-5,Emotional + identity vs identity,yes_to_no,32,23,10,16,13,16,0.625,0.8125,-0.1875,-0.4552869226303682,0.12075956040486063,0.43314794215795327
+claude-sonnet-5-5,Emotional vs control,no_to_yes,209,16,11,72,5,137,0.1527777777777778,0.0364963503649635,0.11628142741281429,0.03637519015891426,0.21886137437117098,0.004760498044347214
+claude-sonnet-5-5,Emotional vs control,yes_to_no,91,61,38,64,23,27,0.59375,0.8518518518518519,-0.25810185185185186,-0.4093516874667382,-0.04911475768315063,0.026678019449754876
+claude-sonnet-5-5,Identity vs control (question change),no_to_yes,209,15,4,19,11,190,0.21052631578947367,0.05789473684210526,0.1526315789473684,0.020084764109535164,0.3768800173037009,0.035129190969315
+claude-sonnet-5-5,Identity vs control (question change),yes_to_no,91,74,12,24,62,67,0.5,0.9253731343283582,-0.4253731343283582,-0.6158648199693979,-0.2196517131133324,2.4476460701243377e-05
+gemini-3.5-flash-lite,Emo + identity vs control (both change),no_to_yes,299,4,0,42,4,257,0.0,0.01556420233463035,-0.01556420233463035,-0.03932893690010747,0.06877365547030602,1.0
+gemini-3.5-flash-lite,Emo + identity vs control (both change),yes_to_no,1,1,1,1,0,0,1.0,,,,,
+gemini-3.5-flash-lite,Emotional + identity vs identity,no_to_yes,292,4,0,40,4,252,0.0,0.015873015873015872,-0.015873015873015872,-0.04009541770713772,0.0722849725275728,1.0
+gemini-3.5-flash-lite,Emotional + identity vs identity,yes_to_no,8,8,3,3,5,5,1.0,1.0,0.0,-0.5615060804490177,0.43449149475208093,1.0
+gemini-3.5-flash-lite,Emotional vs control,no_to_yes,299,0,0,135,0,164,0.0,0.0,0.0,-0.022888247013851153,0.027668940720936668,1.0
+gemini-3.5-flash-lite,Emotional vs control,yes_to_no,1,1,1,1,0,0,1.0,,,,,
+gemini-3.5-flash-lite,Identity vs control (question change),no_to_yes,299,7,2,42,5,257,0.047619047619047616,0.019455252918287938,0.02816379470075968,-0.01457130070238511,0.13900504096382565,0.256138690333529
+gemini-3.5-flash-lite,Identity vs control (question change),yes_to_no,1,0,0,1,0,0,0.0,,,,,
+gemma-4-12b-it,Emo + identity vs control (both change),no_to_yes,300,0,0,43,0,257,0.0,0.0,0.0,-0.014727712144075176,0.08201257002322722,1.0
+gemma-4-12b-it,Emo + identity vs control (both change),yes_to_no,0,0,0,0,0,0,,,,,,
+gemma-4-12b-it,Emotional + identity vs identity,no_to_yes,300,0,0,43,0,257,0.0,0.0,0.0,-0.014727712144075176,0.08201257002322722,1.0
+gemma-4-12b-it,Emotional + identity vs identity,yes_to_no,0,0,0,0,0,0,,,,,,
+gemma-4-12b-it,Emotional vs control,no_to_yes,300,0,0,136,0,164,0.0,0.0,0.0,-0.022888247013851153,0.02747108156657246,1.0
+gemma-4-12b-it,Emotional vs control,yes_to_no,0,0,0,0,0,0,,,,,,
+gemma-4-12b-it,Identity vs control (question change),no_to_yes,300,0,0,43,0,257,0.0,0.0,0.0,-0.014727712144075176,0.08201257002322722,1.0
+gemma-4-12b-it,Identity vs control (question change),yes_to_no,0,0,0,0,0,0,,,,,,
+gemma-4-e4b-it,Emo + identity vs control (both change),no_to_yes,300,0,0,43,0,257,0.0,0.0,0.0,-0.014727712144075176,0.08201257002322722,1.0
+gemma-4-e4b-it,Emo + identity vs control (both change),yes_to_no,0,0,0,0,0,0,,,,,,
+gemma-4-e4b-it,Emotional + identity vs identity,no_to_yes,300,0,0,43,0,257,0.0,0.0,0.0,-0.014727712144075176,0.08201257002322722,1.0
+gemma-4-e4b-it,Emotional + identity vs identity,yes_to_no,0,0,0,0,0,0,,,,,,
+gemma-4-e4b-it,Emotional vs control,no_to_yes,300,0,0,136,0,164,0.0,0.0,0.0,-0.022888247013851153,0.02747108156657246,1.0
+gemma-4-e4b-it,Emotional vs control,yes_to_no,0,0,0,0,0,0,,,,,,
+gemma-4-e4b-it,Identity vs control (question change),no_to_yes,300,0,0,43,0,257,0.0,0.0,0.0,-0.014727712144075176,0.08201257002322722,1.0
+gemma-4-e4b-it,Identity vs control (question change),yes_to_no,0,0,0,0,0,0,,,,,,
+gpt-4o-mini,Emo + identity vs control (both change),no_to_yes,21,5,1,2,4,19,0.5,0.21052631578947367,0.2894736842105263,-0.1731883226045775,0.713908541208202,0.42857142857142855
+gpt-4o-mini,Emo + identity vs control (both change),yes_to_no,279,189,18,41,171,238,0.43902439024390244,0.7184873949579832,-0.27946300471408075,-0.4293894025871009,-0.11727978362890795,0.0009018706121873803
+gpt-4o-mini,Emotional + identity vs identity,no_to_yes,248,61,13,31,48,217,0.41935483870967744,0.22119815668202766,0.19815668202764977,0.03183056675759349,0.37825290272929213,0.024528302595910323
+gpt-4o-mini,Emotional + identity vs identity,yes_to_no,52,18,1,12,17,40,0.08333333333333333,0.425,-0.3416666666666667,-0.5093355839577807,-0.03707999646924376,0.03897688121115202
+gpt-4o-mini,Emotional vs control,no_to_yes,21,7,1,8,6,13,0.125,0.46153846153846156,-0.33653846153846156,-0.6040188068248407,0.07855756184046242,0.17358101135190918
+gpt-4o-mini,Emotional vs control,yes_to_no,279,122,51,128,71,151,0.3984375,0.47019867549668876,-0.07176117549668876,-0.18491730301901566,0.044693362092351724,0.2757358784145383
+gpt-4o-mini,Identity vs control (question change),no_to_yes,21,1,0,2,1,19,0.0,0.05263157894736842,-0.05263157894736842,-0.2463921533654521,0.606419095678147,1.0
+gpt-4o-mini,Identity vs control (question change),yes_to_no,279,228,29,41,199,238,0.7073170731707317,0.8361344537815126,-0.12881738061078096,-0.2865223918315911,-0.0010333304154390432,0.07710652808436093
+gpt-5-mini,Emo + identity vs control (both change),no_to_yes,300,1,0,43,1,257,0.0,0.0038910505836575876,-0.0038910505836575876,-0.021708021939205638,0.0781840761969465,1.0
+gpt-5-mini,Emo + identity vs control (both change),yes_to_no,0,0,0,0,0,0,,,,,,
+gpt-5-mini,Emotional + identity vs identity,no_to_yes,300,1,0,43,1,257,0.0,0.0038910505836575876,-0.0038910505836575876,-0.021708021939205638,0.0781840761969465,1.0
+gpt-5-mini,Emotional + identity vs identity,yes_to_no,0,0,0,0,0,0,,,,,,
+gpt-5-mini,Emotional vs control,no_to_yes,299,0,0,136,0,163,0.0,0.0,0.0,-0.023025432506041655,0.02747108156657246,1.0
+gpt-5-mini,Emotional vs control,yes_to_no,0,0,0,0,0,0,,,,,,
+gpt-5-mini,Identity vs control (question change),no_to_yes,300,0,0,43,0,257,0.0,0.0,0.0,-0.014727712144075176,0.08201257002322722,1.0
+gpt-5-mini,Identity vs control (question change),yes_to_no,0,0,0,0,0,0,,,,,,
+gpt-5-nano,Emo + identity vs control (both change),no_to_yes,300,5,2,43,3,257,0.046511627906976744,0.011673151750972763,0.03483847615600398,-0.0054190968230153555,0.14315831412472424,0.15133562615325094
+gpt-5-nano,Emo + identity vs control (both change),yes_to_no,0,0,0,0,0,0,,,,,,
+gpt-5-nano,Emotional + identity vs identity,no_to_yes,298,5,2,43,3,255,0.046511627906976744,0.011764705882352941,0.0347469220246238,-0.005603431339418159,0.14307106030725197,0.15307080322436933
+gpt-5-nano,Emotional + identity vs identity,yes_to_no,2,2,0,0,2,2,,1.0,,,,
+gpt-5-nano,Emotional vs control,no_to_yes,300,1,1,136,0,164,0.007352941176470588,0.0,0.007352941176470588,-0.016322374465213278,0.040473854826670055,0.4533333333333333
+gpt-5-nano,Emotional vs control,yes_to_no,0,0,0,0,0,0,,,,,,
+gpt-5-nano,Identity vs control (question change),no_to_yes,300,2,0,43,2,257,0.0,0.007782101167315175,-0.007782101167315175,-0.027926000607583393,0.07442454286371517,1.0
+gpt-5-nano,Identity vs control (question change),yes_to_no,0,0,0,0,0,0,,,,,,
+llama-3.1-8b-instruct,Emo + identity vs control (both change),no_to_yes,300,0,0,43,0,257,0.0,0.0,0.0,-0.014727712144075176,0.08201257002322722,1.0
+llama-3.1-8b-instruct,Emo + identity vs control (both change),yes_to_no,0,0,0,0,0,0,,,,,,
+llama-3.1-8b-instruct,Emotional + identity vs identity,no_to_yes,300,0,0,43,0,257,0.0,0.0,0.0,-0.014727712144075176,0.08201257002322722,1.0
+llama-3.1-8b-instruct,Emotional + identity vs identity,yes_to_no,0,0,0,0,0,0,,,,,,
+llama-3.1-8b-instruct,Emotional vs control,no_to_yes,300,0,0,136,0,164,0.0,0.0,0.0,-0.022888247013851153,0.02747108156657246,1.0
+llama-3.1-8b-instruct,Emotional vs control,yes_to_no,0,0,0,0,0,0,,,,,,
+llama-3.1-8b-instruct,Identity vs control (question change),no_to_yes,300,0,0,43,0,257,0.0,0.0,0.0,-0.014727712144075176,0.08201257002322722,1.0
+llama-3.1-8b-instruct,Identity vs control (question change),yes_to_no,0,0,0,0,0,0,,,,,,
+llama-3.2-3b-instruct,Emo + identity vs control (both change),no_to_yes,300,0,0,43,0,257,0.0,0.0,0.0,-0.014727712144075176,0.08201257002322722,1.0
+llama-3.2-3b-instruct,Emo + identity vs control (both change),yes_to_no,0,0,0,0,0,0,,,,,,
+llama-3.2-3b-instruct,Emotional + identity vs identity,no_to_yes,300,0,0,43,0,257,0.0,0.0,0.0,-0.014727712144075176,0.08201257002322722,1.0
+llama-3.2-3b-instruct,Emotional + identity vs identity,yes_to_no,0,0,0,0,0,0,,,,,,
+llama-3.2-3b-instruct,Emotional vs control,no_to_yes,300,0,0,136,0,164,0.0,0.0,0.0,-0.022888247013851153,0.02747108156657246,1.0
+llama-3.2-3b-instruct,Emotional vs control,yes_to_no,0,0,0,0,0,0,,,,,,
+llama-3.2-3b-instruct,Identity vs control (question change),no_to_yes,300,0,0,43,0,257,0.0,0.0,0.0,-0.014727712144075176,0.08201257002322722,1.0
+llama-3.2-3b-instruct,Identity vs control (question change),yes_to_no,0,0,0,0,0,0,,,,,,
+qwen3.5-4b,Emo + identity vs control (both change),no_to_yes,285,5,0,43,5,242,0.0,0.02066115702479339,-0.02066115702479339,-0.04744632771673922,0.0621966089633563,1.0
+qwen3.5-4b,Emo + identity vs control (both change),yes_to_no,15,15,0,0,15,15,,1.0,,,,
+qwen3.5-4b,Emotional + identity vs identity,no_to_yes,278,5,0,39,5,239,0.0,0.02092050209205021,-0.02092050209205021,-0.04803030453548687,0.06954242380206804,1.0
+qwen3.5-4b,Emotional + identity vs identity,yes_to_no,22,22,4,4,18,18,1.0,1.0,0.0,-0.48990002040399916,0.17588455058237484,1.0
+qwen3.5-4b,Emotional vs control,no_to_yes,285,4,0,130,4,155,0.0,0.025806451612903226,-0.025806451612903226,-0.06446953158378047,0.006922024515663556,0.12814213831030982
+qwen3.5-4b,Emotional vs control,yes_to_no,15,15,6,6,9,9,1.0,1.0,0.0,-0.39034303365306455,0.29915275355095927,1.0
+qwen3.5-4b,Identity vs control (question change),no_to_yes,285,20,4,43,16,242,0.09302325581395349,0.06611570247933884,0.026907553334614642,-0.04129950777660661,0.15243161204260536,0.518036224003959
+qwen3.5-4b,Identity vs control (question change),yes_to_no,15,13,0,0,13,15,,0.8666666666666667,,,,
+qwen3.5-9b,Emo + identity vs control (both change),no_to_yes,298,0,0,43,0,255,0.0,0.0,0.0,-0.014841509247354365,0.08201257002322722,1.0
+qwen3.5-9b,Emo + identity vs control (both change),yes_to_no,1,1,0,0,1,1,,1.0,,,,
+qwen3.5-9b,Emotional + identity vs identity,no_to_yes,298,0,0,43,0,255,0.0,0.0,0.0,-0.014841509247354365,0.08201257002322722,1.0
+qwen3.5-9b,Emotional + identity vs identity,yes_to_no,0,0,0,0,0,0,,,,,,
+qwen3.5-9b,Emotional vs control,no_to_yes,299,1,0,135,1,164,0.0,0.006097560975609756,-0.006097560975609756,-0.03372709033210999,0.022023156834204083,1.0
+qwen3.5-9b,Emotional vs control,yes_to_no,1,1,1,1,0,0,1.0,,,,,
+qwen3.5-9b,Identity vs control (question change),no_to_yes,298,0,0,43,0,255,0.0,0.0,0.0,-0.014841509247354365,0.08201257002322722,1.0
+qwen3.5-9b,Identity vs control (question change),yes_to_no,1,1,0,0,1,1,,1.0,,,,
