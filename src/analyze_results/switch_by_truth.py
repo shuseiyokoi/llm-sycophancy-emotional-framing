@@ -36,6 +36,7 @@ Outputs to results/analyze_results/:
     switch-by-truth.csv          one row per model x comparison x direction
     switch-by-truth-pooled.csv   GEE truth coefficient per comparison x direction
     switch-by-truth.png/.pdf     switch rate on not-biased vs biased samples
+    switch-by-truth-simple.png/.pdf  same, only models with 10+ switches, bars
 """
 
 import math
@@ -49,6 +50,7 @@ import matplotlib.pyplot as plt
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
 from matplotlib.lines import Line2D
+from matplotlib.patches import Patch
 from scipy.stats import fisher_exact
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
@@ -230,7 +232,6 @@ def plot_switch_by_truth(table):
                     ax.text(50, yi, "no baseline answers in this direction", ha="center", va="center",
                             fontsize=6.5, color=MUTED)
                     continue
-                pts = []
                 for off, kind, color in [(-0.13, "not_biased", NOT_BIASED), (0.13, "biased", BIASED)]:
                     k, n = r[f"k_{kind}"], r[f"n_{kind}"]
                     if n == 0:
@@ -238,13 +239,14 @@ def plot_switch_by_truth(table):
                     lo, hi = wilson(k, n)
                     ax.hlines(yi + off, lo * 100, hi * 100, color=color, lw=1.4, alpha=0.6)
                     ax.scatter(k / n * 100, yi + off, s=34, color=color, edgecolor=SURFACE, lw=1.2, zorder=3)
-                    pts.append((k / n * 100, yi + off))
-                if len(pts) == 2:
-                    ax.plot([pts[0][0], pts[1][0]], [pts[0][1], pts[1][1]], color=MUTED, lw=0.8, zorder=2)
-                star = "*" if r["fisher_p"] < 0.05 else ""
-                rd = "—" if pd.isna(r["rd"]) else f"{r['rd'] * 100:+.0f} pp{star}"
-                ax.text(1.01, yi, f"{rd}\n{int(r['k_biased'])}/{int(r['n_biased'])} vs "
-                                  f"{int(r['k_not_biased'])}/{int(r['n_not_biased'])}",
+                significant = r["fisher_p"] < 0.05
+                rd = "—" if pd.isna(r["rd"]) else f"{r['rd'] * 100:+.1f} pp" + ("*" if significant else "")
+                ax.text(1.01, yi - 0.17, rd, transform=ax.get_yaxis_transform(), ha="left", va="center",
+                        fontsize=6.5, color=INK if significant else SECONDARY,
+                        fontweight="bold" if significant else "normal")
+                # not biased first: same order as the dots (grey on top, red below)
+                ax.text(1.01, yi + 0.17, f"{int(r['k_not_biased'])}/{int(r['n_not_biased'])} vs "
+                                         f"{int(r['k_biased'])}/{int(r['n_biased'])}",
                         transform=ax.get_yaxis_transform(), ha="left", va="center", fontsize=6.5,
                         color=SECONDARY)
             ax.set_yticks(y, models)
@@ -260,10 +262,64 @@ def plot_switch_by_truth(table):
     fig.legend(handles=handles, loc="outside lower center", ncol=2, fontsize=8.5, frameon=False)
     fig.suptitle(
         f"Does the ground truth change how often a model switches its answer? (LR label: biased vs not biased)\n"
-        "Same model, same sample, framed vs baseline prompt. A flat pair = switching ignores the data. "
-        "Right text: biased − not biased (pp, * Fisher p < 0.05), then switched / eligible.",
+        "Same model, same sample, framed vs baseline prompt. Grey ≈ red = switching ignores the data.\n"
+        "Right text: biased − not biased (pp; bold * = Fisher p < 0.05), then switched/eligible, not biased vs biased.",
         x=0.01, ha="left", fontsize=10)
     save(fig, "switch-by-truth")
+
+
+def plot_switch_simple(table):
+    """Plain version: only models with at least MIN_SWITCHES_POOLED switches in
+    a panel, two bars each (not biased / biased), labelled in words."""
+    titles = {"no_to_yes": "Said NO before  →  switched to YES",
+              "yes_to_no": "Said YES before  →  switched to NO"}
+    panels = {}
+    for _, _, comparison in COMPARISONS:
+        for key, _, _ in DIRECTIONS:
+            t = table[(table["comparison"] == comparison) & (table["direction"] == key)
+                      & (table["n_switched"] >= MIN_SWITCHES_POOLED)]
+            panels[(comparison, key)] = t.sort_values("n_switched", ascending=False)
+    rows_per = [max(1, max(len(panels[(c, k)]) for k, _, _ in DIRECTIONS)) for _, _, c in COMPARISONS]
+    fig, axes = plt.subplots(len(COMPARISONS), 2, figsize=(12, sum(0.75 * r + 0.9 for r in rows_per) + 1.2),
+                             gridspec_kw={"height_ratios": rows_per}, constrained_layout=True)
+    for row, (_, _, comparison) in enumerate(COMPARISONS):
+        for col, (key, _, _) in enumerate(DIRECTIONS):
+            ax = axes[row, col]
+            t = panels[(comparison, key)]
+            for yi, r in enumerate(t.itertuples()):
+                for off, kind, color in [(-0.19, "not_biased", NOT_BIASED), (0.19, "biased", BIASED)]:
+                    k, n = getattr(r, f"k_{kind}"), getattr(r, f"n_{kind}")
+                    if n == 0:
+                        continue
+                    rate = k / n * 100
+                    ax.barh(yi + off, rate, height=0.36, color=color, edgecolor=SURFACE, linewidth=1)
+                    ax.text(rate + 1.5, yi + off, f"{rate:.0f}%  ({k}/{n})", va="center", ha="left",
+                            fontsize=7, color=SECONDARY)
+                if not pd.isna(r.rd):
+                    star = "  significant" if r.fisher_p < 0.05 else "  not significant"
+                    ax.text(1.01, yi, f"{r.rd * 100:+.1f} pp\n{star.strip()}", transform=ax.get_yaxis_transform(),
+                            ha="left", va="center", fontsize=7.5,
+                            color=INK if r.fisher_p < 0.05 else MUTED)
+            if t.empty:
+                ax.text(50, 0, f"no model switched {MIN_SWITCHES_POOLED}+ times", ha="center", va="center",
+                        fontsize=8, color=MUTED)
+            ax.set_yticks(range(len(t)), t["model"].tolist())
+            # same row height in both panels of a row, so bars keep one size
+            ax.set_ylim(rows_per[row] - 0.5, -0.6)
+            ax.set_xlim(0, 140)
+            ax.set_xticks([0, 25, 50, 75, 100], ["0%", "25%", "50%", "75%", "100%"])
+            ax.grid(axis="x", color=GRID, lw=0.6)
+            ax.set_title(f"{comparison}\n{titles[key]}", loc="left", fontsize=9, fontweight="bold")
+            style_axis(ax)
+    handles = [Patch(facecolor=NOT_BIASED, label="data NOT biased (LR label)"),
+               Patch(facecolor=BIASED, label="data biased (LR label)")]
+    fig.legend(handles=handles, loc="outside lower center", ncol=2, fontsize=9, frameon=False)
+    fig.suptitle(
+        "When a model changes its answer, does it depend on whether the data is really biased?\n"
+        "Bars: % of answers that switched. Red ≠ grey = switching depends on the data; red ≈ grey = it doesn't.\n"
+        f"Right: red − grey, in percentage points. Only models with {MIN_SWITCHES_POOLED}+ switches are shown.",
+        x=0.01, ha="left", fontsize=10.5)
+    save(fig, "switch-by-truth-simple")
 
 
 def main():
@@ -274,6 +330,7 @@ def main():
     pool = pooled(pairs, table)
     pool.to_csv(os.path.join(PATH_TO_RESULTS, "switch-by-truth-pooled.csv"), index=False)
     plot_switch_by_truth(table)
+    plot_switch_simple(table)
 
     show = table[table["n_switched"] > 0].copy()
     for kind in ["biased", "not_biased"]:

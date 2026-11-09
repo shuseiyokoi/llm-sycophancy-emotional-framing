@@ -270,7 +270,8 @@ Models are auto-discovered from the `sample_results_*.jsonl` files in `data/call
 
 - `switch-by-truth.csv`: per model × comparison × direction, switch counts on biased vs not-biased samples (LR labels), the risk difference with a Newcombe 95% CI, and the Fisher p-value
 - `switch-by-truth-pooled.csv`: GEE logit `switch ~ biased + C(model)` clustered by sample, per comparison × direction (models with ≥10 switches and a switch rate below 100%)
-- `switch-by-truth.png/.pdf`: switch rate on not-biased vs biased samples per model; a flat pair means switching ignores the data
+- `switch-by-truth.png/.pdf`: switch rate on not-biased vs biased samples per model; grey ≈ red means switching ignores the data
+- `switch-by-truth-simple.png/.pdf`: the same as plain bars, only models with 10+ switches in a panel, with the gap labeled significant / not significant
 
 `python reasoning_to_markdown.py` turns the reasoning summaries in `data/call_models/reasoning/` (saved by `batch_claude.py` for variants that request them, e.g. `claude-haiku-5-5-thinking`) into one readable Markdown file per prompt in `results/reasoning/`, YES answers first.
 
