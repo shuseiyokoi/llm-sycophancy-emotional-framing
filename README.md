@@ -260,8 +260,8 @@ Models are auto-discovered from the `sample_results_*.jsonl` files in `data/call
 
 `python ground_truth_plots.py` scores each answer against the per-sample ground truth (`results/ground_truth/sample_labels_l2.csv` / `sample_term_labels_l2.csv`; identity prompts against that identity's own race/sex terms) and saves:
 
-- `gt-hit-false-alarm.csv` — per model and prompt: hit rate (YES when biased), false alarm (YES when not biased), J = hit − false alarm with bootstrap 95% CI
-- `gt-yes-decomposition.png/.pdf` — YES rate per model × prompt, split into YES on biased vs not-biased samples, with the true biased share as a tick
+- `gt-hit-false-alarm.csv` — per model and prompt: hit rate (YES when biased), false alarm (YES when not biased), J = hit − false alarm with bootstrap 95% CI, precision, F1 and the F1 of always saying YES (`f1_always_yes`)
+- `gt-yes-decomposition.png/.pdf` — YES rate per model × prompt, split into YES on biased vs not-biased samples, with the true biased share as a tick; right-hand text is recall | precision | F1, with the always-YES F1 in the header
 - `gt-discrimination.png/.pdf` — J with 95% CI per model × prompt (0 = YES unrelated to truth)
 - `gt-identity-truth-vs-yes.csv` — per model, identity prompt and identity: true biased rate vs YES rate, with Wilson 95% CI
 - `gt-identity-gap-heatmap.png/.pdf` — YES rate minus true biased rate per model × identity; outlined cells are beyond sampling noise

@@ -140,6 +140,9 @@ def hit_false_alarm(df):
             "yes_rate": g["yes"].mean(),
             "accuracy": (g["yes"] == g["truth"]).mean(),
             "always_no_accuracy": (~g["truth"]).mean(),
+            "precision": tp / (tp + fp) if tp + fp else np.nan,
+            "f1": 2 * tp / (2 * tp + fp + (len(biased) - tp)) if len(biased) else np.nan,
+            "f1_always_yes": 2 * len(biased) / (len(g) + len(biased)),
         })
     return pd.DataFrame(rows)
 
@@ -197,10 +200,12 @@ def plot_yes_decomposition(table, active, never):
         for yi, (_, r) in zip(y, t.iterrows()):
             if pd.isna(r["n"]):
                 continue
-            ax.text(1.02, yi, f"{r['accuracy'] * 100:.0f} | {r['always_no_accuracy'] * 100:.0f}",
+            prec = "—" if pd.isna(r["precision"]) else f"{r['precision'] * 100:.0f}"
+            ax.text(1.02, yi, f"{r['hit_rate'] * 100:.0f} | {prec} | {r['f1'] * 100:.0f}",
                     transform=ax.get_yaxis_transform(), va="center", ha="left", fontsize=7, color=SECONDARY)
-        ax.text(1.02, -0.9, "acc | base", transform=ax.get_yaxis_transform(),
-                va="center", ha="left", fontsize=7, color=MUTED)
+        f1_base = t["f1_always_yes"].dropna().iloc[0] * 100
+        ax.text(1.02, -1.0, f"recall | prec | F1\n(always-YES F1: {f1_base:.0f})",
+                transform=ax.get_yaxis_transform(), va="center", ha="left", fontsize=7, color=MUTED)
         if never:
             ax.axhline(len(active) - 0.5, color=GRID, lw=1)
         truth_name = "identity's own terms" if prompt_type in IDENTITY_PROMPTS else "bias_any"
@@ -224,7 +229,8 @@ def plot_yes_decomposition(table, active, never):
     fig.suptitle(
         f"How often each model says YES, and where those YES answers land ({TRUTH_DEFINITION} ground truth). "
         "Bar left of the tick = under-calls bias; right = over-calls.\n"
-        "acc | base = accuracy vs always-NO accuracy (%). Grey names: always NO under every prompt.",
+        "recall = % of biased samples called YES; prec = % of YES answers that were right; F1 combines both "
+        "(always saying YES gets the F1 in the header). Grey names: always NO under every prompt.",
         x=0.01, ha="left", fontsize=10.5,
     )
     save(fig, "gt-yes-decomposition")
