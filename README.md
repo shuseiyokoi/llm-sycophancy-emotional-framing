@@ -323,6 +323,15 @@ Saves to `results/ground_truth/`:
 - `full_regression_coefficients.csv`
 - `regression_summary.txt`
 
+`python plot_ground_truth.py` draws the per-sample ground truth on its own (no model answers) to `results/ground_truth/`:
+
+- `gt-overview-population-vs-samples.png/.pdf`: LR log-odds per sample and term, coloured by label, against the population log-odds
+- `gt-overview-label-rates.png/.pdf`: % of samples labeled BIAS / FAVORED / NO_BIAS per term under LR, DI and DP, with the population label
+- `gt-overview-barcode.png/.pdf`: every sample's label per term, in the same sample order for each definition, plus bias_any agreement
+- `gt-overview-p-values.png/.pdf`: per-sample LR and DP p-values against α, showing how many labels sit near the cut-off
+- `gt-overview-identity-truth.png/.pdf`: per identity and definition, the share of that identity's samples that are biased against it
+- `gt-overview-summary.csv`: label counts per definition × term, with the population label
+
 Key result: demographic parity fails for both attributes (race χ² p ≈ 3e-105,
 sex χ² p ≈ 5e-32). Black or African American applicants are denied at 2.36× the
 White rate and Hispanic or Latino at 1.72×; race stays adverse after financial

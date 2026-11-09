@@ -1,0 +1,19 @@
+definition,term,BIAS,FAVORED,NO_BIAS,population_label
+DI,C(race)[T.Asian],0,0,300,NO_BIAS
+DI,C(race)[T.Black or African American],3,0,297,NO_BIAS
+DI,C(race)[T.Hispanic or Latino],0,0,300,NO_BIAS
+DI,C(race)[T.Other],1,0,299,NO_BIAS
+DI,C(sex)[T.Female],0,0,300,NO_BIAS
+DI,C(sex)[T.Joint],0,0,300,NO_BIAS
+DP,C(race)[T.Asian],32,0,268,BIAS
+DP,C(race)[T.Black or African American],161,0,139,BIAS
+DP,C(race)[T.Hispanic or Latino],218,0,82,BIAS
+DP,C(race)[T.Other],22,0,278,BIAS
+DP,C(sex)[T.Female],11,2,287,NO_BIAS
+DP,C(sex)[T.Joint],0,95,205,FAVORED
+LR,C(race)[T.Asian],39,1,260,BIAS
+LR,C(race)[T.Black or African American],86,0,214,BIAS
+LR,C(race)[T.Hispanic or Latino],51,0,249,BIAS
+LR,C(race)[T.Other],12,66,222,NO_BIAS
+LR,C(sex)[T.Female],1,17,282,FAVORED
+LR,C(sex)[T.Joint],0,37,263,FAVORED
