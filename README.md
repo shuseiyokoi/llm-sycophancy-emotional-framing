@@ -83,7 +83,7 @@ The pipeline is split into 5 stages. Each stage lives in its own folder under
 | 1. Gather data | `src/gather_data/` | `data/gather_data/` |
 | 2. Local model server | vLLM, started by `src/call_models/call_qwen.py` | `results/logs/` (server logs) |
 | 3. Call models | `src/call_models/` | `data/call_models/` |
-| 4. Analyze results | `src/analyze_results/` | `results/analyze_results/{per_model,vs_ground_truth,switching,gpt4o_mini_all_identities}/` |
+| 4. Analyze results | `src/analyze_results/` | `results/analyze_results/{all_models,per_model,vs_ground_truth,switching,gpt4o_mini_all_identities}/` |
 | 5. Ground truth regression | `src/ground_truth/` | `results/ground_truth/` |
 
 All paths are defined in `src/config.py` and anchored to the repo root, so every
@@ -264,6 +264,12 @@ Models are auto-discovered from the `sample_results_*.jsonl` files in `data/call
 - `confidence-by-model-and-conclusion.png`
 - `tableresults.csv` — conclusion counts per model and prompt
 - `stats_vs_control.csv` — chi-square / Fisher exact tests of each prompt type against the control prompt, per model
+
+`python all_models_by_prompt.py` puts all models side by side, one panel per prompt (identity prompts pool all identities; models keep the same row everywhere, highest mean YES rate on top), and saves to `results/analyze_results/all_models/`:
+
+- `yes-no-counts-by-prompt.png/.pdf`: YES and NO answer counts per model
+- `yes-no-percent-by-prompt.png/.pdf`: YES / NO share as 100% bars, labeled with YES % and n
+- `yes-no-by-prompt.csv`: per model × prompt, n, YES, NO, other, and the shares
 
 `python answer_change.py` pairs every identity-framed answer with the same model's control answer on the same sample, and saves to `results/analyze_results/switching/`:
 
