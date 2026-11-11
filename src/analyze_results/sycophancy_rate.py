@@ -12,7 +12,7 @@ Cells with fewer than MIN_N usable YES/NO answers are shown greyed out:
 too few parseable answers to estimate a rate (usually the model refused
 to answer in the requested JSON format).
 
-Outputs to results/analyze_results/:
+Outputs to results/analyze_results/switching/:
     sycophancy-rate.csv
     sycophancy-rate-heatmap.png
     sycophancy-rate-by-model.png
@@ -28,6 +28,7 @@ from matplotlib.colors import LinearSegmentedColormap, to_rgb
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from config import PATH_TO_RESULTS
+OUT_DIR = os.path.join(PATH_TO_RESULTS, "switching") + os.sep
 from analyze_results import discover_models, load_results, prompt_to_label
 
 MIN_N = 30  # minimum usable YES/NO answers for a cell to count
@@ -276,22 +277,22 @@ def plot_ranked_bars(table, path):
 
 
 def main():
-    os.makedirs(PATH_TO_RESULTS, exist_ok=True)
+    os.makedirs(OUT_DIR, exist_ok=True)
 
     model_names = discover_models()
     df = load_results(model_names)
     table = build_table(df, model_names)
 
-    csv_path = os.path.join(PATH_TO_RESULTS, "sycophancy-rate.csv")
+    csv_path = os.path.join(OUT_DIR, "sycophancy-rate.csv")
     table.to_csv(csv_path, index=False)
 
-    plot_heatmap(table, os.path.join(PATH_TO_RESULTS, "sycophancy-rate-heatmap.png"))
+    plot_heatmap(table, os.path.join(OUT_DIR, "sycophancy-rate-heatmap.png"))
     plot_ranked_bars(
-        table, os.path.join(PATH_TO_RESULTS, "sycophancy-rate-by-model.png")
+        table, os.path.join(OUT_DIR, "sycophancy-rate-by-model.png")
     )
 
     print(
-        f"Saved sycophancy-rate.csv, -heatmap.png, -by-model.png to {PATH_TO_RESULTS}"
+        f"Saved sycophancy-rate.csv, -heatmap.png, -by-model.png to {OUT_DIR}"
     )
     print("\nMean sycophancy rate per model (usable cells only, pp):")
     print(

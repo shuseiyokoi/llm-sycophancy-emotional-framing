@@ -83,7 +83,7 @@ The pipeline is split into 5 stages. Each stage lives in its own folder under
 | 1. Gather data | `src/gather_data/` | `data/gather_data/` |
 | 2. Local model server | vLLM, started by `src/call_models/call_qwen.py` | `results/logs/` (server logs) |
 | 3. Call models | `src/call_models/` | `data/call_models/` |
-| 4. Analyze results | `src/analyze_results/` | `results/analyze_results/` |
+| 4. Analyze results | `src/analyze_results/` | `results/analyze_results/{per_model,vs_ground_truth,switching,gpt4o_mini_all_identities}/` |
 | 5. Ground truth regression | `src/ground_truth/` | `results/ground_truth/` |
 
 All paths are defined in `src/config.py` and anchored to the repo root, so every
@@ -105,7 +105,7 @@ python main.py --sample-data      # data/gather_data/samples/sample_*.{csv,txt} 
 python main.py --label-samples    # results/ground_truth/sample_labels.csv
 python main.py --ground-truth     # full-population parity / chi-square / logit
 # run the call scripts in src/call_models/ (outputs: data/call_models/sample_results_*.jsonl)
-python main.py --compare          # results/analyze_results/gt_metrics_*.csv, gt_flips_*.csv
+python main.py --compare          # results/analyze_results/vs_ground_truth/gt_metrics_*.csv, gt_flips_*.csv
 ```
 
 Ground truth per sample is automated: the same logistic regression used on the
@@ -200,6 +200,19 @@ python call_claude.py
 python call_gemini.py
 ```
 
+**All identities on all samples (OpenRouter).** By default each identity runs on
+1/8 of the samples (`IDENTITY_SAMPLE_SPLIT`). `--no-identity-split` runs every
+identity on all 300 samples, and `--out-dir` writes the files to their own folder.
+The gpt-4o-mini full run (16 identity files × 300 samples, ≈ $47) goes to
+`data/call_models/1110_gpt4o_mini_all_identities/`. That folder was seeded with
+the existing gpt-4o-mini files, so only the missing samples are called:
+
+```sh
+cd src/call_models
+python call_openrouter.py --models openai/gpt-4o-mini --no-identity-split \
+    --out-dir ../../data/call_models/1110_gpt4o_mini_all_identities --workers 8 --max-cost 55
+```
+
 **Local models** (vLLM; needs a CUDA GPU with compute capability ≥ 7.0, e.g. A100 / A40 / L40S)
 
 `call_qwen.py` starts `vllm serve` for each model in `LOCAL_MODELS`, sends the
@@ -243,7 +256,7 @@ python analyze_results.py
 
 Or interactively with the notebook `src/analyze_results/analyze_results.ipynb`.
 
-Models are auto-discovered from the `sample_results_*.jsonl` files in `data/call_models/`, so this works regardless of which models are active in `config.py`. It prints a coverage table (usable responses per model and prompt — rows that came back as API errors or non-JSON are skipped and counted), then saves to `results/analyze_results/`:
+Models are auto-discovered from the `sample_results_*.jsonl` files in `data/call_models/`, so this works regardless of which models are active in `config.py`. It prints a coverage table (usable responses per model and prompt — rows that came back as API errors or non-JSON are skipped and counted), then saves to `results/analyze_results/per_model/`:
 
 - `conclusion-count-by-prompt-{model}.png`
 - `percentages-by-prompt-{model}.png` (with per-bar sample sizes)
@@ -252,13 +265,13 @@ Models are auto-discovered from the `sample_results_*.jsonl` files in `data/call
 - `tableresults.csv` — conclusion counts per model and prompt
 - `stats_vs_control.csv` — chi-square / Fisher exact tests of each prompt type against the control prompt, per model
 
-`python answer_change.py` pairs every identity-framed answer with the same model's control answer on the same sample, and saves:
+`python answer_change.py` pairs every identity-framed answer with the same model's control answer on the same sample, and saves to `results/analyze_results/switching/`:
 
 - `answer-change-dyes-heatmap.png` — Δ YES rate vs control (pp), models × identities, one panel per identity prompt type
 - `answer-change-by-identity.csv` — per model × prompt type × identity: n, YES rates, Δ YES, share changed, NO→YES and YES→NO flips, Δ confidence
 - `answer-change-pairs.csv` — one row per paired (identity call, control call)
 
-`python ground_truth_plots.py` scores each answer against the per-sample ground truth (`results/ground_truth/sample_labels_l2.csv` / `sample_term_labels_l2.csv`; identity prompts against that identity's own race/sex terms) and saves:
+`python ground_truth_plots.py` scores each answer against the per-sample ground truth (`results/ground_truth/sample_labels_l2.csv` / `sample_term_labels_l2.csv`; identity prompts against that identity's own race/sex terms) and saves to `results/analyze_results/vs_ground_truth/` (as do the `gt_*.csv` files from `compare_to_ground_truth.py`):
 
 - `gt-hit-false-alarm.csv` — per model and prompt: hit rate (YES when biased), false alarm (YES when not biased), J = hit − false alarm with bootstrap 95% CI, precision, F1 and the F1 of always saying YES (`f1_always_yes`)
 - `gt-yes-decomposition.png/.pdf` — YES rate per model × prompt, split into YES on biased vs not-biased samples, with the true biased share as a tick; right-hand text is recall | precision | F1, with the always-YES F1 in the header
@@ -266,12 +279,17 @@ Models are auto-discovered from the `sample_results_*.jsonl` files in `data/call
 - `gt-identity-truth-vs-yes.csv` — per model, identity prompt and identity: true biased rate vs YES rate, with Wilson 95% CI
 - `gt-identity-gap-heatmap.png/.pdf` — YES rate minus true biased rate per model × identity; outlined cells are beyond sampling noise
 
-`python switch_by_truth.py` asks whether a sample's ground truth changes how often a model switches its answer under framing (same model, same sample, framed vs baseline prompt). Comparisons: emotional vs control and emotional + identity vs identity (only emotion changes), plus identity vs control (the question changes, so this is not sycophancy) and emotional + identity vs control (emotion and question both change). Each is split into NO→YES (toward the user's claim) and YES→NO (away from it), and the switch rate is compared between biased and not-biased samples. It saves:
+`python switch_by_truth.py` asks whether a sample's ground truth changes how often a model switches its answer under framing (same model, same sample, framed vs baseline prompt). Comparisons: emotional vs control and emotional + identity vs identity (only emotion changes), plus identity vs control (the question changes, so this is not sycophancy) and emotional + identity vs control (emotion and question both change). Each is split into NO→YES (toward the user's claim) and YES→NO (away from it), and the switch rate is compared between biased and not-biased samples. It saves to `results/analyze_results/switching/` (as does `sycophancy_rate.py`):
 
 - `switch-by-truth.csv`: per model × comparison × direction, switch counts on biased vs not-biased samples (LR labels), the risk difference with a Newcombe 95% CI, and the Fisher p-value
 - `switch-by-truth-pooled.csv`: GEE logit `switch ~ biased + C(model)` clustered by sample, per comparison × direction (models with ≥10 switches and a switch rate below 100%)
 - `switch-by-truth.png/.pdf`: switch rate on not-biased vs biased samples per model; grey ≈ red means switching ignores the data
 - `switch-by-truth-simple.png/.pdf`: the same as plain bars, only models with 10+ switches in a panel, with the gap labeled significant / not significant
+
+`python confusion_by_identity.py` reads the gpt-4o-mini all-identity run (`data/call_models/1110_gpt4o_mini_all_identities/`) and counts TP / FN / FP / TN per identity for all four prompts on the same samples, with truth = that identity's own LR race/sex terms (White identities are never biased, so their TP = FN = 0). It saves to `results/analyze_results/gpt4o_mini_all_identities/`:
+
+- `tp-fn-fp-tn-by-identity.csv`: per identity × prompt, n, n biased, TP, FN, FP, TN, other, recall, precision, F1
+- `tp-fn-fp-tn-by-identity.png/.pdf`: one panel per identity, four bars (TP, FN, FP, TN) per prompt
 
 `python reasoning_to_markdown.py` turns the reasoning summaries in `data/call_models/reasoning/` (saved by `batch_claude.py` for variants that request them, e.g. `claude-haiku-5-5-thinking`) into one readable Markdown file per prompt in `results/reasoning/`, YES answers first.
 

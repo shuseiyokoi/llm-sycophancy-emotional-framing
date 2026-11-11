@@ -8,6 +8,9 @@ analyze_results/token_report.py summarizes these runs too.
     python call_openrouter.py           # full run -> sample_results_*.jsonl
     python call_openrouter.py --models openai/gpt-5-nano --workers 8 --max-cost 10
                                         # full run for one model, 8 calls at a time, $10 cap
+    python call_openrouter.py --models openai/gpt-4o-mini --no-identity-split \
+        --out-dir ../../data/call_models/1110_gpt4o_mini_all_identities --workers 8 --max-cost 55
+                                        # every identity on all samples, into its own folder
 
 Prints each call's tokens and cost with running totals, and stops once the
 run's billed cost passes OPENROUTER_MAX_COST_USD.
@@ -24,6 +27,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+import config
 from config import (
     PATH_TO_MODEL_RESULTS,
     OPENROUTER_MODELS,
@@ -49,8 +53,12 @@ def key_spend(api_key):
     return data.get("usage"), data.get("limit")
 
 
-def call_openrouter(smoke=False, models=None, workers=1, max_cost=None):
+def call_openrouter(smoke=False, models=None, workers=1, max_cost=None,
+                    out_dir=None, no_identity_split=False):
     models = models or OPENROUTER_MODELS
+    out_dir = os.path.join(out_dir, "") if out_dir else PATH_TO_MODEL_RESULTS
+    if no_identity_split:
+        config.IDENTITY_SAMPLE_SPLIT = False  # identity_sample_ids reads it at call time
     max_cost = OPENROUTER_MAX_COST_USD if max_cost is None else max_cost
     load_dotenv()
 
@@ -58,13 +66,14 @@ def call_openrouter(smoke=False, models=None, workers=1, max_cost=None):
     if not api_key:
         raise ValueError("OPENROUTER_API_KEY is not set")
 
-    os.makedirs(PATH_TO_MODEL_RESULTS, exist_ok=True)
+    os.makedirs(out_dir, exist_ok=True)
 
     client = OpenAI(base_url=BASE_URL, api_key=api_key)
 
     spend_before, limit = key_spend(api_key)
     print(f"OpenRouter key: spent ${spend_before:.4f} so far, limit {limit}")
     print(f"Models: {models} | workers: {workers} | run budget: ${max_cost:.2f}")
+    print(f"Output: {out_dir} | identity split: {config.IDENTITY_SAMPLE_SPLIT}")
 
     prefix = "smoke" if smoke else "sample_results"
     limit_n = SMOKE_N_PER_PROMPT if smoke else None
@@ -111,7 +120,7 @@ def call_openrouter(smoke=False, models=None, workers=1, max_cost=None):
 
             for prompt_type, identity in prompt_identity_pairs():
                 label = prompt_identity_label(prompt_type, identity)
-                output_file = f"{PATH_TO_MODEL_RESULTS}{prefix}_{label}_{model_name}.jsonl"
+                output_file = f"{out_dir}{prefix}_{label}_{model_name}.jsonl"
 
                 print(f"\nStarting: {model_name} | {label}")
                 run_sample_set(
@@ -143,5 +152,9 @@ if __name__ == "__main__":
     parser.add_argument("--models", nargs="+", help="OpenRouter model ids (default: config.OPENROUTER_MODELS)")
     parser.add_argument("--workers", type=int, default=1, help="concurrent calls")
     parser.add_argument("--max-cost", type=float, help="run budget in USD (default: OPENROUTER_MAX_COST_USD)")
+    parser.add_argument("--out-dir", help="folder for the output jsonl files (default: PATH_TO_MODEL_RESULTS)")
+    parser.add_argument("--no-identity-split", action="store_true",
+                        help="run every identity on every sample (overrides config.IDENTITY_SAMPLE_SPLIT)")
     args = parser.parse_args()
-    call_openrouter(smoke=args.smoke, models=args.models, workers=args.workers, max_cost=args.max_cost)
+    call_openrouter(smoke=args.smoke, models=args.models, workers=args.workers, max_cost=args.max_cost,
+                    out_dir=args.out_dir, no_identity_split=args.no_identity_split)

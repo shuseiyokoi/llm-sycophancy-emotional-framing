@@ -17,7 +17,7 @@ Accuracy alone hides the result (a model that always says NO is already
     false alarm  = P(YES | sample is not biased)
     J            = hit rate - false alarm   (0 = YES unrelated to truth)
 
-Outputs to results/analyze_results/ (each figure as .png and .pdf):
+Outputs to results/analyze_results/vs_ground_truth/ (each figure as .png and .pdf):
     gt-hit-false-alarm.csv           one row per model × prompt type, with
                                      bootstrap 95% CI on J
     gt-yes-decomposition             YES rate split into YES-on-biased and
@@ -42,6 +42,7 @@ from matplotlib.patches import Patch, Rectangle
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from config import PATH_TO_RESULTS, PATH_TO_GROUND_TRUTH, IDENTITIES, all_known_identities
+OUT_DIR = os.path.join(PATH_TO_RESULTS, "vs_ground_truth") + os.sep
 from analyze_results import discover_models, load_results
 from compare_to_ground_truth import (
     BIAS_ANY_COL,
@@ -179,7 +180,7 @@ def grey_never_labels(ax, never):
 
 def save(fig, name):
     for ext in ("png", "pdf"):
-        fig.savefig(os.path.join(PATH_TO_RESULTS, f"{name}.{ext}"), dpi=300, facecolor="white")
+        fig.savefig(os.path.join(OUT_DIR, f"{name}.{ext}"), dpi=300, facecolor="white")
     plt.close(fig)
 
 
@@ -347,23 +348,23 @@ def plot_identity_gap(ident, active, df):
 
 
 def main():
-    os.makedirs(PATH_TO_RESULTS, exist_ok=True)
+    os.makedirs(OUT_DIR, exist_ok=True)
     df = attach_truth(load_results(discover_models()))
 
     table = hit_false_alarm(df)
-    table.to_csv(os.path.join(PATH_TO_RESULTS, "gt-hit-false-alarm.csv"), index=False)
+    table.to_csv(os.path.join(OUT_DIR, "gt-hit-false-alarm.csv"), index=False)
     active, never = model_order(table)
     plot_yes_decomposition(table, active, never)
     plot_discrimination(table, active, never)
 
     ident = identity_truth_vs_yes(df)
-    ident.to_csv(os.path.join(PATH_TO_RESULTS, "gt-identity-truth-vs-yes.csv"), index=False)
+    ident.to_csv(os.path.join(OUT_DIR, "gt-identity-truth-vs-yes.csv"), index=False)
     plot_identity_gap(ident, active, df)
 
 
     print(f"Saved gt-hit-false-alarm.csv, gt-identity-truth-vs-yes.csv and "
           f"gt-yes-decomposition / gt-discrimination / gt-identity-gap-heatmap "
-          f"(.png, .pdf) to {PATH_TO_RESULTS}")
+          f"(.png, .pdf) to {OUT_DIR}")
     show = table.assign(hit=table["hit_rate"] * 100, fa=table["false_alarm"] * 100,
                         J=table["j"] * 100, J_lo=table["j_lo"] * 100, J_hi=table["j_hi"] * 100)
     print("\nHit rate / false alarm / J (%), control prompt:")

@@ -19,6 +19,7 @@ from config import (
     prompt_identity_pairs,
     prompt_identity_label,
 )
+OUT_DIR = os.path.join(PATH_TO_RESULTS, "per_model") + os.sep
 
 FILE_PREFIX = "sample_results_"
 
@@ -260,7 +261,7 @@ def plot_conclusion_counts(df, model_names):
         plt.tight_layout()
 
         plt.savefig(
-            f"{PATH_TO_RESULTS}conclusion-count-by-prompt-{safe_name(model_name)}.png",
+            f"{OUT_DIR}conclusion-count-by-prompt-{safe_name(model_name)}.png",
             dpi=300,
             bbox_inches="tight",
         )
@@ -306,7 +307,7 @@ def plot_conclusion_percentages(df, model_names):
         plt.tight_layout()
 
         plt.savefig(
-            f"{PATH_TO_RESULTS}percentages-by-prompt-{safe_name(model_name)}.png",
+            f"{OUT_DIR}percentages-by-prompt-{safe_name(model_name)}.png",
             dpi=300,
             bbox_inches="tight",
         )
@@ -332,7 +333,7 @@ def plot_confidence_by_prompt(df, model_names):
         fig.tight_layout()
 
         fig.savefig(
-            f"{PATH_TO_RESULTS}confidence-by-prompt-{safe_name(model_name)}.png",
+            f"{OUT_DIR}confidence-by-prompt-{safe_name(model_name)}.png",
             dpi=300,
             bbox_inches="tight",
         )
@@ -372,7 +373,7 @@ def plot_conclusion_counts_by_identity(df, model_names):
             plt.tight_layout()
 
             plt.savefig(
-                f"{PATH_TO_RESULTS}conclusion-count-by-identity-{prompt_type}-{safe_name(model_name)}.png",
+                f"{OUT_DIR}conclusion-count-by-identity-{prompt_type}-{safe_name(model_name)}.png",
                 dpi=300,
                 bbox_inches="tight",
             )
@@ -426,7 +427,7 @@ def plot_conclusion_percentages_by_identity(df, model_names):
             plt.tight_layout()
 
             plt.savefig(
-                f"{PATH_TO_RESULTS}percentages-by-identity-{prompt_type}-{safe_name(model_name)}.png",
+                f"{OUT_DIR}percentages-by-identity-{prompt_type}-{safe_name(model_name)}.png",
                 dpi=300,
                 bbox_inches="tight",
             )
@@ -468,7 +469,7 @@ def plot_confidence_by_identity(df, model_names):
             fig.tight_layout()
 
             fig.savefig(
-                f"{PATH_TO_RESULTS}confidence-by-identity-{prompt_type}-{safe_name(model_name)}.png",
+                f"{OUT_DIR}confidence-by-identity-{prompt_type}-{safe_name(model_name)}.png",
                 dpi=300,
                 bbox_inches="tight",
             )
@@ -495,7 +496,7 @@ def plot_confidence_by_model_and_conclusion(df):
     fig.tight_layout()
 
     fig.savefig(
-        f"{PATH_TO_RESULTS}confidence-by-model-and-conclusion.png",
+        f"{OUT_DIR}confidence-by-model-and-conclusion.png",
         dpi=300,
         bbox_inches="tight",
     )
@@ -573,7 +574,7 @@ def run_stats_vs_control(df, model_names):
             )
 
     stats_df = pd.DataFrame(stats_rows).sort_values(["model", "fisher_p"])
-    stats_df.to_csv(f"{PATH_TO_RESULTS}stats_vs_control.csv", index=False)
+    stats_df.to_csv(f"{OUT_DIR}stats_vs_control.csv", index=False)
     return stats_df
 
 
@@ -611,12 +612,12 @@ def identity_breakdown(df):
 
 
 def analyze_results():
-    """Run the full analysis: load results, save plots and CSVs to PATH_TO_RESULTS.
+    """Run the full analysis: load results, save plots and CSVs to OUT_DIR.
 
     Models are discovered from the files on disk, so this runs regardless of
     which models are currently active in config.py.
     """
-    Path(PATH_TO_RESULTS).mkdir(parents=True, exist_ok=True)
+    Path(OUT_DIR).mkdir(parents=True, exist_ok=True)
 
     model_names = discover_models()
     print(f"Models found: {model_names}")
@@ -627,7 +628,7 @@ def analyze_results():
     report_coverage(df)
 
     summary = df.groupby(["model", "prompt", "conclusion"], observed=True).size()
-    summary.to_csv(f"{PATH_TO_RESULTS}tableresults.csv")
+    summary.to_csv(f"{OUT_DIR}tableresults.csv")
 
     plot_conclusion_counts(df, model_names)
     plot_conclusion_percentages(df, model_names)
@@ -644,12 +645,12 @@ def analyze_results():
 
     id_breakdown_df = identity_breakdown(df)
     if not id_breakdown_df.empty:
-        id_breakdown_df.to_csv(f"{PATH_TO_RESULTS}identity_breakdown.csv", index=False)
+        id_breakdown_df.to_csv(f"{OUT_DIR}identity_breakdown.csv", index=False)
         print(
             f"\nIdentity breakdown ({len(id_breakdown_df)} rows) saved to identity_breakdown.csv"
         )
 
-    print(f"\nPlots and CSVs saved to {PATH_TO_RESULTS}")
+    print(f"\nPlots and CSVs saved to {OUT_DIR}")
     return df, stats_df
 
 

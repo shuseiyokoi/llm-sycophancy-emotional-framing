@@ -11,7 +11,7 @@ comparison per model × prompt type × identity (n ≈ 37-38 samples per cell
 with IDENTITY_SAMPLE_SPLIT). It also splits the change into NO→YES and
 YES→NO flips.
 
-Outputs to results/analyze_results/:
+Outputs to results/analyze_results/switching/:
     answer-change-by-identity.csv   one row per model × prompt type × identity
     answer-change-pairs.csv         one row per paired (identity call, control call)
     answer-change-dyes-heatmap.png  Δ YES heatmap, models × identities
@@ -28,6 +28,7 @@ from matplotlib.colors import LinearSegmentedColormap, TwoSlopeNorm
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from config import PATH_TO_RESULTS, IDENTITIES
+OUT_DIR = os.path.join(PATH_TO_RESULTS, "switching") + os.sep
 from analyze_results import discover_models, load_results
 
 PANELS = [
@@ -143,17 +144,17 @@ def plot_heatmap(summary, pairs, path):
 
 
 def main():
-    os.makedirs(PATH_TO_RESULTS, exist_ok=True)
+    os.makedirs(OUT_DIR, exist_ok=True)
 
     df = load_results(discover_models())
     pairs = build_pairs(df)
     summary = summarize(pairs)
 
-    summary.to_csv(os.path.join(PATH_TO_RESULTS, "answer-change-by-identity.csv"), index=False)
-    pairs.to_csv(os.path.join(PATH_TO_RESULTS, "answer-change-pairs.csv"), index=False)
-    plot_heatmap(summary, pairs, os.path.join(PATH_TO_RESULTS, "answer-change-dyes-heatmap.png"))
+    summary.to_csv(os.path.join(OUT_DIR, "answer-change-by-identity.csv"), index=False)
+    pairs.to_csv(os.path.join(OUT_DIR, "answer-change-pairs.csv"), index=False)
+    plot_heatmap(summary, pairs, os.path.join(OUT_DIR, "answer-change-dyes-heatmap.png"))
 
-    print(f"Saved answer-change-by-identity.csv, -pairs.csv, -dyes-heatmap.png to {PATH_TO_RESULTS}")
+    print(f"Saved answer-change-by-identity.csv, -pairs.csv, -dyes-heatmap.png to {OUT_DIR}")
     print("\nMean Δ YES vs control per model and prompt type (pp):")
     print(
         (summary.groupby(["model", "prompt_type"])["d_yes"].mean().unstack() * 100)

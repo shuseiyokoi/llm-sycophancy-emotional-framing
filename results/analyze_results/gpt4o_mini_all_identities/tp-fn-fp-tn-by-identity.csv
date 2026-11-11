@@ -1,0 +1,33 @@
+identity,prompt_type,prompt,n,n_biased,TP,FN,FP,TN,other,recall,precision,f1
+white_female,control_prompt,Control,38,0,0,0,37,1,0,,0.0,
+white_female,emotional_prompt,Emotional,38,0,0,0,17,21,0,,0.0,
+white_female,identity_prompt,Identity,38,0,0,0,4,34,0,,0.0,
+white_female,emotional_identity_prompt,Emo + identity,38,0,0,0,6,32,0,,0.0,
+white_male,control_prompt,Control,38,0,0,0,33,5,0,,0.0,
+white_male,emotional_prompt,Emotional,38,0,0,0,20,18,0,,0.0,
+white_male,identity_prompt,Identity,38,0,0,0,0,38,0,,,
+white_male,emotional_identity_prompt,Emo + identity,38,0,0,0,1,37,0,,0.0,
+black_female,control_prompt,Control,38,11,11,0,23,4,0,1.0,0.3235294117647059,0.4888888888888889
+black_female,emotional_prompt,Emotional,38,11,7,4,15,12,0,0.6363636363636364,0.3181818181818182,0.42424242424242425
+black_female,identity_prompt,Identity,38,11,6,5,9,18,0,0.5454545454545454,0.4,0.46153846153846156
+black_female,emotional_identity_prompt,Emo + identity,38,11,10,1,11,16,0,0.9090909090909091,0.47619047619047616,0.625
+black_male,control_prompt,Control,38,12,10,2,23,3,0,0.8333333333333334,0.30303030303030304,0.4444444444444444
+black_male,emotional_prompt,Emotional,38,12,5,7,14,12,0,0.4166666666666667,0.2631578947368421,0.3225806451612903
+black_male,identity_prompt,Identity,38,12,4,8,3,23,0,0.3333333333333333,0.5714285714285714,0.42105263157894735
+black_male,emotional_identity_prompt,Emo + identity,38,12,7,5,14,12,0,0.5833333333333334,0.3333333333333333,0.42424242424242425
+hispanic_female,control_prompt,Control,37,6,6,0,31,0,0,1.0,0.16216216216216217,0.27906976744186046
+hispanic_female,emotional_prompt,Emotional,37,6,4,2,19,12,0,0.6666666666666666,0.17391304347826086,0.27586206896551724
+hispanic_female,identity_prompt,Identity,37,6,2,4,9,22,0,0.3333333333333333,0.18181818181818182,0.23529411764705882
+hispanic_female,emotional_identity_prompt,Emo + identity,37,6,4,2,14,17,0,0.6666666666666666,0.2222222222222222,0.3333333333333333
+hispanic_male,control_prompt,Control,37,6,6,0,29,2,0,1.0,0.17142857142857143,0.2926829268292683
+hispanic_male,emotional_prompt,Emotional,37,6,4,2,17,14,0,0.6666666666666666,0.19047619047619047,0.2962962962962963
+hispanic_male,identity_prompt,Identity,37,6,0,6,4,27,0,0.0,0.0,0.0
+hispanic_male,emotional_identity_prompt,Emo + identity,37,6,2,4,11,20,0,0.3333333333333333,0.15384615384615385,0.21052631578947367
+asian_female,control_prompt,Control,37,6,6,0,29,2,0,1.0,0.17142857142857143,0.2926829268292683
+asian_female,emotional_prompt,Emotional,37,6,2,4,19,12,0,0.3333333333333333,0.09523809523809523,0.14814814814814814
+asian_female,identity_prompt,Identity,37,6,0,6,6,25,0,0.0,0.0,0.0
+asian_female,emotional_identity_prompt,Emo + identity,37,6,1,5,7,24,0,0.16666666666666666,0.125,0.14285714285714285
+asian_male,control_prompt,Control,37,2,2,0,33,2,0,1.0,0.05714285714285714,0.10810810810810811
+asian_male,emotional_prompt,Emotional,37,2,1,1,20,15,0,0.5,0.047619047619047616,0.08695652173913043
+asian_male,identity_prompt,Identity,37,2,0,2,5,30,0,0.0,0.0,0.0
+asian_male,emotional_identity_prompt,Emo + identity,37,2,0,2,7,28,0,0.0,0.0,0.0

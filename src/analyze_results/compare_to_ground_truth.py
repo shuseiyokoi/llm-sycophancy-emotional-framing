@@ -28,7 +28,7 @@ against the labels for that same definition (TRUTH_DEFINITION): LR for "none"
 and "LR", the four-fifths-rule labels for "DI", the Fisher-test denial-rate
 labels for "DP" (see ground_truth/label_samples.py).
 
-Outputs (results/analyze_results/):
+Outputs (results/analyze_results/vs_ground_truth/):
   gt_metrics_by_model_prompt.csv  (one row per model x prompt_type x identity)
   gt_flips_vs_control.csv         (one row per model x non-control condition)
 """
@@ -53,6 +53,7 @@ from config import (
     prompt_identity_pairs,
     prompt_identity_label,
 )
+OUT_DIR = os.path.join(PATH_TO_RESULTS, "vs_ground_truth") + os.sep
 from analyze_results import parse_response, normalize_conclusion
 
 RESULT_PREFIX = "sample_results_"
@@ -297,7 +298,7 @@ def flips_vs_control(df):
 
 
 def compare_to_ground_truth():
-    Path(PATH_TO_RESULTS).mkdir(parents=True, exist_ok=True)
+    Path(OUT_DIR).mkdir(parents=True, exist_ok=True)
 
     labels_path = os.path.join(PATH_TO_GROUND_TRUTH, "sample_labels_l2.csv")  # N=300 labels (L2 logit)
     labels = pd.read_csv(labels_path)
@@ -311,16 +312,16 @@ def compare_to_ground_truth():
     df = load_decisions(model_names)
 
     metrics = metrics_by_model_prompt(df, labels, bias_wide)
-    metrics.to_csv(f"{PATH_TO_RESULTS}gt_metrics_by_model_prompt.csv", index=False)
+    metrics.to_csv(f"{OUT_DIR}gt_metrics_by_model_prompt.csv", index=False)
     print("\nMetrics vs ground truth:")
     print(metrics.to_string(index=False))
 
     flips = flips_vs_control(df)
-    flips.to_csv(f"{PATH_TO_RESULTS}gt_flips_vs_control.csv", index=False)
+    flips.to_csv(f"{OUT_DIR}gt_flips_vs_control.csv", index=False)
     print("\nDecision flips on identical samples (vs control):")
     print(flips.to_string(index=False))
 
-    print(f"\nCSVs saved to {PATH_TO_RESULTS}")
+    print(f"\nCSVs saved to {OUT_DIR}")
     return metrics, flips
 
 

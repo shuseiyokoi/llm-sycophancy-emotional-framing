@@ -32,7 +32,7 @@ strictly between 0 and 1 (others carry no information about truth).
 Truth is the LR label assigned to each sample at labeling time (BIAS vs
 not), regardless of config.FAIRNESS_DEFINITION.
 
-Outputs to results/analyze_results/:
+Outputs to results/analyze_results/switching/:
     switch-by-truth.csv          one row per model x comparison x direction
     switch-by-truth-pooled.csv   GEE truth coefficient per comparison x direction
     switch-by-truth.png/.pdf     switch rate on not-biased vs biased samples
@@ -55,6 +55,7 @@ from scipy.stats import fisher_exact
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from config import PATH_TO_RESULTS, PATH_TO_GROUND_TRUTH, all_known_identities
+OUT_DIR = os.path.join(PATH_TO_RESULTS, "switching") + os.sep
 from analyze_results import discover_models, load_results
 from compare_to_ground_truth import load_term_bias_wide, identity_bias_series
 
@@ -206,7 +207,7 @@ def style_axis(ax):
 
 def save(fig, name):
     for ext in ("png", "pdf"):
-        fig.savefig(os.path.join(PATH_TO_RESULTS, f"{name}.{ext}"), dpi=300, facecolor="white")
+        fig.savefig(os.path.join(OUT_DIR, f"{name}.{ext}"), dpi=300, facecolor="white")
     plt.close(fig)
 
 
@@ -323,12 +324,12 @@ def plot_switch_simple(table):
 
 
 def main():
-    os.makedirs(PATH_TO_RESULTS, exist_ok=True)
+    os.makedirs(OUT_DIR, exist_ok=True)
     pairs = build_pairs(load_results(discover_models()))
     table = switch_table(pairs)
-    table.to_csv(os.path.join(PATH_TO_RESULTS, "switch-by-truth.csv"), index=False)
+    table.to_csv(os.path.join(OUT_DIR, "switch-by-truth.csv"), index=False)
     pool = pooled(pairs, table)
-    pool.to_csv(os.path.join(PATH_TO_RESULTS, "switch-by-truth-pooled.csv"), index=False)
+    pool.to_csv(os.path.join(OUT_DIR, "switch-by-truth-pooled.csv"), index=False)
     plot_switch_by_truth(table)
     plot_switch_simple(table)
 
@@ -342,7 +343,7 @@ def main():
     print("\nPooled GEE (truth coefficient):")
     print(pool.round(4).to_string(index=False))
     print(f"\nSaved switch-by-truth.csv, switch-by-truth-pooled.csv, switch-by-truth (.png, .pdf)"
-          f" to {PATH_TO_RESULTS}")
+          f" to {OUT_DIR}")
 
 
 if __name__ == "__main__":
