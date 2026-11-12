@@ -56,15 +56,15 @@ def identity_axis_label(identity_key):
     return identity_key.replace("_", " ")
 
 
-def discover_models():
+def discover_models(results_dir=PATH_TO_MODEL_RESULTS):
     """Find model names from results_{prompt_type}[_{identity_key}]_{model}.jsonl
-    files on disk."""
+    files in results_dir."""
     models = set()
     prefixes = [
         f"{FILE_PREFIX}{prompt_identity_label(prompt_type, identity)}_"
         for prompt_type, identity in prompt_identity_pairs()
     ]
-    for path in Path(PATH_TO_MODEL_RESULTS).glob(f"{FILE_PREFIX}*.jsonl"):
+    for path in Path(results_dir).glob(f"{FILE_PREFIX}*.jsonl"):
         for prefix in prefixes:
             if path.name.startswith(prefix):
                 models.add(path.name[len(prefix) : -len(".jsonl")])
@@ -114,7 +114,7 @@ def parse_response(response):
     return response
 
 
-def load_results(model_names):
+def load_results(model_names, results_dir=PATH_TO_MODEL_RESULTS):
     """Load all result jsonl files into one dataframe.
 
     Rows whose response is an API error, non-JSON text, or missing a
@@ -134,7 +134,7 @@ def load_results(model_names):
         for prompt_type, identity in prompt_identity_pairs():
             label = prompt_identity_label(prompt_type, identity)
             path = (
-                Path(PATH_TO_MODEL_RESULTS) / f"{FILE_PREFIX}{label}_{model_name}.jsonl"
+                Path(results_dir) / f"{FILE_PREFIX}{label}_{model_name}.jsonl"
             )
             if not path.exists():
                 continue
@@ -171,7 +171,7 @@ def load_results(model_names):
                     )
 
     if not rows:
-        raise ValueError(f"No rows loaded for {model_names} in {PATH_TO_MODEL_RESULTS}")
+        raise ValueError(f"No rows loaded for {model_names} in {results_dir}")
 
     df = pd.DataFrame(rows)
     df["confidence"] = pd.to_numeric(df["confidence"], errors="coerce")

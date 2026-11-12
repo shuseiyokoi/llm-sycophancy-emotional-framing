@@ -5,12 +5,19 @@ Identity prompts pool every identity (as in analyze_results.py). Models keep
 the same row in every panel and both figures, sorted by mean YES rate over
 the four prompts (highest on top).
 
-Outputs to results/analyze_results/all_models/:
+--data-dir DIR (repeatable) reads result files from several folders, e.g. the
+main runs plus data/call_models/1111_commercial_small. --n-samples N keeps only
+the first N sample ids (sorted) for every model, so models run on all 300 and
+models from a small run are compared on the same samples. --out-sub names the
+output subfolder (default all_models).
+
+Outputs to results/analyze_results/<out-sub>/:
     yes-no-by-prompt.csv              model x prompt: n, YES, NO, other, shares
     yes-no-counts-by-prompt.png/.pdf  YES and NO counts per model, per prompt
     yes-no-percent-by-prompt.png/.pdf YES / NO share (100% bars) per model, per prompt
 """
 
+import argparse
 import os
 import sys
 
@@ -20,7 +27,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-from config import PATH_TO_RESULTS
+from config import PATH_TO_RESULTS, PATH_TO_MODEL_RESULTS
 from analyze_results import discover_models, load_results
 
 OUT_DIR = os.path.join(PATH_TO_RESULTS, "all_models") + os.sep
@@ -119,9 +126,35 @@ def plot_percent(table, models):
          "Share of YES vs NO per model, by prompt (100% bars; label = YES %)")
 
 
+def load_all(data_dirs, n_samples=None):
+    """Rows from every folder; a model found in two folders keeps the first."""
+    frames, seen = [], set()
+    for d in data_dirs:
+        models = [m for m in discover_models(d) if m not in seen]
+        if not models:
+            continue
+        seen.update(models)
+        frames.append(load_results(models, d))
+    df = pd.concat(frames, ignore_index=True)
+    df = df.drop_duplicates(["model", "prompt_type", "identity", "sample_id"], keep="last")
+    if n_samples:
+        keep = sorted(df["sample_id"].dropna().unique())[:n_samples]
+        df = df[df["sample_id"].isin(keep)]
+    return df
+
+
 def main():
+    global OUT_DIR
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--data-dir", action="append", default=None,
+                        help="results folder; repeat for several (default: data/call_models/)")
+    parser.add_argument("--n-samples", type=int, default=None,
+                        help="keep only the first N sample ids for every model")
+    parser.add_argument("--out-sub", default="all_models", help="output subfolder of results/analyze_results/")
+    args = parser.parse_args()
+    OUT_DIR = os.path.join(PATH_TO_RESULTS, args.out_sub) + os.sep
     os.makedirs(OUT_DIR, exist_ok=True)
-    df = load_results(discover_models())
+    df = load_all(args.data_dir or [PATH_TO_MODEL_RESULTS], args.n_samples)
     table = yes_no_table(df)
     table.to_csv(os.path.join(OUT_DIR, "yes-no-by-prompt.csv"), index=False)
     models = model_order(table)

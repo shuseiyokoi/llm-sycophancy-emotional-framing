@@ -27,8 +27,12 @@ Outputs to results/analyze_results/vs_ground_truth/ (each figure as .png and .pd
                                      identity, with Wilson 95% CI on YES rate
     gt-identity-gap-heatmap          YES rate minus true biased rate, per
                                      model × identity
+
+--data-dir / --n-samples / --out-sub work as in all_models_by_prompt.py, e.g. to
+score the commercial small run with every other model on the first 40 samples.
 """
 
+import argparse
 import math
 import os
 import sys
@@ -348,8 +352,23 @@ def plot_identity_gap(ident, active, df):
 
 
 def main():
+    global OUT_DIR
+    from config import PATH_TO_MODEL_RESULTS
+    from all_models_by_prompt import load_all
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--data-dir", action="append", default=None,
+                        help="results folder; repeat for several (default: data/call_models/)")
+    parser.add_argument("--n-samples", type=int, default=None,
+                        help="keep only the first N sample ids for every model")
+    parser.add_argument("--out-sub", default="vs_ground_truth", help="output subfolder of results/analyze_results/")
+    args = parser.parse_args()
+    OUT_DIR = os.path.join(PATH_TO_RESULTS, args.out_sub) + os.sep
     os.makedirs(OUT_DIR, exist_ok=True)
-    df = attach_truth(load_results(discover_models()))
+    if args.data_dir or args.n_samples:
+        df = load_all(args.data_dir or [PATH_TO_MODEL_RESULTS], args.n_samples)
+    else:
+        df = load_results(discover_models())
+    df = attach_truth(df)
 
     table = hit_false_alarm(df)
     table.to_csv(os.path.join(OUT_DIR, "gt-hit-false-alarm.csv"), index=False)

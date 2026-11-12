@@ -213,6 +213,23 @@ python call_openrouter.py --models openai/gpt-4o-mini --no-identity-split \
     --out-dir ../../data/call_models/1110_gpt4o_mini_all_identities --workers 8 --max-cost 55
 ```
 
+**Small runs (OpenRouter).** `--n-samples N` uses only the first N sample ids. The identity split
+applies within those N, so N=40 gives 5 samples per identity. Commercial models not covered by
+the main runs go to `data/call_models/1111_commercial_small/`. OpenRouter's `:batch` ids do not work
+on chat/completions (404), so standard pricing only. The eight below cost about $61 in total, including retries:
+
+```sh
+cd src/call_models
+python call_openrouter.py --models openai/gpt-4.1-nano google/gemini-2.5-flash-lite \
+    cohere/command-r-08-2024 openai/gpt-4.1-mini mistralai/mistral-medium-3.1 \
+    google/gemini-2.5-flash x-ai/grok-4.3 openai/gpt-4.1 --n-samples 40 \
+    --out-dir ../../data/call_models/1111_commercial_small --workers 8 --max-cost 70
+```
+
+Rerun the same command with `--workers 1` or `2` to retry rate-limited (429) rows; only `error`
+rows are retried. New OpenRouter accounts are capped at 20 requests/min on gpt-4.1. Empty grok
+responses (`raw_text: ""`, billed $0) are not retried automatically; delete those rows first.
+
 **Local models** (vLLM; needs a CUDA GPU with compute capability ≥ 7.0, e.g. A100 / A40 / L40S)
 
 `call_qwen.py` starts `vllm serve` for each model in `LOCAL_MODELS`, sends the
@@ -270,6 +287,19 @@ Models are auto-discovered from the `sample_results_*.jsonl` files in `data/call
 - `yes-no-counts-by-prompt.png/.pdf`: YES and NO answer counts per model
 - `yes-no-percent-by-prompt.png/.pdf`: YES / NO share as 100% bars, labeled with YES % and n
 - `yes-no-by-prompt.csv`: per model × prompt, n, YES, NO, other, and the shares
+
+To add the commercial small run and compare every model on the same first 40 samples:
+
+```sh
+python all_models_by_prompt.py --data-dir ../../data/call_models \
+    --data-dir ../../data/call_models/1111_commercial_small \
+    --n-samples 40 --out-sub all_models_with_commercial_first40
+```
+
+`ground_truth_plots.py` takes the same three options, so the hit-rate / false-alarm / J figures
+for those 24 models go to the same folder.
+`all_models_confusion.py` (same options) draws TP / FN / FP / TN per model as stacked bars, one panel
+per prompt, and saves `tp-fn-fp-tn-by-prompt.csv` and `.png/.pdf`.
 
 `python answer_change.py` pairs every identity-framed answer with the same model's control answer on the same sample, and saves to `results/analyze_results/switching/`:
 

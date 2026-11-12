@@ -36,6 +36,7 @@ from config import (
     prompt_identity_pairs,
     prompt_identity_label,
 )
+from prompts import list_sample_ids
 from sample_runner import run_sample_set
 
 BASE_URL = "https://openrouter.ai/api/v1"
@@ -54,7 +55,7 @@ def key_spend(api_key):
 
 
 def call_openrouter(smoke=False, models=None, workers=1, max_cost=None,
-                    out_dir=None, no_identity_split=False):
+                    out_dir=None, no_identity_split=False, n_samples=None):
     models = models or OPENROUTER_MODELS
     out_dir = os.path.join(out_dir, "") if out_dir else PATH_TO_MODEL_RESULTS
     if no_identity_split:
@@ -73,8 +74,9 @@ def call_openrouter(smoke=False, models=None, workers=1, max_cost=None,
     spend_before, limit = key_spend(api_key)
     print(f"OpenRouter key: spent ${spend_before:.4f} so far, limit {limit}")
     print(f"Models: {models} | workers: {workers} | run budget: ${max_cost:.2f}")
-    print(f"Output: {out_dir} | identity split: {config.IDENTITY_SAMPLE_SPLIT}")
+    print(f"Output: {out_dir} | identity split: {config.IDENTITY_SAMPLE_SPLIT} | n_samples: {n_samples or 'all'}")
 
+    sample_ids = sorted(list_sample_ids())[:n_samples] if n_samples else None  # small run: first N samples
     prefix = "smoke" if smoke else "sample_results"
     limit_n = SMOKE_N_PER_PROMPT if smoke else None
     totals = {"run": 0.0}
@@ -111,8 +113,8 @@ def call_openrouter(smoke=False, models=None, workers=1, max_cost=None,
                     totals[model_name] += cost
                     totals["run"] += cost
                     print(
-                        f"  [cost] {model_name} | in={usage['prompt_tokens']:,} "
-                        f"out={usage['completion_tokens']:,} (reasoning={usage['reasoning_tokens']}) "
+                        f"  [cost] {model_name} | in={usage['prompt_tokens'] or 0:,} "
+                        f"out={usage['completion_tokens'] or 0:,} (reasoning={usage['reasoning_tokens']}) "
                         f"| ${cost:.4f} | model total ${totals[model_name]:.4f} "
                         f"| run total ${totals['run']:.4f}"
                     )
@@ -125,7 +127,7 @@ def call_openrouter(smoke=False, models=None, workers=1, max_cost=None,
                 print(f"\nStarting: {model_name} | {label}")
                 run_sample_set(
                     send_fn, model_name, prompt_type, output_file,
-                    identity=identity, limit=limit_n,
+                    identity=identity, limit=limit_n, sample_ids=sample_ids,
                     sleep_s=0 if workers > 1 else 1.0, workers=workers,
                 )
                 print(f"Finished: {model_name} | {label}")
@@ -155,6 +157,9 @@ if __name__ == "__main__":
     parser.add_argument("--out-dir", help="folder for the output jsonl files (default: PATH_TO_MODEL_RESULTS)")
     parser.add_argument("--no-identity-split", action="store_true",
                         help="run every identity on every sample (overrides config.IDENTITY_SAMPLE_SPLIT)")
+    parser.add_argument("--n-samples", type=int,
+                        help="small run: only the first N sample ids (identity split applies within them)")
     args = parser.parse_args()
     call_openrouter(smoke=args.smoke, models=args.models, workers=args.workers, max_cost=args.max_cost,
-                    out_dir=args.out_dir, no_identity_split=args.no_identity_split)
+                    out_dir=args.out_dir, no_identity_split=args.no_identity_split,
+                    n_samples=args.n_samples)
